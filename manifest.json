@@ -1,0 +1,14 @@
+{
+  "name": "HtmlPlayer (dev)",
+  "version": "0.0.0.1",
+  "description": "",
+  "app": {
+    "launch": {
+      "local_path": "main.html",
+      "container": "tab"
+    }
+  },
+  "options_page": "options/index.html",
+  "permissions": ["tabs", "fileBrowserHandler", "unlimitedStorage", "background", "https://*.ubuntu.com/*", "https://login.ubuntu.com/api/1.0/authentications"]
+}
+

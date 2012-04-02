@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Digi-Images Favorites Options</title>
+<link rel="stylesheet" href="css/style.css" />
+<link rel="stylesheet" href="css/chrome_shared.css" />
+<link rel="stylesheet" href="css/browser.css" />
+<link rel="stylesheet" href="css/checkbox.css" />
+<link rel="stylesheet" href="css/button.css" />
+<link rel="stylesheet" href="css/select.css" />
+<script type="text/javascript" src="main.js"></script>
+</head>
+<body onload="fill();">
+<div id="navbar-container">
+    <div id="navbar-content-title">Options</div>
+	<ul id="navbar">
+		<li id="authentication" class="navbar-item navbar-item-selected">Authentication</li>
+		<li id="about" class="navbar-item">About</li>
+	</ul>
+</div>
+<div id="mainview">
+	<div id="mainview-content">
+		<div id="page-container">
+			<div id="authenticationPage" class="page" style="display:block">
+				<h1>Authentication</h1>
+				<div class="displaytable">
+				  <section>
+			      <div>
+			        <a href="https://one.ubuntu.com/phones/creds">1. Create ubuntu one mobile credits</a>
+			        <a href="https://one.ubuntu.com/phones">2. Copy and paste credits</a>
+			      </div>
+			      <div>
+			        <h3>login</h3>
+			        <input spellcheck="false" id="loginBox" type="text" size="20" onchange="saveLogin()" />
+			      </div>
+			      <div>
+			      <div class="section-group">
+			        <h3>password</h3>
+			        </div>
+			        <div class="section-group">
+			        <input spellcheck="false" id="passwordBox" type="password" size="30" onchange="savePassword()" />
+			        </div>
+			      </div>
+			      </div>
+			    </section>
+			  </div>
+			</div>
+			<div id="aboutPage" class="page">
+				<h1>About</h1>
+				<div class="displaytable">
+					<section id="version">
+						<h3>Version</h3>
+						<div></div>
+					</section>
+					<section>
+						<h3>Created by</h3>
+						<div>
+							<div class="section-group"><span>Martin Schaaf</span></div>
+							<div class="section-group">
+							  <span><a href="https://github.com/Dica-Developer/HtmlPlayer" target="_blank">https://github.com/Dica-Developer/HtmlPlayer</a></span>
+							  <span class="informational-text"> - Website</span>
+							</div>
+						</div>
+					</section>
+					<section>
+						<h3>Send feedback</h3>
+						<div>
+							<a href="mailto:chrome@ma-scha.de">chrome@ma-scha.de</a>
+						</div>
+					</section>
+					<section>
+						<h3>Donate</h3>
+						<div>
+              <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+                  <input type="hidden" name="cmd" value="_s-xclick">
+                  <input type="hidden" name="hosted_button_id" value="VFXFCF6GKXFXW">
+                  <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG_global.gif" border="0" name="submit" alt="PayPal — The safer, easier way to pay online.">
+                  <img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
+              </form>
+						</div>
+					</section>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>

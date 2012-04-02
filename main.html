@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <script src="js/chrome_ex_oauthsimple.js"></script>
+    <script src="js/lib_ubuntuone.js"></script>
+    <input type="file" id="files" name="files"/>
+    <audio id="player" controls></audio>
+    <img id="coverArt" src="" width="100"></img>
+
+    <script>
+      function handleFileSelect(evt) {
+        var files = evt.target.files;
+        for (var i = 0, f; f = files[i]; i++) {
+	        var reader = new FileReader();
+	        reader.onload = function(evt) {
+	          var audio = document.getElementById('player');
+	          audio.src = evt.target.result;
+	        };
+	        reader.readAsDataURL(f);
+        }
+      }
+      document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+    </script>
+    <script>
+    var image = document.getElementById('coverArt');
+    image.src = "https://streaming.one.ubuntu.com/rest/getCoverArt.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=sha1:a130ce9578fdfcdaa8864cb1365d8d92313f5017";
+
+    var audio = document.getElementById('player');
+	  audio.src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=egdeYJc0TcCw8hKOXRtEtg%3AYqtNiX5VTdeuBC3aCPr79g&maxBitRate=0";
+	  audio.type = "audio/mp3";
+	  </script>
+  </body>
+</html>
