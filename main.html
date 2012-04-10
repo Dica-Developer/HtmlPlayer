@@ -2,25 +2,108 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <style>
+      #searchView {
+        height: 100%;
+        width: 0;
+        overflow: hidden;
+        background-color: white;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 2;
+      }
+      #search {
+        float: left;
+      }
+      #playerView {
+        display: table;
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        background-color: black;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 1;
+      }
+      #descriptionBox {
+        color: #bbbbbb;
+        width: 49%;
+        float: left;
+        text-align: right;
+        padding-right: 10px;
+        font-size: 12px;
+        vertical-align: middle;
+      }
+      #title {
+        color: white;
+        font-size: 40px;
+      }
+      #album {
+        font-size: 24px;
+      }
+      #artist {
+        font-size: 24px;
+      }
+      #coverArtBox {
+        color: #bbbbbb;
+        width: 49%;
+        float: right;
+        padding-left: 10px;
+        margin: auto;
+        vertical-align: middle;
+      }
+    </style>
   </head>
   <body>
     <script src="js/lib_ubuntuone.js"></script>
     <script src="js/lib_controller.js"></script>
-    <input id="search" name="search" />
-    <input type="file" id="files" name="files" />
-    <audio id="player" controls></audio>
-    <img id="coverArt" src="" width="100"></img>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+
+    <div id="searchView">
+      <input id="search" name="search" accesskey="l"/>
+      <!--<input type="file" id="files" name="files" />-->
+      <select id="songBox" size="10"></select>
+    </div>
+    <div id="playerView">
+      <audio id="player" autoplay="true"></audio>
+      <div id="descriptionBox">
+        <label id="title">Unknown</label>
+        <br />
+        by <label id="artist">Unknown</label>
+        <br />
+        from <label id="album">Unknown</label>
+      </div>
+      <div id="coverArtBox">
+        <img id="coverArt" src=""/>
+      </div>
+    </div>
 
     <!-- select id="artistsBox" size="10" multiple></select -->
     <!-- select id="albumsBox" size="10" multiple></select -->
-    <select id="songBox" size="10"></select>
 
     <script>
       document.getElementById('songBox').addEventListener('change', startPlay, false);
       document.getElementById('search').addEventListener('change', startSearch, false);
-      document.getElementById('files').addEventListener('change', handleFileSelect, false);
+//      document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
       searchForSongs("", collectSongs, null, null);
+
+      $(function() {
+        $("#search").on("focus", function(event) {
+          $("#searchView").animate({
+            width: "100%"
+          });
+        });
+        $("#songBox").on("blur", function(event) {
+          $("#searchView").animate({
+            width: 0
+          });
+        });
+        $("#searchView").height($(document).height());
+        $("#coverArt").height($(document).height() * 0.75);
+      });
     </script>
     <script>
     // var audio = document.getElementById('player');

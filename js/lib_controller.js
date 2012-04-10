@@ -39,8 +39,8 @@ function collectSongs(event) {
   var req = event.target;
   var ssr = req.responseXML.getElementsByTagName("subsonic-response");
   if (null !== ssr && undefined !== ssr && ssr.length > 0 && "ok" === ssr[0].getAttribute("status")) {
-    var container = document.getElementById("songBox");
     var songs = req.responseXML.getElementsByTagName("match");
+    var options = "";
     for (var i = 0; i < songs.length; i++) {
       var song = {
         "artist": songs[i].getAttribute("artist"),
@@ -54,12 +54,13 @@ function collectSongs(event) {
         "genre": songs[i].getAttribute("genre"),
         "year": songs[i].getAttribute("year")
       };
-      var option = document.createElement("option");
-      option.value = JSON.stringify(song);
-      var optionText = document.createTextNode(song.artist + " / " + song.album + " / " + song.title);
-      option.appendChild(optionText);
-      container.appendChild(option);
+      var option = "<option ";
+      option = option + "value='" + JSON.stringify(song) + "'>";
+      option = option + song.artist + " / " + song.album + " / " + song.title;
+      option = option + "</option>";
+      options = options + option;
     }
+    $("#songBox").html(options);
   } else {
     error = "fetching artists failed with status '" +ssr.getAttribute("status")+ "'";
   }
@@ -71,8 +72,10 @@ function startPlay(event) {
   audio.type = song.contentType;
   audio.src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" + song.id;
 
-  var image = document.getElementById('coverArt');
-  image.src = "https://streaming.one.ubuntu.com/rest/getCoverArt.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" +song.coverArt;
+  $('#coverArt').attr("src", "https://streaming.one.ubuntu.com/rest/getCoverArt.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" +song.coverArt);
+  $('#title').text(song.title);
+  $('#album').text(song.album);
+  $('#artist').text(song.artist);
 }
 
 function startSearch(event) {
