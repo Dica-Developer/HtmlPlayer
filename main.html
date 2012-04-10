@@ -16,34 +16,11 @@
     <select id="songBox" size="10"></select>
 
     <script>
-      function startPlay(event) {
-        var song = JSON.parse(event.target.value);
-	      var audio = document.getElementById('player');
-	      audio.type = song.contentType;
-	      audio.src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" + song.id;
-
-	      var image = document.getElementById('coverArt');
-        image.src = "https://streaming.one.ubuntu.com/rest/getCoverArt.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" +song.coverArt;
-      }
       document.getElementById('songBox').addEventListener('change', startPlay, false);
-    
-      function handleFileSelect(evt) {
-        var files = evt.target.files;
-        for (var i = 0, f; f = files[i]; i++) {
-	        var reader = new FileReader();
-	        reader.onload = function(evt) {
-	          var audio = document.getElementById('player');
-	          audio.src = evt.target.result;
-	        };
-	        reader.readAsDataURL(f);
-        }
-      }
+      document.getElementById('search').addEventListener('change', startSearch, false);
       document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
-      function startSearch(event) {
-        searchForSongs(event.target.value, collectSongs, null, null);
-      }
-      document.getElementById('search').addEventListener('change', startSearch, false);
+      searchForSongs("", collectSongs, null, null);
     </script>
     <script>
     // var audio = document.getElementById('player');

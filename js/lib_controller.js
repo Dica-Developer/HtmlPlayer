@@ -65,3 +65,28 @@ function collectSongs(event) {
   }
 }
 
+function startPlay(event) {
+  var song = JSON.parse(event.target.value);
+  var audio = document.getElementById('player');
+  audio.type = song.contentType;
+  audio.src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" + song.id;
+
+  var image = document.getElementById('coverArt');
+  image.src = "https://streaming.one.ubuntu.com/rest/getCoverArt.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" +song.coverArt;
+}
+
+function startSearch(event) {
+  searchForSongs(event.target.value, collectSongs, null, null);
+}
+
+function handleFileSelect(evt) {
+  var files = evt.target.files;
+  for (var i = 0, f; f = files[i]; i++) {
+    var reader = new FileReader();
+    reader.onload = function(evt) {
+      var audio = document.getElementById('player');
+      audio.src = evt.target.result;
+    };
+    reader.readAsDataURL(f);
+  }
+}
