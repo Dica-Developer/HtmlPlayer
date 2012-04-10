@@ -40,7 +40,7 @@ function getSongs(id, collectSongs, collectErrors, collectProgress) {
 }
 
 function searchForSongs(query, collectSongs, collectErrors, collectProgress) {
-  var url = "https://streaming.one.ubuntu.com/rest/search.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&any=" +query;
+  var url = "https://streaming.one.ubuntu.com/rest/search.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&count=1000&any=" +query;
   var req = new XMLHttpRequest();
   req.open("GET", url, true);
   req.onload = collectSongs;

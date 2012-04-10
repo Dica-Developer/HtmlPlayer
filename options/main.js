@@ -31,21 +31,21 @@ function selectTab() {
 
 function authenticate() {
   // get oauth params from here: https://login.ubuntu.com/api/1.0/authentications?ws.op=authenticate&token_name=Ubuntu%20One%20@%20chrome
-      // use result in signatures map plus '"shared_secret": ""'
-      var url = 'https://one.ubuntu.com/phones/creds'
-      var oauthObject = OAuthSimple().sign({path:url,
-                                              parameters: 'platform=chrome&manufacturer=chrome&model=chrome&redirect_url=http://bla',
-                                              signatures:{
-                                                "consumer_secret": "lIcNthyZddYcKuKgtpoGZfvETxkLVV", 
-                                                "token": "yiuVcpRrgWzLqFOHojNZmVBijyxmStsldHVMRXipBmsVKUfctd", 
-    "consumer_key": "TpM4bem", 
-    "name": "Ubuntu One @ chrome", 
-    "token_secret": "uhNJUjjtJMUJhnbgOUjViOKuaQljPpRTldGfAOWmvLBQJyYtCR",
-    "shared_secret": ""
-                                             }});
-      console.log(oauthObject.signed_url);
-      // call signed url to get mobile login and password
-      console.log("https://streaming.one.ubuntu.com/rest/ping.view?u=" +localStorage["authentication.login"]+ "&p=" + localStorage["authentication.password"] + "&v=1&c=HtmlPlayer");
-      // get credentials from https://one.ubuntu.com/phones/
+  // use result in signatures map plus '"shared_secret": ""'
+  var url = 'https://one.ubuntu.com/phones/creds'
+  var oauthObject = OAuthSimple().sign({path:url,
+                                          parameters: 'platform=chrome&manufacturer=chrome&model=chrome&redirect_url=http://bla',
+                                          signatures:{
+                                            "consumer_secret": "lIcNthyZddYcKuKgtpoGZfvETxkLVV", 
+                                            "token": "yiuVcpRrgWzLqFOHojNZmVBijyxmStsldHVMRXipBmsVKUfctd", 
+"consumer_key": "TpM4bem", 
+"name": "Ubuntu One @ chrome", 
+"token_secret": "uhNJUjjtJMUJhnbgOUjViOKuaQljPpRTldGfAOWmvLBQJyYtCR",
+"shared_secret": ""
+                                         }});
+  console.log(oauthObject.signed_url);
+  // call signed url to get mobile login and password
+  console.log("https://streaming.one.ubuntu.com/rest/ping.view?u=" +localStorage["authentication.login"]+ "&p=" + localStorage["authentication.password"] + "&v=1&c=HtmlPlayer");
+  // get credentials from https://one.ubuntu.com/phones/
 }
 
