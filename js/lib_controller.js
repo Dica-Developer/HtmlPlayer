@@ -55,7 +55,7 @@ function collectSongs(event) {
         "year": songs[i].getAttribute("year")
       };
       var option = "<option ";
-      option = option + "value='" + JSON.stringify(song) + "'>";
+      option = option + "value='" + escape(JSON.stringify(song)) + "'>";
       option = option + song.artist + " / " + song.album + " / " + song.title;
       option = option + "</option>";
       options = options + option;
@@ -66,8 +66,7 @@ function collectSongs(event) {
   }
 }
 
-function startPlay(event) {
-  var song = JSON.parse(event.target.value);
+function startPlay(song) {
   var audio = document.getElementById('player');
   audio.type = song.contentType;
   audio.src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" + song.id;

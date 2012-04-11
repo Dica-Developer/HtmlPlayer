@@ -59,7 +59,7 @@
   <body>
     <script src="js/lib_ubuntuone.js"></script>
     <script src="js/lib_controller.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="js/jquery-1.7.2.min.js"></script>
 
     <div id="searchView">
       <input id="search" name="search" accesskey="l"/>
@@ -80,11 +80,7 @@
       </div>
     </div>
 
-    <!-- select id="artistsBox" size="10" multiple></select -->
-    <!-- select id="albumsBox" size="10" multiple></select -->
-
     <script>
-      document.getElementById('songBox').addEventListener('change', startPlay, false);
       document.getElementById('search').addEventListener('change', startSearch, false);
 //      document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
@@ -100,18 +96,13 @@
           $("#searchView").animate({
             width: 0
           });
+          var selectedElement = $(":selected");
+          var song = JSON.parse(unescape(selectedElement[0].value));
+          startPlay(song);
         });
         $("#searchView").height($(document).height());
-        $("#coverArt").height($(document).height() * 0.75);
+        $("#coverArt").height($(document).height() * 0.6);
       });
     </script>
-    <script>
-    // var audio = document.getElementById('player');
-	  // audio.src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=egdeYJc0TcCw8hKOXRtEtg%3AYqtNiX5VTdeuBC3aCPr79g&maxBitRate=0";
-	  // audio.type = "audio/mp3";
-
-	  // getArtists(1, collectArtists, null, null);
-	  // getAlbums("ad0ee8280b27b55c6660af6bc4884d0a", collectAlbums, null, null);
-	  </script>
   </body>
 </html>
