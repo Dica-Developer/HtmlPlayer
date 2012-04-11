@@ -17,7 +17,6 @@
         float: left;
       }
       #playerView {
-        display: table;
         height: 100%;
         width: 100%;
         overflow: hidden;
@@ -60,6 +59,7 @@
     <script src="js/lib_ubuntuone.js"></script>
     <script src="js/lib_controller.js"></script>
     <script src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/reflection.js"></script>
 
     <div id="searchView">
       <input id="search" name="search" accesskey="l"/>
@@ -76,7 +76,7 @@
         from <label id="album">Unknown</label>
       </div>
       <div id="coverArtBox">
-        <img id="coverArt" src=""/>
+        <img id="coverArt" src="images/wholeNote.png"/>
       </div>
     </div>
 
@@ -88,6 +88,7 @@
 
       $(function() {
         $("#search").on("focus", function(event) {
+          $("#searchView").height($(document).height());
           $("#searchView").animate({
             width: "100%"
           });
@@ -99,9 +100,9 @@
           var selectedElement = $(":selected");
           var song = JSON.parse(unescape(selectedElement[0].value));
           startPlay(song);
+          $("#coverArt").height($(document).height() * 0.3);
+          $("#coverArt").reflect({height: 0.165, opacity: 0.25});
         });
-        $("#searchView").height($(document).height());
-        $("#coverArt").height($(document).height() * 0.6);
       });
     </script>
   </body>
