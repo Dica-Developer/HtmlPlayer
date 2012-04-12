@@ -40,9 +40,11 @@
         font-size: 40px;
       }
       #album {
+        color: white;
         font-size: 24px;
       }
       #artist {
+        color: white;
         font-size: 24px;
       }
       #coverArtBox {
@@ -53,27 +55,40 @@
         margin: auto;
         vertical-align: middle;
       }
+      #searchBox {
+        font-size: 18px;
+        margin: 10px;
+      }
+      #songBox {
+        font-size: 12px;
+        margin: 10px;
+      }
+      #playlistBox {
+        font-size: 12px;
+        margin: 10px;
+      }
     </style>
   </head>
   <body>
-    <script src="js/lib_ubuntuone.js"></script>
-    <script src="js/lib_controller.js"></script>
-    <script src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/lib_ubuntuone.js"></script>
+    <script type="text/javascript" src="js/lib_controller.js"></script>
+    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="js/reflection.js"></script>
 
     <div id="searchView">
-      <input id="search" name="search" accesskey="l"/>
+      <input id="searchBox" accesskey="l"/>
       <!--<input type="file" id="files" name="files" />-->
       <select id="songBox" size="10"></select>
+      <select id="playlistBox" size="10"></select>
     </div>
     <div id="playerView">
       <audio id="player" autoplay="true"></audio>
       <div id="descriptionBox">
-        <label id="title">Unknown</label>
+        <label id="title">title</label>
         <br />
-        by <label id="artist">Unknown</label>
+        by <label id="artist">artist</label>
         <br />
-        from <label id="album">Unknown</label>
+        from <label id="album">album</label>
       </div>
       <div id="coverArtBox">
         <img id="coverArt" src="images/wholeNote.png"/>
@@ -81,13 +96,20 @@
     </div>
 
     <script>
-      document.getElementById('search').addEventListener('change', startSearch, false);
+      document.getElementById('searchBox').addEventListener('change', startSearch, false);
 //      document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
       searchForSongs("", collectSongs, null, null);
 
       $(function() {
-        $("#search").on("focus", function(event) {
+        $("#searchBox").on("focus", function(event) {
+          $("#searchBox").width($(document).width() - 20 - 4);
+          var boxWidth = ($(document).width() / 2) - 20 - 2;
+          var boxHeight = $(document).height() - 22 - 46;
+          $("#songBox").width(boxWidth);
+          $("#songBox").height(boxHeight);
+          $("#playlistBox").width(boxWidth);
+          $("#playlistBox").height(boxHeight);
           $("#searchView").height($(document).height());
           $("#searchView").animate({
             width: "100%"
