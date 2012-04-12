@@ -78,8 +78,8 @@
     <div id="searchView">
       <input id="searchBox" accesskey="l"/>
       <!--<input type="file" id="files" name="files" />-->
-      <select id="songBox" size="10"></select>
-      <select id="playlistBox" size="10"></select>
+      <select id="songBox" size="10" multiple="multiple"></select>
+      <select id="playlistBox" size="10" multiple="multiple"></select>
     </div>
     <div id="playerView">
       <audio id="player" autoplay="true"></audio>
@@ -96,6 +96,20 @@
     </div>
 
     <script>
+      function applyCoverArtStyle() {
+        document.getElementById("coverArt").height = $(document).height() * 0.6;
+        $("#coverArt").reflect({height: 0.165, opacity: 0.25});
+      }
+      
+      function next() {
+        var song = getFirstPlaylistElement()
+        if (null !== song) {
+          startPlay(song);
+          removeFirstPlaylistElement();
+          applyCoverArtStyle();
+        }
+      }
+      
       document.getElementById('searchBox').addEventListener('change', startSearch, false);
 //      document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
@@ -115,15 +129,27 @@
             width: "100%"
           });
         });
-        $("#songBox").on("blur", function(event) {
-          $("#searchView").animate({
-            width: 0
-          });
-          var selectedElement = $(":selected");
-          var song = JSON.parse(unescape(selectedElement[0].value));
-          startPlay(song);
-          document.getElementById("coverArt").height = $(document).height() * 0.6;
-          $("#coverArt").reflect({height: 0.165, opacity: 0.25});
+        $("#songBox").on("keyup", function(event) {
+          if (39 === event.which) {
+            $("#songBox :selected").clone().appendTo("#playlistBox");
+          }
+        });
+        $("#playlistBox").on("keyup", function(event) {
+          if (37 === event.which) {
+            $("#playlistBox :selected").detach();
+          };
+        });
+        $(document).on("keyup", function() {
+          if (27 === event.which) {
+            $("#searchView").animate({
+              width: "0"
+            });
+            // todo: check if something is playing
+            next();
+          }
+        });
+        $("#player").on("ended", function(event) {
+          next();
         });
       });
     </script>

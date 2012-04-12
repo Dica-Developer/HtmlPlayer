@@ -56,7 +56,7 @@ function collectSongs(event) {
       };
       var option = "<option ";
       option = option + "value='" + escape(JSON.stringify(song)) + "'>";
-      option = option + song.artist + " / " + song.album + " / " + song.title;
+      option = option + song.artist + " / " + song.album + " / " + song.track + ". " + song.title;
       option = option + "</option>";
       options = options + option;
     }
@@ -92,3 +92,17 @@ function handleFileSelect(evt) {
     reader.readAsDataURL(f);
   }
 }
+
+function getFirstPlaylistElement() {
+  var elements = $("#playlistBox :first");
+  if (elements.length > 0) {
+    return JSON.parse(unescape(elements[0].value));
+  } else {
+    return null;
+  }
+}
+
+function removeFirstPlaylistElement() {
+  $("#playlistBox :first").detach();
+}
+
