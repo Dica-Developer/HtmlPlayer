@@ -8,6 +8,13 @@
       "container": "tab"
     }
   },
+  "content_scripts": [
+    {
+      "matches": ["https://one.ubuntu.com/phones/creds"],
+      "js": ["js/ubuntuone_authentication.js"],
+      "run_at": "document_end"
+    }
+  ],
   "icons": {
 	  "128": "images/icon.png",
 	  "48": "images/icon.png",

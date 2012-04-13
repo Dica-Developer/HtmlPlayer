@@ -1,5 +1,5 @@
 function getArtists(musicFolderId, collectArtists, collectErrors, collectProgress) {
-  var url = "https://streaming.one.ubuntu.com/rest/getIndexes.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&musicfolderId=" +musicFolderId;
+  var url = JSON.parse(localStorage["serverUrl"]) + "/rest/getIndexes.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&musicfolderId=" +musicFolderId;
   var req = new XMLHttpRequest();
   req.open("GET", url, true);
   req.onload = collectArtists;
@@ -17,7 +17,7 @@ function getSongs(id, collectSongs, collectErrors, collectProgress) {
 }
 
 function searchForSongs(query, collectSongs, collectErrors, collectProgress) {
-  var url = "https://streaming.one.ubuntu.com/rest/search.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&count=1000&any=" +query;
+  var url = JSON.parse(localStorage["serverUrl"]) + "/rest/search.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&count=1000&any=" +query;
   var req = new XMLHttpRequest();
   req.open("GET", url, true);
   req.onload = collectSongs;
@@ -27,7 +27,7 @@ function searchForSongs(query, collectSongs, collectErrors, collectProgress) {
 }
 
 function getMusicDirectory(id, collectChilds, collectErrors, collectProgress) {
-  var url = "https://streaming.one.ubuntu.com/rest/getMusicDirectory.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" +id;
+  var url = JSON.parse(localStorage["serverUrl"]) + "/rest/getMusicDirectory.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" +id;
   var req = new XMLHttpRequest();
   req.open("GET", url, true);
   req.onload = collectChilds;
@@ -35,5 +35,4 @@ function getMusicDirectory(id, collectChilds, collectErrors, collectProgress) {
   req.onprogress = collectProgress;
   req.send(null);
 }
-
 
