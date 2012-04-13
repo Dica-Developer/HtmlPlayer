@@ -1,34 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Digi-Images Favorites Options</title>
+  <title>Dica Audio Player Options</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/chrome_shared.css" />
   <link rel="stylesheet" href="css/browser.css" />
   <link rel="stylesheet" href="css/checkbox.css" />
   <link rel="stylesheet" href="css/button.css" />
   <link rel="stylesheet" href="css/select.css" />
-  <script type="text/javascript" src="js/chrome_ex_oauthsimple.js"></script>
+  <script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
   <script type="text/javascript" src="main.js"></script>
 </head>
 <body onload="fill();">
+<script>
+chrome.extension.onRequest.addListener(
+  function(request, sender, sendResponse) {
+    var patt = new RegExp("^ubuntuone://(.+):(.+)@syncml\.one\.ubuntu\.com$");
+    if (patt.test(request.url)) {
+      var match = patt.exec(request.url);
+      document.querySelector("#loginBox").value = match[1];
+      document.querySelector("#passwordBox").value = match[2];
+      document.querySelector("#serverUrlBox").value = "https://streaming.one.ubuntu.com";
+      saveLogin();
+      savePassword();
+      saveServerUrl();
+      chrome.tabs.remove(sender.tab.id);
+    } else {
+      alert("I could not retreive the credentials from ubuntuone. The url is invalid '" + request.url + "'.");
+    }
+  }
+);
+</script>
 <div id="navbar-container">
     <div id="navbar-content-title">Options</div>
 	<ul id="navbar">
-		<li id="authentication" class="navbar-item navbar-item-selected">Authentication</li>
+		<li id="backend" class="navbar-item navbar-item-selected">Backend</li>
+		<li id="scrobbling" class="navbar-item">Scrobbling</li>
 		<li id="about" class="navbar-item">About</li>
 	</ul>
 </div>
 <div id="mainview">
 	<div id="mainview-content">
 		<div id="page-container">
-			<div id="authenticationPage" class="page" style="display:block">
-				<h1>Authentication</h1>
+			<div id="backendPage" class="page" style="display:block">
+				<h1>Backend</h1>
 				<div class="displaytable">
 				  <section>
+				    <div>
+				      <select id="backendSelection" onchange="initBackend(this);">
+				        <option value="" selected="selected" disabled="disabled">Select a backend</option>
+				        <option value="ubuntuone">Ubuntu One</option>
+				        <option value="subsonic">Subsonic</option>
+				      </select>
+				    </div>
+			      <div id="ubuntuoneAuthenticationHelp" style="display: none;">
+			        <a href="https://one.ubuntu.com/phones/creds" target="_blank">Click to retrieve streaming credentials!</a>
+			      </div>
 			      <div>
-			        <a href="https://one.ubuntu.com/phones/creds">1. Create ubuntu one mobile credits</a>
-			        <a href="https://one.ubuntu.com/phones">2. Copy and paste credits</a>
+			        <h3>server url</h3>
+			        <input spellcheck="false" id="serverUrlBox" type="text" size="20" onchange="saveServerUrl()" />
 			      </div>
 			      <div>
 			        <h3>login</h3>
@@ -46,6 +76,13 @@
 			    </section>
 			  </div>
 			</div>
+			<div id="scrobblingPage" class="page">
+				<h1>Scrobbling</h1>
+				<div class="displaytable">
+				  <section>
+				  </section>
+				</div>
+			</div>
 			<div id="aboutPage" class="page">
 				<h1>About</h1>
 				<div class="displaytable">
@@ -56,7 +93,7 @@
 					<section>
 						<h3>Created by</h3>
 						<div>
-							<div class="section-group"><span>Martin Schaaf</span></div>
+							<div class="section-group"><span>Dica Developers</span></div>
 							<div class="section-group">
 							  <span><a href="https://github.com/Dica-Developer/HtmlPlayer" target="_blank">https://github.com/Dica-Developer/HtmlPlayer</a></span>
 							  <span class="informational-text"> - Website</span>
@@ -67,17 +104,6 @@
 						<h3>Send feedback</h3>
 						<div>
 							<a href="mailto:chrome@ma-scha.de">chrome@ma-scha.de</a>
-						</div>
-					</section>
-					<section>
-						<h3>Donate</h3>
-						<div>
-              <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-                  <input type="hidden" name="cmd" value="_s-xclick">
-                  <input type="hidden" name="hosted_button_id" value="VFXFCF6GKXFXW">
-                  <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG_global.gif" border="0" name="submit" alt="PayPal — The safer, easier way to pay online.">
-                  <img alt="" border="0" src="https://www.paypalobjects.com/de_DE/i/scr/pixel.gif" width="1" height="1">
-              </form>
 						</div>
 					</section>
 				</div>
