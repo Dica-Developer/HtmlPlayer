@@ -79,7 +79,6 @@
 
     <div id="searchView">
       <input id="searchBox" accesskey="l"/>
-      <!--<input type="file" id="files" name="files" />-->
       <select id="songBox" size="10" multiple="multiple"></select>
       <select id="playlistBox" size="10" multiple="multiple"></select>
     </div>
@@ -96,8 +95,20 @@
         <img id="coverArt" src="images/wholeNote.png"/>
       </div>
     </div>
+    <div id="playerControlView">
+      <progress id="progressBar"></progress>
+    </div>
 
     <script>
+      var songHistory = new Array();
+
+      function addToHistory(song) {
+        songHistory.push(song)
+        if (songHistory.length > 1000) {
+          songHistory.shift();
+        }
+      }
+
       function applyCoverArtStyle() {
         document.getElementById("coverArt").height = $(document).height() * 0.6;
         $("#coverArt").reflect({height: 0.165, opacity: 0.25});
@@ -108,12 +119,23 @@
         if (null !== song) {
           startPlay(song);
           removeFirstPlaylistElement();
+          addToHistory(song);
           applyCoverArtStyle();
         }
       }
-      
+
+      function previous() {
+        if (songHistory.length > 0) {
+          var song = songHistory.pop();
+          if (null !== song) {
+            startPlay(song);
+            setFirstPlaylistElement(song);
+            applyCoverArtStyle();
+          }
+        }
+      }
+
       document.getElementById('searchBox').addEventListener('change', startSearch, false);
-//      document.getElementById('files').addEventListener('change', handleFileSelect, false);
 
       searchForSongs("", collectSongs, null, null);
 
@@ -141,13 +163,37 @@
             $("#playlistBox :selected").detach();
           };
         });
-        $(document).on("keyup", function() {
+        $("#searchView").on("keyup", function() {
           if (27 === event.which) {
             $("#searchView").animate({
               width: "0"
             });
-            // todo: check if something is playing
+            var audio = document.getElementById('player');
+            if (audio.paused) {
+              next();
+            }
+          }
+        });
+        $("#playerView").on("keydown", function() {
+          var progress = document.getElementById('progressBar');
+          $("#playerControlView").animate({
+            height: "50%"
+          });
+        });
+        $(document).on("keyup", function() {
+          if (80 === event.which) {
+            previous();
+          } else if (78 === event.which) {
             next();
+          } else if (32 === event.which) {
+            var audio = document.getElementById('player');
+            if (audio.paused) {
+              audio.play();
+            } else {
+              audio.pause();
+            }
+          } else {
+            console.log(event.which);
           }
         });
         $("#player").on("ended", function(event) {
