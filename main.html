@@ -11,7 +11,7 @@
         position: absolute;
         top: 0;
         left: 0;
-        z-index: 2;
+        z-index: 100;
       }
       #search {
         float: left;
@@ -34,7 +34,6 @@
         padding-top: 10px;
         padding-right: 10px;
         font-size: 12px;
-        vertical-align: middle;
       }
       #title {
         color: white;
@@ -55,7 +54,6 @@
         padding-top: 10px;
         padding-left: 10px;
         margin: auto;
-        vertical-align: middle;
       }
       #searchBox {
         font-size: 18px;
@@ -68,6 +66,22 @@
       #playlistBox {
         font-size: 12px;
         margin: 10px;
+      }
+      #playerControlView {
+        background: black;
+        position: absolute;
+        left: 0;
+        bottom: 0px;
+        height: 4px;
+        width: 100%;
+        z-index: 10;
+        overflow: hidden;
+      }
+      #progressBar {
+        position: absolute;
+        height: 4px;
+        width: 100%;
+        border: 0;
       }
     </style>
   </head>
@@ -96,7 +110,7 @@
       </div>
     </div>
     <div id="playerControlView">
-      <progress id="progressBar"></progress>
+      <progress id="progressBar" value="0" max="100"></progress>
     </div>
 
     <script>
@@ -133,6 +147,23 @@
             applyCoverArtStyle();
           }
         }
+      }
+
+      function updateProgress() {
+        var audio = document.getElementById('player');
+        if (null !== audio && undefined !== audio) {
+          if (!audio.paused) {
+            var progress = document.getElementById('progressBar');
+            if (null !== progress && undefined !== progress) {
+              progress.value = Math.round((audio.currentTime * 100) / audio.duration);
+            }
+          }
+        }
+      }
+
+      function backgroundTasks() {
+        updateProgress();
+        setTimeout("backgroundTasks()", 1000);
       }
 
       document.getElementById('searchBox').addEventListener('change', startSearch, false);
@@ -174,12 +205,6 @@
             }
           }
         });
-        $("#playerView").on("keydown", function() {
-          var progress = document.getElementById('progressBar');
-          $("#playerControlView").animate({
-            height: "50%"
-          });
-        });
         $(document).on("keyup", function() {
           if (80 === event.which) {
             previous();
@@ -199,6 +224,7 @@
         $("#player").on("ended", function(event) {
           next();
         });
+        setTimeout("backgroundTasks()", 1000);
       });
     </script>
   </body>
