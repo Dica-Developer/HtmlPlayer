@@ -1,6 +1,6 @@
 {
-  "name": "Dica Audio Player",
-  "version": "0.0.2",
+  "name": "Audica Player",
+  "version": "0.2",
   "description": "",
   "app": {
     "launch": {
