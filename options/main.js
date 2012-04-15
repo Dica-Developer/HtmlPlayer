@@ -27,7 +27,7 @@ function fill(){
 	  document.querySelector("#serverUrlBox").value = JSON.parse(serverUrl);
 	}
 	document.querySelector("#backend").onclick = selectTab;
-	document.querySelector("#scrobbling").onclick = selectTab;
+	document.querySelector("#scrobble").onclick = selectTab;
 	document.querySelector("#about").onclick = selectTab;
 }
 
