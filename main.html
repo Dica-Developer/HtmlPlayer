@@ -68,7 +68,7 @@
         margin: 10px;
       }
       #playerControlView {
-        background: black;
+        background: rgba(44, 44, 44, 0.5);
         position: absolute;
         left: 0;
         bottom: 0px;
@@ -97,7 +97,7 @@
       <select id="playlistBox" size="10" multiple="multiple"></select>
     </div>
     <div id="playerView">
-      <audio id="player" autoplay="true"></audio>
+      <audio id="player" autoplay="true" preload="auto"></audio>
       <div id="descriptionBox">
         <label id="title">title</label>
         <br />
@@ -224,6 +224,28 @@
         $("#player").on("ended", function(event) {
           next();
         });
+        $("#player").on("error", function(event) {
+          var audio = document.getElementById('player');
+          var errorMsg = "The file '" + audio.src + "' cannot be played. The possible reasons is: ";
+          switch (event.currentTarget.error.code) {
+            case 4:
+              errorMsg += "The current media type '" + audio.type + "' isn't supported.";
+              break;
+            case 1:
+              errorMsg += "The user agent stopped fetching the media data.";
+              break;
+            case 2:
+              errorMsg += "A network error stopped the user agent fetching the media data.";
+              break;
+            case 3:
+              errorMsg += "Error on decoding the media data.";
+              break;
+            default:
+              errorMsg += "Unknown error with code '" + event.currentTarget.error.code + "' happened."
+          }
+          alert(errorMsg);
+        });
+        // todo: log as errors/warnings onstalled, onsuspend, onabort, onemptied. use log.isError to enable disable printing to console
         setTimeout("backgroundTasks()", 1000);
       });
     </script>
