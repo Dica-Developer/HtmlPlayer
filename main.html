@@ -115,6 +115,7 @@
 
     <script>
       var songHistory = new Array();
+      var viewState = 'player';
 
       function addToHistory(song) {
         songHistory.push(song)
@@ -188,6 +189,7 @@
           $("#searchView").animate({
             width: "100%"
           });
+          viewState = 'search';
         });
         $("#songBox").on("keyup", function(event) {
           if (39 === event.which) {
@@ -199,37 +201,39 @@
             $("#playlistBox :selected").detach();
           };
         });
-        $("#searchView").on("keyup", function(event) {
-          // todo: handle this evemt also in document keyup handler
-          if (27 === event.which) {
-            $("#searchView").animate({
-              width: "0"
-            });
-            var audio = document.getElementById('player');
-            if (audio.paused) {
-              next();
-            }
-          }
-        });
         $(document).on("keyup", function(event) {
-          // todo: handle the keys with view states
-          switch (event.which) {
-            case 80:
-              previous();
-              break;
-            case 78:
-              next();
-              break;
-            case 32:
-              var audio = document.getElementById('player');
-              if (audio.paused) {
-                audio.play();
-              } else {
-                audio.pause();
-              }
-              break;
-            default:
-              console.log(event.which);
+          if ('player' === viewState) {
+            switch (event.which) {
+              case 80:
+                previous();
+                break;
+              case 78:
+                next();
+                break;
+              case 32:
+                var audio = document.getElementById('player');
+                if (audio.paused) {
+                  audio.play();
+                } else {
+                  audio.pause();
+                }
+                break;
+            }
+          } else if ('search' === viewState) {
+            switch (event.which) {
+              case 27:
+                $("#searchView").animate({
+                  width: "0"
+                });
+                var audio = document.getElementById('player');
+                if (audio.paused) {
+                  next();
+                }
+                viewState = 'player';
+                break;
+            }
+          } else {
+            console.log("Unknown view state '" + viewState + "'.");
           }
         });
         $("#player").on("ended", function(event) {
