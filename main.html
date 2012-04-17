@@ -155,7 +155,12 @@
           if (!audio.paused) {
             var progress = document.getElementById('progressBar');
             if (null !== progress && undefined !== progress) {
-              progress.value = Math.round((audio.currentTime * 100) / audio.duration);
+              try {
+                progress.value = Math.round((audio.currentTime * 100) / audio.duration);
+              } catch (e) {
+                // it can happen that during song change the audio values are wrong
+                // todo: avoid this try catch by synchronizing player manipulation events
+              }
             }
           }
         }
@@ -194,7 +199,8 @@
             $("#playlistBox :selected").detach();
           };
         });
-        $("#searchView").on("keyup", function() {
+        $("#searchView").on("keyup", function(event) {
+          // todo: handle this evemt also in document keyup handler
           if (27 === event.which) {
             $("#searchView").animate({
               width: "0"
@@ -205,20 +211,25 @@
             }
           }
         });
-        $("playerView").on("keyup", function() {
-          if (80 === event.which) {
-            previous();
-          } else if (78 === event.which) {
-            next();
-          } else if (32 === event.which) {
-            var audio = document.getElementById('player');
-            if (audio.paused) {
-              audio.play();
-            } else {
-              audio.pause();
-            }
-          } else {
-            console.log(event.which);
+        $(document).on("keyup", function(event) {
+          // todo: handle the keys with view states
+          switch (event.which) {
+            case 80:
+              previous();
+              break;
+            case 78:
+              next();
+              break;
+            case 32:
+              var audio = document.getElementById('player');
+              if (audio.paused) {
+                audio.play();
+              } else {
+                audio.pause();
+              }
+              break;
+            default:
+              console.log(event.which);
           }
         });
         $("#player").on("ended", function(event) {
