@@ -71,7 +71,7 @@
         background: rgba(44, 44, 44, 0.5);
         position: absolute;
         left: 0;
-        bottom: 0px;
+        bottom: 0;
         height: 4px;
         width: 100%;
         z-index: 10;
@@ -82,6 +82,15 @@
         height: 4px;
         width: 100%;
         border: 0;
+      }
+      #timeField {
+        position: absolute;
+        height: 20px;
+        width: 100%;
+        border: 0;
+        color: white;
+        font-size: 40px;
+        margin-top: 3px;
       }
     </style>
   </head>
@@ -111,6 +120,7 @@
     </div>
     <div id="playerControlView">
       <progress id="progressBar" value="0" max="100"></progress>
+      <label id="timeField">0 / 0</label>
     </div>
 
     <script>
@@ -167,9 +177,32 @@
         }
       }
 
+      function updateTimings() {
+        var audio = document.getElementById('player');
+        if (null !== audio && undefined !== audio) {
+          if (!audio.paused) {
+            var field = document.getElementById('timeField');
+            if (null !== field && undefined !== field) {
+              field.innerHTML = Math.round(audio.currentTime) + " / " + Math.round(audio.duration);
+            }
+          }
+        }
+      }
+
       function backgroundTasks() {
         updateProgress();
+        updateTimings();
         setTimeout("backgroundTasks()", 1000);
+      }
+
+      var closePlayerControlViewTimerId = null;
+ 
+      function closePlayerControlView() {
+        $("#playerControlView").data("open", false);
+        closePlayerControlViewTimerId = null;
+        $("#playerControlView").animate({
+          height: "4px"
+        });
       }
 
       document.getElementById('searchBox').addEventListener('change', startSearch, false);
@@ -177,6 +210,7 @@
       searchForSongs("", collectSongs, null, null);
 
       $(function() {
+
         $("#searchBox").on("focus", function(event) {
           $("#searchBox").width($(document).width() - 20 - 4);
           var boxWidth = ($(document).width() / 2) - 20 - 2;
@@ -200,6 +234,18 @@
           if (37 === event.which) {
             $("#playlistBox :selected").detach();
           };
+        });
+        $(document).mousemove(function(event) {
+          if (null !== closePlayerControlViewTimerId) {
+            clearTimeout(closePlayerControlViewTimerId);
+          }
+          if (!$("#playerControlView").data("open")) {
+            $("#playerControlView").data("open", true);
+            $("#playerControlView").animate({
+              height: "50px"
+            });
+          }
+          closePlayerControlViewTimerId = setTimeout("closePlayerControlView()", 3000);
         });
         $(document).on("keyup", function(event) {
           if ('player' === viewState) {
@@ -260,7 +306,6 @@
           }
           alert(errorMsg);
         });
-        // todo: log as errors/warnings onstalled, onsuspend, onabort, onemptied. use log.isError to enable disable printing to console
         setTimeout("backgroundTasks()", 1000);
       });
     </script>
