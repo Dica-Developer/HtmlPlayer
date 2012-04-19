@@ -162,29 +162,18 @@
 
       function updateProgress() {
         var audio = document.getElementById('player');
-        if (null !== audio && undefined !== audio) {
-          if (!audio.paused) {
-            var progress = document.getElementById('progressBar');
-            if (null !== progress && undefined !== progress) {
-              try {
-                progress.value = Math.round((audio.currentTime * 100) / audio.duration);
-              } catch (e) {
-                // it can happen that during song change the audio values are wrong
-                // todo: avoid this try catch by synchronizing player manipulation events
-              }
-            }
-          }
+        if (!audio.paused) {
+          var progress = document.getElementById('progressBar');
+          progress.value = Math.round((audio.currentTime * 100) / audio.duration);
         }
       }
 
       function updateTimings() {
-        var audio = document.getElementById('player');
-        if (null !== audio && undefined !== audio) {
+        if ($("#playerControlView").data("open")) {
+          var audio = document.getElementById('player');
           if (!audio.paused) {
             var field = document.getElementById('timeField');
-            if (null !== field && undefined !== field) {
-              field.innerHTML = Math.round(audio.currentTime) + " / " + Math.round(audio.duration);
-            }
+            field.innerHTML = Math.round(audio.currentTime) + " / " + Math.round(audio.duration);
           }
         }
       }
@@ -192,7 +181,6 @@
       function backgroundTasks() {
         updateProgress();
         updateTimings();
-        setTimeout("backgroundTasks()", 1000);
       }
 
       var closePlayerControlViewTimerId = null;
@@ -306,7 +294,7 @@
           }
           alert(errorMsg);
         });
-        setTimeout("backgroundTasks()", 1000);
+        setInterval("backgroundTasks()", 1000);
       });
     </script>
   </body>
