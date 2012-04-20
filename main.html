@@ -31,7 +31,6 @@
         width: 49%;
         float: left;
         text-align: right;
-        padding-top: 10px;
         padding-right: 10px;
         font-size: 12px;
       }
@@ -51,7 +50,6 @@
         color: #bbbbbb;
         width: 49%;
         float: right;
-        padding-top: 10px;
         padding-left: 10px;
         margin: auto;
       }
@@ -115,7 +113,7 @@
         from <label id="album">album</label>
       </div>
       <div id="coverArtBox">
-        <img id="coverArt" src="images/wholeNote.png"/>
+        <img id="coverArt" class="reflect" src="images/wholeNote.png"/>
       </div>
     </div>
     <div id="playerControlView">
@@ -198,6 +196,8 @@
       searchForSongs("", collectSongs, null, null);
 
       $(function() {
+        $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
+        $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
 
         $("#searchBox").on("focus", function(event) {
           $("#searchBox").width($(document).width() - 20 - 4);
@@ -264,6 +264,8 @@
                   next();
                 }
                 viewState = 'player';
+                $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
+                $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
                 break;
             }
           } else {
