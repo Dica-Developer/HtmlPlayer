@@ -99,7 +99,7 @@
     <script type="text/javascript" src="js/reflection.js"></script>
 
     <div id="searchView">
-      <input id="searchBox" accesskey="l"/>
+      <input id="searchBox"/>
       <select id="songBox" size="10" multiple="multiple"></select>
       <select id="playlistBox" size="10" multiple="multiple"></select>
     </div>
@@ -136,7 +136,7 @@
         document.getElementById("coverArt").height = $(document).height() * 0.6;
         $("#coverArt").reflect({height: 0.165, opacity: 0.25});
       }
-      
+
       function next() {
         var song = getFirstPlaylistElement()
         if (null !== song) {
@@ -182,7 +182,7 @@
       }
 
       var closePlayerControlViewTimerId = null;
- 
+
       function closePlayerControlView() {
         $("#playerControlView").data("open", false);
         closePlayerControlViewTimerId = null;
@@ -199,20 +199,6 @@
         $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
         $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
 
-        $("#searchBox").on("focus", function(event) {
-          $("#searchBox").width($(document).width() - 20 - 4);
-          var boxWidth = ($(document).width() / 2) - 20 - 2;
-          var boxHeight = $(document).height() - 22 - 46;
-          $("#songBox").width(boxWidth);
-          $("#songBox").height(boxHeight);
-          $("#playlistBox").width(boxWidth);
-          $("#playlistBox").height(boxHeight);
-          $("#searchView").height($(document).height());
-          $("#searchView").animate({
-            width: "100%"
-          });
-          viewState = 'search';
-        });
         $("#songBox").on("keyup", function(event) {
           if (39 === event.which) {
             $("#songBox :selected").clone().appendTo("#playlistBox");
@@ -228,7 +214,7 @@
             clearTimeout(closePlayerControlViewTimerId);
           }
           if (!$("#playerControlView").data("open")) {
-            $("#playerControlView").data("open", true);
+            $("#playerControlView").data("open", true);l
             $("#playerControlView").animate({
               height: "50px"
             });
@@ -238,11 +224,25 @@
         $(document).on("keyup", function(event) {
           if ('player' === viewState) {
             switch (event.which) {
+              case 76:
+                $("#searchBox").width($(document).width() - 20 - 4);
+                var boxWidth = ($(document).width() / 2) - 20 - 2;
+                var boxHeight = $(document).height() - 22 - 46;
+                $("#songBox").width(boxWidth);
+                $("#songBox").height(boxHeight);
+                $("#playlistBox").width(boxWidth);
+                $("#playlistBox").height(boxHeight);
+                $("#searchView").height($(document).height());
+                $("#searchView").animate({
+                  width: "100%"
+                });
+                viewState = 'search';
+                break;
               case 80:
                 previous();
                 break;
               case 78:
-                next();
+                next();l
                 break;
               case 32:
                 var audio = document.getElementById('player');
