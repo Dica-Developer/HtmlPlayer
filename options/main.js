@@ -24,7 +24,18 @@ function fill(){
 	}
 	var serverUrl = localStorage["serverUrl"];
 	if (null !== serverUrl && undefined !== serverUrl) {
-	  document.querySelector("#serverUrlBox").value = JSON.parse(serverUrl);
+	  var serverUrlClear = JSON.parse(serverUrl);
+	  document.querySelector("#serverUrlBox").value = serverUrlClear;
+	  if ("https://streaming.one.ubuntu.com" === serverUrlClear) {
+	    selectOption($("#backendSelection"), "ubuntuone");
+	  } else {
+	    selectOption($("#backendSelection"), "subsonic");
+	  }
+	  initBackend(null);
+	}
+	var lastFmLogin = localStorage["audica.lastfm.login"];
+	if (null !== lastFmLogin && undefined !== lastFmLogin) {
+	  document.querySelector("#lastfmLoginLink").innerHTML = lastFmLogin;
 	}
 	document.querySelector("#backend").onclick = selectTab;
 	document.querySelector("#scrobble").onclick = selectTab;
@@ -42,14 +53,19 @@ function selectTab() {
 function initBackend(event) {
   if ($("#backendSelection :selected").length > 0 && "ubuntuone" === $("#backendSelection :selected")[0].value) {
     document.querySelector("#ubuntuoneAuthenticationHelp").style.display = "block";
-    document.querySelector("#serverUrlBox").disabled = "disabled";
-    document.querySelector("#loginBox").disabled = "disabled";
-    document.querySelector("#passwordBox").disabled = "disabled";
+    document.querySelector("#subsonicAuthParams").style.display = "none";
   } else {
     document.querySelector("#ubuntuoneAuthenticationHelp").style.display = "none";
-    document.querySelector("#serverUrlBox").disabled = "";
-    document.querySelector("#loginBox").disabled = "";
-    document.querySelector("#passwordBox").disabled = "";
+    document.querySelector("#subsonicAuthParams").style.display = "block";
+  }
+}
+
+function selectOption(selectElement, optionValue) {
+  var children = selectElement.children();
+  for (var i = 0; i < children.length; i++) {
+    if (optionValue === children[i].value) {
+      selectElement.selectedIndex = children[i].index;
+    }
   }
 }
 

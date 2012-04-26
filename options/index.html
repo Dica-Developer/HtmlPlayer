@@ -9,12 +9,15 @@
   <link rel="stylesheet" href="css/button.css" />
   <link rel="stylesheet" href="css/select.css" />
   <script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
+  <script type="text/javascript" src="../js/md5.js"></script>
+  <script type="text/javascript" src="../js/lib_lastfm.js"></script>
   <script type="text/javascript" src="main.js"></script>
 </head>
 <body onload="fill();">
 <script>
 chrome.extension.onRequest.addListener(
   function(request, sender, sendResponse) {
+    var pattLastFM = new RegExp("^chrome-extension://.+/options/authenticate_lastfm\.html.token=(.+)$");
     var patt = new RegExp("^ubuntuone://(.+):(.+)@syncml\.one\.ubuntu\.com$");
     if (patt.test(request.url)) {
       var match = patt.exec(request.url);
@@ -24,10 +27,21 @@ chrome.extension.onRequest.addListener(
       saveLogin();
       savePassword();
       saveServerUrl();
-      chrome.tabs.remove(sender.tab.id);
+    } else if(pattLastFM.test(request.url)) {
+      var match = pattLastFM.exec(request.url);
+      (new Scrobbler(null, null)).getSession(match[1], function(data, textStatus, jqXHR) {
+        if (undefined === data.error) {
+          localStorage["audica.lastfm.sessionKey"] = data.session.key;
+          localStorage["audica.lastfm.login"] = data.session.name;
+          document.querySelector("#lastfmLoginLink").innerHTML = data.session.name;
+        } else {
+          alert("It failed to get a session key." + data.error + " - " + data.message);
+        }
+      }, null);
     } else {
-      alert("It failed to retreive the credentials from ubuntuone. The returned url is invalid '" + request.url + "'.");
+      alert("It failed to retreive the authentication credentials. The returned url is invalid '" + request.url + "'.");
     }
+    chrome.tabs.remove(sender.tab.id);
   }
 );
 </script>
@@ -48,7 +62,7 @@ chrome.extension.onRequest.addListener(
 				  <section>
 				    <div class="section-group">
 				      <select id="backendSelection" onchange="initBackend(this);">
-				        <option value="" selected="selected" disabled="disabled">Select a backend</option>
+				        <option value="" disabled="disabled">Select a backend</option>
 				        <option value="ubuntuone">Ubuntu One</option>
 				        <option value="subsonic">Subsonic</option>
 				      </select>
@@ -56,17 +70,19 @@ chrome.extension.onRequest.addListener(
 			      <div class="section-group" id="ubuntuoneAuthenticationHelp" style="display: none;">
 			        <a href="https://one.ubuntu.com/phones/creds" target="_blank">Click to retrieve streaming credentials!</a>
 			      </div>
-			      <div class="section-group">
-			        <h3>server url</h3>
-			        <input spellcheck="false" id="serverUrlBox" type="text" size="20" onchange="saveServerUrl()" />
-			      </div>
-			      <div class="section-group">
-			        <h3>login</h3>
-			        <input spellcheck="false" id="loginBox" type="text" size="20" onchange="saveLogin()" />
-			      </div>
-		        <div class="section-group">
-		          <h3>password</h3>
-		          <input spellcheck="false" id="passwordBox" type="password" size="30" onchange="savePassword()" />
+			      <div id="subsonicAuthParams">
+			        <div class="section-group">
+			          <h3>server url</h3>
+			          <input spellcheck="false" id="serverUrlBox" type="text" size="20" onchange="saveServerUrl()" />
+			        </div>
+			        <div id="loginBoxDiv" class="section-group">
+			          <h3>login</h3>
+			          <input spellcheck="false" id="loginBox" type="text" size="20" onchange="saveLogin()" />
+			        </div>
+		          <div id="passwordBoxDiv" class="section-group">
+		            <h3>password</h3>
+		            <input spellcheck="false" id="passwordBox" type="password" size="30" onchange="savePassword()" />
+		          </div>
 		        </div>
 			    </section>
 			  </div>
@@ -74,8 +90,13 @@ chrome.extension.onRequest.addListener(
 			<div id="scrobblePage" class="page">
 				<h1>Scrobble</h1>
 				<div class="displaytable">
-				  <section>
-				  </section>
+			    <section>
+  				  <div class="section-group">
+				      <a href="javascript:;" target="_blank" onclick="this.href = (new Scrobbler(null, null)).getTokenUrl();">Login to last.fm</a>
+				      Logged in as
+				      <a id="lastfmLoginLink" href="javascript:;" target="_blank" onclick="this.href = 'http://last.fm/user/' + this.innerHTML"></a>
+  				  </div>
+			    </section>
 				</div>
 			</div>
 			<div id="aboutPage" class="page">

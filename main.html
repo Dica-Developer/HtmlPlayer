@@ -93,9 +93,11 @@
     </style>
   </head>
   <body>
+    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/md5.js"></script>
+    <script type="text/javascript" src="js/lib_lastfm.js"></script>
     <script type="text/javascript" src="js/lib_ubuntuone.js"></script>
     <script type="text/javascript" src="js/lib_controller.js"></script>
-    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="js/reflection.js"></script>
 
     <div id="searchView">
@@ -158,11 +160,31 @@
         }
       }
 
+      function getLastSong() {
+       var song = null;
+       if (songHistory.length > 0) {
+        song = songHistory[songHistory.length - 1];
+       }
+       return song;
+      }
+
       function updateProgress() {
         var audio = document.getElementById('player');
         if (!audio.paused) {
           var progress = document.getElementById('progressBar');
           progress.value = Math.round((audio.currentTime * 100) / audio.duration);
+        }
+      }
+      
+      function setNowPlaying() {
+        var song = getLastSong();
+        if (null !== song) {
+          (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).setNowPlaying(song.artist, song.title, song.album, song.duration,
+          function(response) {
+            if (undefined === data.error) {
+              alert("Cannot set last.fm now playing track. " + data.error + " - " data.message);
+            }
+          }, null);
         }
       }
 
@@ -214,7 +236,7 @@
             clearTimeout(closePlayerControlViewTimerId);
           }
           if (!$("#playerControlView").data("open")) {
-            $("#playerControlView").data("open", true);l
+            $("#playerControlView").data("open", true);
             $("#playerControlView").animate({
               height: "50px"
             });
@@ -240,9 +262,11 @@
                 break;
               case 80:
                 previous();
+                setNowPlaying();
                 break;
               case 78:
-                next();l
+                next();
+                setNowPlaying();
                 break;
               case 32:
                 var audio = document.getElementById('player');
@@ -262,6 +286,7 @@
                 var audio = document.getElementById('player');
                 if (audio.paused) {
                   next();
+                  setNowPlaying();
                 }
                 viewState = 'player';
                 $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
@@ -274,6 +299,7 @@
         });
         $("#player").on("ended", function(event) {
           next();
+          setNowPlaying();
         });
         $("#player").on("error", function(event) {
           var audio = document.getElementById('player');
