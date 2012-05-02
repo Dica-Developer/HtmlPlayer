@@ -22,8 +22,10 @@ Scrobbler.prototype.setNowPlaying = function(artist, track, album, duration, suc
   }
 }
 
-Scrobbler.prototype.scrobble = function(artist, track, album, duration){
-  if (this.authenticated) {
+Scrobbler.prototype.scrobble = function(artist, track, album, duration, playStartTime, successCB, errorCB){
+  if (this.isAuthenticated) {
+    var signature = hex_md5("album" + album + "api_key" + this._apiKey + "artist" + artist + "duration" + duration + "methodtrack.scrobblesk" + this._sessionKey + "timestamp" + playStartTime + "track" + track + this._secret);
+      $.ajax(this._serviceUrl + "?format=json&method=track.scrobble&api_key=" + this._apiKey + "&api_sig=" + signature + "&sk=" + this._sessionKey + "&artist=" + artist + "&track=" + track + "&album=" + album + "&duration=" + duration + "&timestamp=" + playStartTime, {type: "POST", success: successCB, error: errorCB});
   }
 }
 

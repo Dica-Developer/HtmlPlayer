@@ -126,6 +126,7 @@
     <script>
       var songHistory = new Array();
       var viewState = 'player';
+      var notScrobbled = true;
 
       function addToHistory(song) {
         songHistory.push(song)
@@ -180,11 +181,11 @@
         var song = getLastSong();
         if (null !== song) {
           (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).setNowPlaying(song.artist, song.title, song.album, song.duration,
-          function(response) {
-            if (undefined === data.error) {
-              alert("Cannot set last.fm now playing track. " + data.error + " - " data.message);
-            }
-          }, null);
+            function(data, textStatus, jqXHR) {
+              if (undefined !== data.error) {
+                alert("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
+              }
+            }, null);
         }
       }
 
@@ -198,9 +199,31 @@
         }
       }
 
+      function scrobble() {
+        var audio = document.getElementById('player');
+        if (!audio.paused) {
+          if (Math.round((audio.currentTime * 100) / audio.duration) > 50 && notScrobbled) {
+            var song = getLastSong();
+            if (null !== song) {
+              var timestamp = parseInt((new Date()).getTime() / 1000.0);
+              (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).scrobble(song.artist, song.title, song.album, song.duration,
+              timestamp,
+              function(data, textStatus, jqXHR) {
+                if (undefined !== data.error) {
+                  alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
+                } else {
+                  notScrobbled = false;
+                }
+              }, null);
+            }
+          }
+        }
+      }
+
       function backgroundTasks() {
         updateProgress();
         updateTimings();
+        scrobble();
       }
 
       var closePlayerControlViewTimerId = null;
@@ -247,6 +270,7 @@
           if ('player' === viewState) {
             switch (event.which) {
               case 76:
+                $("#searchBox").focus();
                 $("#searchBox").width($(document).width() - 20 - 4);
                 var boxWidth = ($(document).width() / 2) - 20 - 2;
                 var boxHeight = $(document).height() - 22 - 46;
@@ -263,10 +287,12 @@
               case 80:
                 previous();
                 setNowPlaying();
+                notScrobbled = true;
                 break;
               case 78:
                 next();
                 setNowPlaying();
+                notScrobbled = true;
                 break;
               case 32:
                 var audio = document.getElementById('player');
@@ -287,6 +313,7 @@
                 if (audio.paused) {
                   next();
                   setNowPlaying();
+                  notScrobbled = true;
                 }
                 viewState = 'player';
                 $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
@@ -300,6 +327,7 @@
         $("#player").on("ended", function(event) {
           next();
           setNowPlaying();
+          notScrobbled = true;
         });
         $("#player").on("error", function(event) {
           var audio = document.getElementById('player');
