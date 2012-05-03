@@ -33,7 +33,11 @@ chrome.extension.onRequest.addListener(
         if (undefined === data.error) {
           localStorage["audica.lastfm.sessionKey"] = data.session.key;
           localStorage["audica.lastfm.login"] = data.session.name;
-          document.querySelector("#lastfmLoginLink").innerHTML = data.session.name;
+          document.querySelector("#lastfmUserLink").innerHTML = data.session.name;
+          document.querySelector("#lastfmUserLink").style.display = "block";
+          document.querySelector("#lastfmLogoutLink").style.display = "block";
+          document.querySelector("#lastfmLoginLink").style.display = "none";
+          document.querySelector("#lastfmUserLabel").style.display = "block";
         } else {
           alert("It failed to get a session key." + data.error + " - " + data.message);
         }
@@ -47,98 +51,100 @@ chrome.extension.onRequest.addListener(
 </script>
 <div id="navbar-container">
     <div id="navbar-content-title">Options</div>
-	<ul id="navbar">
-		<li id="backend" class="navbar-item navbar-item-selected">Backend</li>
-		<li id="scrobble" class="navbar-item">Scrobble</li>
-		<li id="about" class="navbar-item">About</li>
-	</ul>
+  <ul id="navbar">
+    <li id="backend" class="navbar-item navbar-item-selected">Backend</li>
+    <li id="scrobble" class="navbar-item">Scrobble</li>
+    <li id="about" class="navbar-item">About</li>
+  </ul>
 </div>
 <div id="mainview">
-	<div id="mainview-content">
-		<div id="page-container">
-			<div id="backendPage" class="page" style="display:block">
-				<h1>Backend</h1>
-				<div class="displaytable">
-				  <section>
-				    <div class="section-group">
-				      <select id="backendSelection" onchange="initBackend(this);">
-				        <option value="" disabled="disabled">Select a backend</option>
-				        <option value="ubuntuone">Ubuntu One</option>
-				        <option value="subsonic">Subsonic</option>
-				      </select>
-				    </div>
-			      <div class="section-group" id="ubuntuoneAuthenticationHelp" style="display: none;">
-			        <a href="https://one.ubuntu.com/phones/creds" target="_blank">Click to retrieve streaming credentials!</a>
-			      </div>
-			      <div id="subsonicAuthParams">
-			        <div class="section-group">
-			          <h3>server url</h3>
-			          <input spellcheck="false" id="serverUrlBox" type="text" size="20" onchange="saveServerUrl()" />
-			        </div>
-			        <div id="loginBoxDiv" class="section-group">
-			          <h3>login</h3>
-			          <input spellcheck="false" id="loginBox" type="text" size="20" onchange="saveLogin()" />
-			        </div>
-		          <div id="passwordBoxDiv" class="section-group">
-		            <h3>password</h3>
-		            <input spellcheck="false" id="passwordBox" type="password" size="30" onchange="savePassword()" />
-		          </div>
-		        </div>
-			    </section>
-			  </div>
-			</div>
-			<div id="scrobblePage" class="page">
-				<h1>Scrobble</h1>
-				<div class="displaytable">
-			    <section>
-  				  <div class="section-group">
-				      <a href="javascript:;" target="_blank" onclick="this.href = (new Scrobbler(null, null)).getTokenUrl();">Login to last.fm</a>
-				      Logged in as
-				      <a id="lastfmLoginLink" href="javascript:;" target="_blank" onclick="this.href = 'http://last.fm/user/' + this.innerHTML"></a>
-  				  </div>
-			    </section>
-				</div>
-			</div>
-			<div id="aboutPage" class="page">
-				<h1>About</h1>
-				<div class="displaytable">
-  				<section>
-						<h3>Homepage</h3>
-						<div>
-							<div class="section-group">
-							  <span><a href="https://github.com/Dica-Developer">http://dica-developer.github.com/HtmlPlayer</a></span>
-							  <span class="informational-text"> - Website</span>
-							</div>
-						</div>
-					</section>
-					<section>
-						<h3>Bugreports</h3>
-						<div class="section-group">
-					    <span>Please report bugs or suggestions under <a href="https://github.com/Dica-Developer/HtmlPlayer/issues">https://github.com/Dica-Developer/HtmlPlayer/issues</a>.</span>
-					    <span class="informational-text"> - Website</span>
-					  </div>
-					</section>
-					<section>
-						<h3>Feedback</h3>
-					  <div class="section-group">
-					    <span>Please send feedback and question to <a href="mailto:dica-users@googlegroups.com?subject=[audica player]">dica-users@googlegroups.com</a>.</span>
-					    <span class="informational-text"> - public mailinglist</span>
-					  </div>
-					</section>
-					<section>
-						<h3>Created by</h3>
-						<div>
-							<div class="section-group"><span>Dica Developers</span></div>
-							<div class="section-group">
-							  <span><a href="https://github.com/Dica-Developer">https://github.com/Dica-Developer</a></span>
-							  <span class="informational-text"> - Website</span>
-							</div>
-						</div>
-					</section>
-				</div>
-			</div>
-		</div>
-	</div>
+  <div id="mainview-content">
+    <div id="page-container">
+      <div id="backendPage" class="page" style="display:block">
+        <h1>Backend</h1>
+        <div class="displaytable">
+          <section>
+            <div class="section-group">
+              <select id="backendSelection" onchange="initBackend(this);">
+                <option value="" disabled="disabled">Select a backend</option>
+                <option value="ubuntuone">Ubuntu One</option>
+                <option value="subsonic">Subsonic</option>
+              </select>
+            </div>
+            <div class="section-group" id="ubuntuoneAuthenticationHelp" style="display: none;">
+              <a href="https://one.ubuntu.com/phones/creds" target="_blank">Click to retrieve streaming credentials!</a>
+            </div>
+            <div id="subsonicAuthParams">
+              <div class="section-group">
+                <h3>server url</h3>
+                <input spellcheck="false" id="serverUrlBox" type="text" size="20" onchange="saveServerUrl()" />
+              </div>
+              <div id="loginBoxDiv" class="section-group">
+                <h3>login</h3>
+                <input spellcheck="false" id="loginBox" type="text" size="20" onchange="saveLogin()" />
+              </div>
+              <div id="passwordBoxDiv" class="section-group">
+                <h3>password</h3>
+                <input spellcheck="false" id="passwordBox" type="password" size="30" onchange="savePassword()" />
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div id="scrobblePage" class="page">
+        <h1>Scrobble</h1>
+        <div class="displaytable">
+          <section>
+            <div class="section-group">
+              <a href="http://www.last.fm/" target="_blank"><img src="http://cdn.last.fm/flatness/badges/lastfm_grey_small.gif" /></a>
+              <a id="lastfmLoginLink" href="javascript:;" target="_blank" onclick="this.href = (new Scrobbler(null, null)).getTokenUrl();">Login to last.fm</a>
+              <a id="lastfmLogoutLink" href="javascript:;" onclick="logoutFromLastFm();">Logout from last.fm</a>
+              <label id="lastfmUserLabel">Logged in as</label>
+              <a id="lastfmUserLink" href="javascript:;" target="_blank" onclick="this.href = 'http://last.fm/user/' + this.innerHTML"></a>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div id="aboutPage" class="page">
+        <h1>About</h1>
+        <div class="displaytable">
+          <section>
+            <h3>Homepage</h3>
+            <div>
+              <div class="section-group">
+                <span><a href="https://github.com/Dica-Developer">http://dica-developer.github.com/HtmlPlayer</a></span>
+                <span class="informational-text"> - Website</span>
+              </div>
+            </div>
+          </section>
+          <section>
+            <h3>Bugreports</h3>
+            <div class="section-group">
+              <span>Please report bugs or suggestions under <a href="https://github.com/Dica-Developer/HtmlPlayer/issues">https://github.com/Dica-Developer/HtmlPlayer/issues</a>.</span>
+              <span class="informational-text"> - Website</span>
+            </div>
+          </section>
+          <section>
+            <h3>Feedback</h3>
+            <div class="section-group">
+              <span>Please send feedback and question to <a href="mailto:dica-users@googlegroups.com?subject=[audica player]">dica-users@googlegroups.com</a>.</span>
+              <span class="informational-text"> - public mailinglist</span>
+            </div>
+          </section>
+          <section>
+            <h3>Created by</h3>
+            <div>
+              <div class="section-group"><span>Dica Developers</span></div>
+              <div class="section-group">
+                <span><a href="https://github.com/Dica-Developer">https://github.com/Dica-Developer</a></span>
+                <span class="informational-text"> - Website</span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </body>
 </html>

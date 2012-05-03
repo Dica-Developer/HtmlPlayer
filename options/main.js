@@ -35,7 +35,16 @@ function fill(){
 	}
 	var lastFmLogin = localStorage["audica.lastfm.login"];
 	if (null !== lastFmLogin && undefined !== lastFmLogin) {
-	  document.querySelector("#lastfmLoginLink").innerHTML = lastFmLogin;
+	  document.querySelector("#lastfmUserLink").innerHTML = lastFmLogin;
+	  document.querySelector("#lastfmUserLink").style.display = "block";
+	  document.querySelector("#lastfmUserLabel").style.display = "block";
+	  document.querySelector("#lastfmLogoutLink").style.display = "block";
+	  document.querySelector("#lastfmLoginLink").style.display = "none";
+	} else {
+	  document.querySelector("#lastfmLoginLink").style.display = "block";
+    document.querySelector("#lastfmLogoutLink").style.display = "none";
+    document.querySelector("#lastfmUserLink").style.display = "none";
+    document.querySelector("#lastfmUserLabel").style.display = "none";
 	}
 	document.querySelector("#backend").onclick = selectTab;
 	document.querySelector("#scrobble").onclick = selectTab;
@@ -67,5 +76,10 @@ function selectOption(selectElement, optionValue) {
       selectElement.selectedIndex = children[i].index;
     }
   }
+}
+
+function logoutFromLastFm() {
+  delete localStorage["audica.lastfm.sessionKey"];
+  delete localStorage["audica.lastfm.login"];
 }
 
