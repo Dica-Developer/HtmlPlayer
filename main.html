@@ -183,7 +183,14 @@
           (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).setNowPlaying(song.artist, song.title, song.album, song.duration,
             function(data, textStatus, jqXHR) {
               if (undefined !== data.error) {
-                alert("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
+                switch (data.error) {
+                  case 6:
+                  case 13:
+                    console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
+                  break;
+                  default:
+                    alert("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
+                }
               }
             }, null);
         }
@@ -210,7 +217,15 @@
               timestamp,
               function(data, textStatus, jqXHR) {
                 if (undefined !== data.error) {
-                  alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
+                  switch (data.error) {
+                    case 6:
+                    case 13:
+                      console.warn("Cannot scrobble the song there is a parameter missing/wrong!", data.message);
+                      notScrobbled = true;
+                    break;
+                    default:
+                      alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
+                  }
                 } else {
                   notScrobbled = false;
                 }
