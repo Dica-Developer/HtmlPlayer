@@ -1,0 +1,110 @@
+#searchViewPreview {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    min-width: 5%;
+    z-index: 200;
+}
+#playerViewPreview {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    min-width: 5%;
+    z-index: 200;
+}
+#searchView {
+    height: 100%;
+    width: 0;
+    overflow: hidden;
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+}
+#search {
+    float: left;
+}
+#playerView {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+#descriptionBox {
+    color: #bbbbbb;
+    width: 49%;
+    float: left;
+    text-align: right;
+    padding-right: 10px;
+    font-size: 12px;
+}
+#title {
+    color: white;
+    font-size: 40px;
+}
+#album {
+    color: white;
+    font-size: 24px;
+}
+#artist {
+    color: white;
+    font-size: 24px;
+}
+#coverArtBox {
+    color: #bbbbbb;
+    width: 49%;
+    float: right;
+    padding-left: 10px;
+    margin: auto;
+}
+#searchBox {
+    font-size: 18px;
+    margin: 10px;
+}
+#songBox {
+    font-size: 12px;
+    margin: 10px;
+}
+#playlistBox {
+    font-size: 12px;
+    margin: 10px;
+}
+#playerControlView {
+    background: rgba(44, 44, 44, 0.5);
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 4px;
+    width: 100%;
+    z-index: 10;
+    overflow: hidden;
+}
+#progressBar {
+    position: absolute;
+    height: 4px;
+    width: 100%;
+    border: 0;
+}
+
+progress::-webkit-progress-bar-value,
+progress::-webkit-progress-value,
+progress::-moz-progress-bar {
+    background-color:#BBB
+}
+
+#timeField {
+    position: absolute;
+    height: 20px;
+    width: 100%;
+    border: 0;
+    color: white;
+    font-size: 40px;
+    margin-top: 3px;
+}
