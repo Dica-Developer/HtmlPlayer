@@ -3,6 +3,22 @@
   <head>
     <meta charset="utf-8">
     <style>
+      #searchViewPreview {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        min-width: 5%;
+        z-index: 200;
+      }
+      #playerViewPreview {
+        position: absolute;
+        top: 0;
+        right: 0;
+        height: 100%;
+        min-width: 5%;
+        z-index: 200;
+      }
       #searchView {
         height: 100%;
         width: 0;
@@ -81,6 +97,13 @@
         width: 100%;
         border: 0;
       }
+
+      progress::-webkit-progress-bar-value,
+      progress::-webkit-progress-value,
+      progress::-moz-progress-bar {
+        background-color:#BBB
+      }
+
       #timeField {
         position: absolute;
         height: 20px;
@@ -100,6 +123,10 @@
     <script type="text/javascript" src="js/lib_controller.js"></script>
     <script type="text/javascript" src="js/reflection.js"></script>
 
+    <div id="searchViewPreview">
+    </div>
+    <div id="playerViewPreview">
+    </div>
     <div id="searchView">
       <input id="searchBox"/>
       <select id="songBox" size="10" multiple="multiple"></select>
@@ -267,19 +294,88 @@
         $("#playlistBox").on("keyup", function(event) {
           if (37 === event.which) {
             $("#playlistBox :selected").detach();
-          };
+          }
+        });
+        function handleRightZone(event) {
+          if ('search' === viewState) {
+            if ("mouseenter" === event.type) {
+              $("#searchView").height($(document).height());
+              $("#searchView").animate({
+                width:"95%"
+              });
+            } else if ("mouseleave" === event.type) {
+              $("#searchView").height($(document).height());
+              $("#searchView").animate({
+                width:"100%"
+              });
+            } else if ("click" === event.type) {
+              $("#searchView").animate({
+                width:"0"
+              });
+              var audio = document.getElementById('player');
+              if (audio.paused) {
+                next();
+                setNowPlaying();
+                notScrobbled = true;
+              }
+              viewState = 'player';
+              $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
+              $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
+            }
+          }
+        }
+
+        $("#playerViewPreview").on({
+          hover: handleRightZone,
+          click: handleRightZone
+        });
+        function handleLeftZone(event) {
+          if ('player' === viewState) {
+            if ("mouseenter" === event.type) {
+              $("#searchView").height($(document).height());
+              $("#searchView").animate({
+                width:"5%"
+              });
+            } else if ("mouseleave" === event.type) {
+              $("#searchView").height($(document).height());
+              $("#searchView").animate({
+                width:"0"
+              });
+            } else if ("click" === event.type) {
+              $("#searchBox").focus();
+              $("#searchBox").width($(document).width() - 20 - 4);
+              var boxWidth = ($(document).width() / 2) - 20 - 2;
+              var boxHeight = $(document).height() - 22 - 46;
+              $("#songBox").width(boxWidth);
+              $("#songBox").height(boxHeight);
+              $("#playlistBox").width(boxWidth);
+              $("#playlistBox").height(boxHeight);
+              $("#searchView").height($(document).height());
+              $("#searchView").animate({
+                width:"100%"
+              });
+              viewState = 'search';
+            }
+          }
+        }
+
+        $("#searchViewPreview").on({
+          hover: handleLeftZone,
+          click: handleLeftZone
         });
         $(document).mousemove(function(event) {
-          if (null !== closePlayerControlViewTimerId) {
-            clearTimeout(closePlayerControlViewTimerId);
+          if ('player' === viewState) {
+            if (null !== closePlayerControlViewTimerId) {
+              clearTimeout(closePlayerControlViewTimerId);
+            }
+            if (!$("#playerControlView").data("open")) {
+              $("#playerControlView").data("open", true);
+              $("#playerControlView").animate({
+                height: "50px"
+              });
+            }
+            closePlayerControlViewTimerId = setTimeout("closePlayerControlView()", 3000);
           }
-          if (!$("#playerControlView").data("open")) {
-            $("#playerControlView").data("open", true);
-            $("#playerControlView").animate({
-              height: "50px"
-            });
-          }
-          closePlayerControlViewTimerId = setTimeout("closePlayerControlView()", 3000);
         });
         $(document).on("keyup", function(event) {
           if ('player' === viewState) {
