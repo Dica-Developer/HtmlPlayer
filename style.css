@@ -38,13 +38,41 @@
     z-index: 1;
 }
 #descriptionBox {
-    color: #bbbbbb;
-    width: 49%;
+    color:#BBB;
+    width: 50%;
     float: left;
     text-align: right;
     padding-right: 10px;
-    font-size: 12px;
+    font-size: 20px;
+    position: absolute;
+    border: 2px solid blue;
+    /*position: absolute;*/
+    /*left: 50%;*/
+    /*top: 0;*/
+    /*width: 1px;*/
+    /*height: 1px;*/
+    /*padding: 0px;*/
+    /*margin: 0px;*/
 }
+#descriptionBox > div {
+    border: 1px solid white;
+    font-size: 0;
+}
+/*#container {*/
+    /*position: absolute;*/
+    /*left: 15px;*/
+    /*top: 15px;*/
+    /*right: 15px;*/
+    /*height: 300px;*/
+    /*border: 3px solid black;*/
+    /*overflow: hidden;*/
+    /*-moz-border-radius: 12px;*/
+    /*-webkit-border-radius: 12px;*/
+    /*border-radius: 12px;*/
+    /*-moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;*/
+    /*padding: 0px;*/
+    /*margin: 0px;*/
+/*}*/
 #title {
     color: white;
     font-size: 40px;
@@ -107,4 +135,23 @@ progress::-moz-progress-bar {
     color: white;
     font-size: 40px;
     margin-top: 3px;
+}
+.prevNextTitle {
+    opacity: .3;
+
+}
+
+.face {
+    width: 160px;
+    height: 40px;
+    background: white;
+    color:red;
+    font-size: 16px;
+}
+.faceNew {
+    width: 160px;
+    height: 40px;
+    background: red;
+    color:white;
+    font-size: 16px;
 }

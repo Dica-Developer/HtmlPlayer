@@ -3,8 +3,8 @@ function collectSongs(event) {
   var ssr = req.responseXML.getElementsByTagName("subsonic-response");
   if (null !== ssr && undefined !== ssr && ssr.length > 0 && "ok" === ssr[0].getAttribute("status")) {
     var songs = req.responseXML.getElementsByTagName("match");
-    var options = "";
     for (var i = 0; i < songs.length; i++) {
+      var option = $('<option>');
       var song = {
         "artist": songs[i].getAttribute("artist"),
         "album": songs[i].getAttribute("album"),
@@ -17,27 +17,42 @@ function collectSongs(event) {
         "genre": songs[i].getAttribute("genre"),
         "year": songs[i].getAttribute("year")
       };
-      var option = "<option ";
-      option = option + "value='" + escape(JSON.stringify(song)) + "'>";
-      option = option + song.artist + " / " + song.album + " / " + song.track + ". " + song.title;
-      option = option + "</option>";
-      options = options + option;
+      option.data('song',song);
+      option.text(song.artist + " / " + song.album + " / " + song.track + ". " + song.title);
+      option.attr('song-id',song.id);
+      option.appendTo("#songBox");
     }
-    $("#songBox").html(options);
   } else {
     error = "fetching artists failed with status '" +ssr.getAttribute("status")+ "'";
   }
 }
 
+function setDetails(args) {
+  var currentSong = args.current;
+  var nextSong = args.next;
+  var prevSong = args.prev;
+  $('#title').text(currentSong.title);
+  $('#album').text(currentSong.album);
+  $('#artist').text(currentSong.artist);
+  $('#prevTitle').text(prevSong.title);
+  $('#prevAlbum').text(prevSong.album);
+  $('#prevArtist').text(prevSong.artist);
+  $('#nextTitle').text(nextSong.title);
+  $('#nextAlbum').text(nextSong.album);
+  $('#nextAlbum').text(nextSong.artist);
+}
+
 function startPlay(song) {
-  var audio = document.getElementById('player');
-  audio.type = song.contentType;
-  audio.src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" + song.id;
+//  var audio = document.getElementById('player');
+//  audio.type = song.contentType;
+//  audio.src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" + song.id;
 
   $('#coverArt').attr("src", "https://streaming.one.ubuntu.com/rest/getCoverArt.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" +song.coverArt);
   $('#title').text(song.title);
   $('#album').text(song.album);
   $('#artist').text(song.artist);
+  localStorage["nowPlaying"] = song.id;
+  setDetails({current: song, next: navigation.getNextSong(), prev: navigation.getPrevSong()});
 }
 
 function startSearch(event) {
@@ -59,7 +74,7 @@ function handleFileSelect(evt) {
 function getFirstPlaylistElement() {
   var elements = $("#playlistBox :first");
   if (elements.length > 0) {
-    return JSON.parse(unescape(elements[0].value));
+    return elements.data('song');
   } else {
     return null;
   }

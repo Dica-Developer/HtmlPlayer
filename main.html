@@ -7,8 +7,10 @@
   <body>
     <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
     <script type="text/javascript" src="js/md5.js"></script>
-    <script type="text/javascript" src="js/lib_lastfm.js"></script>
+    <script type="text/javascript" src="js/sprite.js"></script>
     <script type="text/javascript" src="js/lib_ubuntuone.js"></script>
+    <script type="text/javascript" src="js/lib_lastfm.js"></script>
+    <script type="text/javascript" src="js/lib_navigation.js"></script>
     <script type="text/javascript" src="js/lib_controller.js"></script>
     <script type="text/javascript" src="js/reflection.js"></script>
 
@@ -22,30 +24,23 @@
       <select id="playlistBox" size="10" multiple="multiple"></select>
     </div>
     <div id="playerView">
+        <div id="descriptionBox"></div>
       <audio id="player" autoplay="true" preload="auto"></audio>
-      <div id="descriptionBox">
-        <label id="title">title</label>
-        <br />
-        by <label id="artist">artist</label>
-        <br />
-        from <label id="album">album</label>
-      </div>
-      <div id="coverArtBox">
-        <img id="coverArt" class="reflect" src="images/wholeNote.png"/>
-      </div>
     </div>
     <div id="playerControlView">
       <progress id="progressBar" value="0" max="100"></progress>
       <label id="timeField">0 / 0</label>
     </div>
 
-    <script>
+    <script type="text/javascript">
+      var navigation = new SongNavigation();
       var songHistory = new Array();
       var viewState = 'player';
       var notScrobbled = true;
+      localStorage['nowPlaying'] = '';
 
       function addToHistory(song) {
-        songHistory.push(song)
+        songHistory.push(song);
         if (songHistory.length > 1000) {
           songHistory.shift();
         }
@@ -57,24 +52,25 @@
       }
 
       function next() {
-        var song = getFirstPlaylistElement()
-        if (null !== song) {
-          startPlay(song);
-          removeFirstPlaylistElement();
-          addToHistory(song);
-          applyCoverArtStyle();
-        }
+        navigation.nextSong();
+//        var song = getFirstPlaylistElement();
+//        if (null !== song) {
+//          startPlay(song);
+//          addToHistory(song);
+//          applyCoverArtStyle();
+//        }
       }
 
       function previous() {
-        if (songHistory.length > 0) {
-          var song = songHistory.pop();
-          if (null !== song) {
-            startPlay(song);
-            setFirstPlaylistElement(song);
-            applyCoverArtStyle();
-          }
-        }
+        navigation.prevSong();
+//        if (songHistory.length > 0) {
+//          var song = songHistory.pop();
+//          if (null !== song) {
+//            startPlay(song);
+//            setFirstPlaylistElement(song);
+//            applyCoverArtStyle();
+//          }
+//        }
       }
 
       function getLastSong() {
@@ -173,11 +169,11 @@
 
       $(function() {
         $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
-        $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
+//        $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
 
         $("#songBox").on("keyup", function(event) {
           if (39 === event.which) {
-            $("#songBox :selected").clone().appendTo("#playlistBox");
+            $("#songBox :selected").clone(true, true).appendTo("#playlistBox");
           }
         });
         $("#playlistBox").on("keyup", function(event) {
@@ -325,7 +321,7 @@
           }
         });
         $("#player").on("ended", function(event) {
-          next();
+          navigation.nextSong();
           setNowPlaying();
           notScrobbled = true;
         });
@@ -351,6 +347,52 @@
           alert(errorMsg);
         });
         setInterval("backgroundTasks()", 1000);
+
+
+        var stage = Sprite3D.stage( document.getElementById("descriptionBox") );
+
+        var newSprite = new Sprite3D();
+        newSprite.rotation(0,0,0);
+        //TODO define center of the barrel
+        newSprite.position(200,100,300);
+        newSprite.update();
+        var box = stage.addChild(newSprite);
+
+        var v1 = box.addChild( new Sprite3D().className("faceNew").position( -80, -20, 40).rotationX(0).update() );
+        $(v1.domElement).html('ELement1');
+        var v2 = box.addChild( new Sprite3D().className("face").position( -80, -20, 40).rotationX(-45).update() );
+        $(v2.domElement).html('ELement2');
+        var v3 = box.addChild( new Sprite3D().className("faceNew").position( -80, -40, 10).rotationX(-90).update() );
+        $(v3.domElement).html('ELement3');
+        var v4 = box.addChild( new Sprite3D().className("face").position( -80, 25, -45).rotationX(-135).update() );
+        $(v4.domElement).html('ELement4');
+        var v5 = box.addChild( new Sprite3D().className("faceNew").position( -80, -10, -60).rotationX(-180).update() );
+        $(v5.domElement).html('ELement5');
+        var v6 = box.addChild( new Sprite3D().className("face").position( -80, -50, -40).rotationX(-225).update() );
+        $(v6.domElement).html('ELement6');
+        var v7 = box.addChild( new Sprite3D().className("faceNew").position( -80, -60, -10).rotationX(-270).update() );
+        $(v7.domElement).html('ELement7');
+        var v8 = box.addChild( new Sprite3D().className("face").position( -80, -45, 25).rotationX(-315).update() );
+        $(v8.domElement).html('ELement8');
+
+        document.addEventListener( "mousemove", onMove, false );
+        function onMove( event ) {
+          moveBox(event.pageX,event.pageY);
+        }
+// move with finger
+        document.getElementById("descriptionBox").addEventListener( "touchmove", onTouchMove, false );
+        function onTouchMove(event){
+          var t = event.changedTouches[0];
+          moveBox( t.pageX, t.pageY );
+          event.preventDefault();
+        }
+        function moveBox(x,y){
+          box.rotation(
+              y ,
+              90 ,
+              0
+          ).update();
+        }
       });
     </script>
   </body>
