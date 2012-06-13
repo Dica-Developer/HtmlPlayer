@@ -1,6 +1,6 @@
 {
   "name": "Audica Player",
-  "version": "0.7",
+  "version": "0.8",
   "description": "",
   "app": {
     "launch": {
@@ -16,9 +16,9 @@
     }
   ],
   "icons": {
-	  "128": "images/icon.png",
-	  "48": "images/icon.png",
-	  "16": "images/icon.png"
+	  "128": "images/icon128.png",
+	  "48": "images/icon48.png",
+	  "16": "images/icon16.png"
 	},
   "options_page": "options/index.html",
   "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://streaming.one.ubuntu.com/rest/*"]
