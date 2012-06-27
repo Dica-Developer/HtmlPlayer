@@ -172,6 +172,10 @@
       searchForSongs("", collectSongs, null, null);
 
       $(function() {
+        if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
+          document.location = chrome.extension.getURL("options/index.html");
+        }
+        updateSongList();
         $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
         $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
 
