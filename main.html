@@ -238,6 +238,7 @@
                 width:"0"
               });
             } else if ("click" === event.type) {
+              $("#songBox").focus();
               var boxWidth = ($(document).width() / 2) - 20 - 2;
               var boxHeight = $(document).height() - 22;
               $("#songBox").width(boxWidth);
@@ -275,10 +276,9 @@
           if ('player' === viewState) {
             switch (event.which) {
               case 76:
-                $("#searchBox").focus();
-                $("#searchBox").width($(document).width() - 20 - 4);
+                $("#songBox").focus();
                 var boxWidth = ($(document).width() / 2) - 20 - 2;
-                var boxHeight = $(document).height() - 22 - 46;
+                var boxHeight = $(document).height() - 22;
                 $("#songBox").width(boxWidth);
                 $("#songBox").height(boxHeight);
                 $("#playlistBox").width(boxWidth);
