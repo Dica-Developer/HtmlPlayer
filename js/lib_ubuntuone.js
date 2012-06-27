@@ -17,7 +17,7 @@ function getSongs(id, collectSongs, collectErrors, collectProgress) {
 }
 
 function searchForSongs(query, collectSongs, collectErrors, collectProgress) {
-  var url = JSON.parse(localStorage["serverUrl"]) + "/rest/search.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&count=1000&any=" +query;
+  var url = JSON.parse(localStorage["serverUrl"]) + "/rest/search.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&count=100000&any=" +query;
   var req = new XMLHttpRequest();
   req.open("GET", url, true);
   req.onload = collectSongs;

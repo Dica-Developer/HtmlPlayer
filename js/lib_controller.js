@@ -3,7 +3,7 @@ function collectSongs(event) {
   var ssr = req.responseXML.getElementsByTagName("subsonic-response");
   if (null !== ssr && undefined !== ssr && ssr.length > 0 && "ok" === ssr[0].getAttribute("status")) {
     var songs = req.responseXML.getElementsByTagName("match");
-    var options = "";
+    var songList = new Array();
     for (var i = 0; i < songs.length; i++) {
       var song = {
         "artist": songs[i].getAttribute("artist"),
@@ -17,15 +17,12 @@ function collectSongs(event) {
         "genre": songs[i].getAttribute("genre"),
         "year": songs[i].getAttribute("year")
       };
-      var option = "<option ";
-      option = option + "value='" + escape(JSON.stringify(song)) + "'>";
-      option = option + song.artist + " / " + song.album + " / " + song.track + ". " + song.title;
-      option = option + "</option>";
-      options = options + option;
+      songList.push(song);
     }
-    $("#songBox").html(options);
+    localStorage["songs.list"] = JSON.stringify(songList);
+    fillSongBox(songList);
   } else {
-    error = "fetching artists failed with status '" +ssr.getAttribute("status")+ "'";
+    error = "fetching songs failed with status '" +ssr.getAttribute("status")+ "'";
   }
 }
 
@@ -81,5 +78,18 @@ function setFirstPlaylistElement(song) {
 
 function removeFirstPlaylistElement() {
   $("#playlistBox :first").detach();
+}
+
+function fillSongBox(songs) {
+  var options = "";
+  for (var i = 0; i < songs.length; i++) {
+    var song = songs[i];
+    var option = "<option ";
+    option = option + "value='" + escape(JSON.stringify(song)) + "'>";
+    option = option + song.artist + " / " + song.album + " / " + song.track + ". " + song.title;
+    option = option + "</option>";
+    options = options + option;
+  }
+  $("#songBox").html(options);
 }
 
