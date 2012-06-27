@@ -21,7 +21,7 @@ On every time you can use your prefered input method and Audica shows what is po
     `move around` ... shows progress timing and player usage elements
     `move near to the left side` ... previews search view selecting it changes to it)
 
-    bla
+                bla
 
 * search view
 
