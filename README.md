@@ -18,37 +18,34 @@ On every time you can use your prefered input method and Audica shows what is po
 
 * player view
 
-    `move around` ... shows progress timing and player usage elements
-    `move near to the left side` ... previews search view selecting it changes to it)
-
-        bla
+        `move around` ... shows progress timing and player usage elements
+        `move near to the left side` ... previews search view selecting it changes to it)
 
 * search view
 
-    `click a songs` ... select a song
-    `<ctrl> + click a song` ... selects all clicked songs
-    `<shift> + click two songs` ... selects all songs between the clicked
-    `double click a song on the left list` ... adds it to the playlist
-    `double click a song on the right list` ... removes it from the playlist
-    `move near to the right side` ... previews player view selecting it changes to it
+        `click a songs` ... select a song
+        `<ctrl> + click a song` ... selects all clicked songs
+        `<shift> + click two songs` ... selects all songs between the clicked
+        `double click a song on the left list` ... adds it to the playlist
+        `double click a song on the right list` ... removes it from the playlist
+        `move near to the right side` ... previews player view selecting it changes to it
 
 ### Keyboard
 
 * player view
 
-    `n` ... jumps to next songs
-    `p` ... jumps to previous song
-    `<space>` ... starts/stop playing
-    `l` ... switches to the search view
+        `n` ... jumps to next songs
+        `p` ... jumps to previous song
+        `<space>` ... starts/stop playing
+        `l` ... switches to the search view
 
 * search view
 
-    `<tab>` ... switch between the song and the playlist box
-    `<cursor up/down>` ... select a song
-    `<shift> + <cursor up/down>` ... select multiple songs
-    `<cursor left>` ... removes a selected song from the playlist box
-    `<cursor right>` ... adds a selected song from the song box to the playlist box
-    `<esc>` ... switches to the player view
+        `<tab>` ... switch between the song and the playlist box
+        `<cursor up/down>` ... select a song
+        `<shift> + <cursor up/down>` ... select multiple songs
+        `<cursor left>` ... removes a selected song from the playlist box
+        `<cursor right>` ... adds a selected song from the song box to the playlist box
+        `<esc>` ... switches to the player view
 
 ### Touch
-
