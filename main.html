@@ -179,6 +179,7 @@
           document.location = chrome.extension.getURL("options/index.html");
         }
         updateSongList();
+        $("#searchView").css("left", -1 * $(document).width());
         $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
         $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
 
@@ -192,21 +193,40 @@
             $("#playlistBox :selected").detach();
           }
         });
+
         function handleRightZone(event) {
           if ('search' === viewState) {
             if ("mouseenter" === event.type) {
               $("#searchView").height($(document).height());
               $("#searchView").animate({
-                width:"95%"
+                left: -1 * $(document).width() * 0.05
+              });
+              $("#playerView").animate({
+                left: $(document).width() * 0.95
+              });
+              $("#playerControlView").animate({
+                left: $(document).width() * 0.95
               });
             } else if ("mouseleave" === event.type) {
               $("#searchView").height($(document).height());
               $("#searchView").animate({
-                width:"100%"
+                left: "0"
+              });
+              $("#playerView").animate({
+                left: $(document).width()
+              });
+              $("#playerControlView").animate({
+                left: $(document).width()
               });
             } else if ("click" === event.type) {
               $("#searchView").animate({
-                width:"0"
+                width: -1 * $(document).width()
+              });
+              $("#playerView").animate({
+                left: "0"
+              });
+              $("#playerControlView").animate({
+                left: "0"
               });
               var audio = document.getElementById('player');
               if (audio.paused) {
@@ -225,17 +245,24 @@
           hover: handleRightZone,
           click: handleRightZone
         });
+
         function handleLeftZone(event) {
           if ('player' === viewState) {
             if ("mouseenter" === event.type) {
               $("#searchView").height($(document).height());
               $("#searchView").animate({
-                width:"5%"
+                left:-1 * $(document).width() * 0.05
+              });
+              $("#playerView").animate({
+                left:$(document).width() * 0.05
               });
             } else if ("mouseleave" === event.type) {
               $("#searchView").height($(document).height());
               $("#searchView").animate({
-                width:"0"
+                left:-1 * $(document).width()
+              });
+              $("#playerView").animate({
+                left:"0px"
               });
             } else if ("click" === event.type) {
               $("#songBox").focus();
@@ -247,7 +274,13 @@
               $("#playlistBox").height(boxHeight);
               $("#searchView").height($(document).height());
               $("#searchView").animate({
-                width:"100%"
+                left: "0"
+              });
+              $("#playerView").animate({
+                left: $(document).width()
+              });
+              $("#playerControlView").animate({
+                left: $(document).width()
               });
               viewState = 'search';
             }
@@ -258,6 +291,7 @@
           hover: handleLeftZone,
           click: handleLeftZone
         });
+
         $(document).mousemove(function(event) {
           if ('player' === viewState) {
             if (null !== closePlayerControlViewTimerId) {
@@ -272,6 +306,7 @@
             closePlayerControlViewTimerId = setTimeout("closePlayerControlView()", 3000);
           }
         });
+
         $(document).on("keyup", function(event) {
           if ('player' === viewState) {
             switch (event.which) {
@@ -285,7 +320,13 @@
                 $("#playlistBox").height(boxHeight);
                 $("#searchView").height($(document).height());
                 $("#searchView").animate({
-                  width: "100%"
+                  left: "0"
+                });
+                $("#playerView").animate({
+                  left: $(document).width()
+                });
+                $("#playerControlView").animate({
+                  left: $(document).width()
                 });
                 viewState = 'search';
                 break;
@@ -312,7 +353,13 @@
             switch (event.which) {
               case 27:
                 $("#searchView").animate({
-                  width: "0"
+                  left: -1 * $(document).width()
+                });
+                $("#playerView").animate({
+                  left: "0"
+                });
+                $("#playerControlView").animate({
+                  left: "0"
                 });
                 var audio = document.getElementById('player');
                 if (audio.paused) {
@@ -329,11 +376,13 @@
             console.log("Unknown view state '" + viewState + "'.");
           }
         });
+
         $("#player").on("ended", function(event) {
           next();
           setNowPlaying();
           notScrobbled = true;
         });
+
         $("#player").on("error", function(event) {
           var audio = document.getElementById('player');
           var errorMsg = "The file '" + audio.src + "' cannot be played. The possible reasons is: ";

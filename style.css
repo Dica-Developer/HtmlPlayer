@@ -1,3 +1,6 @@
+body {
+  overflow: hidden;
+}
 #searchViewPreview {
     position: absolute;
     top: 0;
@@ -16,13 +19,13 @@
 }
 #searchView {
     height: 100%;
-    width: 0;
+    width: 100%;
     overflow: hidden;
     background-color: white;
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 100;
+    z-index: 1;
 }
 #search {
     float: left;
