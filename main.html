@@ -251,18 +251,24 @@
             if ("mouseenter" === event.type) {
               $("#searchView").height($(document).height());
               $("#searchView").animate({
-                left:-1 * $(document).width() * 0.05
+                left: -1 * $(document).width() * 0.95
               });
               $("#playerView").animate({
-                left:$(document).width() * 0.05
+                left: $(document).width() * 0.05
+              });
+              $("#playerControlView").animate({
+                left: $(document).width() * 0.05
               });
             } else if ("mouseleave" === event.type) {
               $("#searchView").height($(document).height());
               $("#searchView").animate({
-                left:-1 * $(document).width()
+                left: -1 * $(document).width()
               });
               $("#playerView").animate({
-                left:"0px"
+                left: "0"
+              });
+              $("#playerControlView").animate({
+                left: "0"
               });
             } else if ("click" === event.type) {
               $("#songBox").focus();
