@@ -47,6 +47,7 @@ body {
     text-align: right;
     padding-right: 10px;
     font-size: 12px;
+    position: absolute;
 }
 #title {
     color: white;
