@@ -169,7 +169,7 @@
       function updateSongList() {
         var currentSongList = localStorage["songs.list"];
         if (null !== currentSongList && undefined !== currentSongList) {
-          fillSongBox(JSON.parse(currentSongList));
+          fillSongBox(JSON.parse(currentSongList), null);
         }
         searchForSongs("", collectSongs, null, null);
       }
@@ -376,6 +376,10 @@
                 viewState = 'player';
                 $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
                 $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
+                break;
+              default:
+                var songList = JSON.parse(localStorage["songs.list"]);
+                // fillSongBox(songList, String.fromCharCode(event.which));
                 break;
             }
           } else {
