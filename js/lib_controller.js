@@ -142,7 +142,7 @@ function fillSongBox(songs, query) {
     var song = songs[i];
     var patt = new RegExp(query, "i");
     if (null === query || (null != song.artist && -1 !== song.artist.search(patt)) || (null != song.title && -1 !== song.title.search(patt))
-        || (null != song.album && -1 !== song.album.search(patt))) {
+        || (null != song.album && -1 !== song.album.search(patt)) || (null != song.genre && -1 !== song.genre.search(patt))) {
       var option = "<option ";
       option = option + "value='" + escape(JSON.stringify(song)) + "'>";
       option = option + song.artist + " / " + song.album + " / " + song.track + ". " + song.title;
