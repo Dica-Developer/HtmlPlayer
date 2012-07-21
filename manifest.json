@@ -13,6 +13,11 @@
       "matches": ["https://one.ubuntu.com/phones/creds"],
       "js": ["js/ubuntuone_authentication.js"],
       "run_at": "document_end"
+    },
+    {
+      "matches": ["http://www.google.com/robots.txt*"],
+      "js": ["oauth2/oauth2_inject.js"],
+      "run_at": "document_start"
     }
   ],
   "icons": {
@@ -21,6 +26,6 @@
 	  "16": "images/icon16.png"
 	},
   "options_page": "options/index.html",
-  "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://streaming.one.ubuntu.com/rest/*"]
+  "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://streaming.one.ubuntu.com/rest/*", "https://accounts.google.com/o/oauth2/token"]
 }
 

@@ -88,6 +88,20 @@ chrome.extension.onRequest.addListener(
                 <input spellcheck="false" id="passwordBox" type="password" size="30" onchange="savePassword()" />
               </div>
             </div>
+            <div id="googleDriveParams">
+              <div class="section-group">
+                <h3>server url</h3>
+                <input spellcheck="false" id="googleDriveServerUrlBox" type="text" size="20" onchange="saveServerUrl()" />
+              </div>
+              <div id="loginBoxDiv" class="section-group">
+                <h3>login</h3>
+                <input spellcheck="false" id="googleDriveLoginBox" type="text" size="20" onchange="saveLogin()" />
+              </div>
+              <div id="passwordBoxDiv" class="section-group">
+                <h3>password</h3>
+                <input spellcheck="false" id="googleDrivePasswordBox" type="password" size="30" onchange="savePassword()" />
+              </div>
+            </div>
           </section>
         </div>
       </div>

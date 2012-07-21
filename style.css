@@ -1,7 +1,10 @@
 body {
   overflow: hidden;
+  margin: 0;
+  padding: 0;
+  font-size: 12px;
 }
-#searchViewPreview {
+#leftZone {
     position: absolute;
     top: 0;
     left: 0;
@@ -9,16 +12,7 @@ body {
     min-width: 5%;
     z-index: 200;
 }
-#playerViewPreview {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    min-width: 5%;
-    z-index: 200;
-}
-
-#fileApiPreview {
+#rightZone {
     position: absolute;
     top: 0;
     right: 0;
@@ -32,10 +26,10 @@ body {
     width: 100%;
     overflow: hidden;
     background-color: white;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*z-index: 1;*/
 }
 #search {
     float: left;
@@ -45,10 +39,10 @@ body {
     width: 100%;
     overflow: hidden;
     background-color: black;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
+    /*position: absolute;*/
+    /*top: 0;*/
+    /*left: 0;*/
+    /*z-index: 1;*/
 }
 #descriptionBox {
     color: #bbbbbb;
@@ -57,7 +51,7 @@ body {
     text-align: right;
     padding-right: 10px;
     font-size: 12px;
-    position: absolute;
+    position: relative;
 }
 #title {
     color: white;
@@ -74,21 +68,18 @@ body {
 #coverArtBox {
     color: #bbbbbb;
     width: 49%;
-    float: right;
-    padding-left: 10px;
-    margin: auto;
+    /*float: right;*/
+    /*padding-left: 10px;*/
+    /*margin: auto;*/
 }
 #searchBox {
     font-size: 18px;
     margin: 10px;
 }
-#songBox {
+#playlistBox, #songBox {
     font-size: 12px;
     margin: 10px;
-}
-#playlistBox {
-    font-size: 12px;
-    margin: 10px;
+    width: 45%;
 }
 #playerControlView {
     background: rgba(44, 44, 44, 0.5);
@@ -144,4 +135,82 @@ progress::-moz-progress-bar {
     -webkit-border-top-right-radius: 5px;
     padding: 10px;
     font-size: 12px;
+}
+
+
+#mainWrapper {
+    -webkit-transform: scale(1,1);
+    -webkit-box-align: center;
+    top:0;
+    left:0;
+    height: 100%;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-orient: horizontal;
+    -webkit-box-pack: center;
+}
+
+#entry1 {
+    -webkit-transform: translate(0px,0px);
+}
+
+.mainEntries {
+    height: 100%;
+    width: 100%;
+    display: -webkit-box;
+    -webkit-box-align: center;
+    -webkit-box-orient: horizontal;
+    -webkit-box-pack: center;
+}
+
+#fileView {
+    -webkit-box-pack: justify;
+}
+
+#dropZone {
+    width: 40%;
+    background-color: #EEE;
+    border: 5px dashed #CCC;
+    color: #CCC;
+    border-radius: 10px;
+    margin: 0 10px;
+}
+
+
+/*file browser*/
+#fileBrowser {
+    width: 40%;
+    overflow: scroll;
+    background-color: #EEE;
+    border: 5px dashed #CCC;
+    border-radius: 10px;
+    margin: 0 10px;
+    color: #333;
+    text-shadow: 1px 1px 1px whiteSmoke;
+}
+
+#header {
+    padding: 5px;
+    float: left;
+}
+#usage{
+    padding: 5px;
+    float: right;
+}
+
+#fileLists{
+    margin: 30px 0;
+}
+
+ul {
+    list-style: none;
+    margin-left: -20px;
+}
+
+div.entry.file {
+    cursor: pointer;
+}
+div.entry.dir {
+    cursor: pointer;
+    font-weight: bold;
 }

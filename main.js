@@ -1,9 +1,8 @@
-var songHistory = new Array();
-var viewState = 'player';
+var songHistory = [];
 var notScrobbled = true;
 
 function addToHistory(song) {
-  songHistory.push(song)
+  songHistory.push(song);
   if (songHistory.length > 1000) {
     songHistory.shift();
   }
@@ -15,7 +14,7 @@ function applyCoverArtStyle() {
 }
 
 function next() {
-  var song = getFirstPlaylistElement()
+  var song = getFirstPlaylistElement();
   if (null !== song) {
     startPlay(song);
     removeFirstPlaylistElement();
@@ -55,7 +54,7 @@ function setNowPlaying() {
   var song = getLastSong();
   if (null !== song) {
     (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).setNowPlaying(song.artist, song.title, song.album, song.duration,
-      function (data, textStatus, jqXHR) {
+      function (data) {
         if (undefined !== data.error) {
           switch (data.error) {
             case 6:
@@ -89,7 +88,7 @@ function scrobble() {
         var timestamp = parseInt((new Date()).getTime() / 1000.0);
         (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).scrobble(song.artist, song.title, song.album, song.duration,
           timestamp,
-          function (data, textStatus, jqXHR) {
+          function (data) {
             if (undefined !== data.error) {
               switch (data.error) {
                 case 6:
@@ -115,16 +114,6 @@ function backgroundTasks() {
   scrobble();
 }
 
-var closePlayerControlViewTimerId = null;
-
-function closePlayerControlView() {
-  $("#playerControlView").data("open", false);
-  closePlayerControlViewTimerId = null;
-  $("#playerControlView").animate({
-    height:"4px"
-  });
-}
-
 function updateSongList() {
   var currentSongList = localStorage["songs.list"];
   if (null !== currentSongList && undefined !== currentSongList) {
@@ -134,18 +123,15 @@ function updateSongList() {
 }
 
 $(function () {
-  if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
-    if (window.File && window.FileReader && window.FileList && window.Blob) {
-      View.showNoSongsMessage();
-    } else {
-      console.log('no');
-    }
-  } else {
-    updateSongList();
-  }
-  $("#searchView").css("left", -1 * $(document).width());
-  $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
-  $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
+//  if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
+//    if (window.File && window.FileReader && window.FileList && window.Blob) {
+//      View.showNoSongsMessage();
+//    } else {
+//      console.log('no');
+//    }
+//  } else {
+//    updateSongList();
+//  }
 
   $("#songBox").on("keyup", function (event) {
     if (39 === event.which) {
@@ -155,126 +141,6 @@ $(function () {
   $("#playlistBox").on("keyup", function (event) {
     if (37 === event.which) {
       $("#playlistBox :selected").detach();
-    }
-  });
-
-  function handleRightZone(event) {
-    if ('search' === viewState) {
-      if ("mouseenter" === event.type) {
-        $("#searchView").height($(document).height());
-        $("#searchView").animate({
-          left:-1 * $(document).width() * 0.05
-        });
-        $("#playerView").animate({
-          left:$(document).width() * 0.95
-        });
-        $("#playerControlView").animate({
-          left:$(document).width() * 0.95
-        });
-      } else if ("mouseleave" === event.type) {
-        $("#searchView").height($(document).height());
-        $("#searchView").animate({
-          left:"0"
-        });
-        $("#playerView").animate({
-          left:$(document).width()
-        });
-        $("#playerControlView").animate({
-          left:$(document).width()
-        });
-      } else if ("click" === event.type) {
-        $("#searchView").animate({
-          width:-1 * $(document).width()
-        });
-        $("#playerView").animate({
-          left:"0"
-        });
-        $("#playerControlView").animate({
-          left:"0"
-        });
-        var audio = document.getElementById('player');
-        if (audio.paused) {
-          next();
-          setNowPlaying();
-          notScrobbled = true;
-        }
-        viewState = 'player';
-        $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
-        $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
-      }
-    }
-  }
-
-  $("#playerViewPreview").on({
-    hover:handleRightZone,
-    click:handleRightZone
-  });
-
-  function handleLeftZone(event, args) {
-    var elem = event.data;
-    if ('player' === viewState) {
-      if ("mouseenter" === event.type) {
-        elem.height($(document).height());
-        elem.animate({
-          left:-1 * $(document).width() * 0.95
-        });
-        elem.animate({
-          left:$(document).width() * 0.05
-        });
-        $("#playerControlView").animate({
-          left:$(document).width() * 0.05
-        });
-      } else if ("mouseleave" === event.type) {
-        $("#searchView").height($(document).height());
-        $("#searchView").animate({
-          left:-1 * $(document).width()
-        });
-        $("#playerView").animate({
-          left:"0"
-        });
-        $("#playerControlView").animate({
-          left:"0"
-        });
-      } else if ("click" === event.type) {
-        $("#songBox").focus();
-        var boxWidth = ($(document).width() / 2) - 20 - 2;
-        var boxHeight = $(document).height() - 22;
-        $("#songBox").width(boxWidth);
-        $("#songBox").height(boxHeight);
-        $("#playlistBox").width(boxWidth);
-        $("#playlistBox").height(boxHeight);
-        $("#searchView").height($(document).height());
-        $("#searchView").animate({
-          left:"0"
-        });
-        $("#playerView").animate({
-          left:$(document).width()
-        });
-        $("#playerControlView").animate({
-          left:$(document).width()
-        });
-        viewState = 'search';
-      }
-    }
-  }
-
-  $("#searchViewPreview").on({
-    hover:handleLeftZone,
-    click:handleLeftZone
-  }, $('#searchView'));
-
-  $(document).mousemove(function (event) {
-    if ('player' === viewState) {
-      if (null !== closePlayerControlViewTimerId) {
-        clearTimeout(closePlayerControlViewTimerId);
-      }
-      if (!$("#playerControlView").data("open")) {
-        $("#playerControlView").data("open", true);
-        $("#playerControlView").animate({
-          height:"50px"
-        });
-      }
-      closePlayerControlViewTimerId = setTimeout("closePlayerControlView()", 3000);
     }
   });
 
@@ -381,4 +247,96 @@ $(function () {
     alert(errorMsg);
   });
   setInterval("backgroundTasks()", 1000);
+
+
+  $('#searchView, #playerView, #fileView').width($(window).width());
+  $('#searchView, #playerView, #fileView').height($(window).height());
+  $('#playerControlView').css('left', $(window).width());
 });
+
+function test(){
+  var song = Controller.getFirstPlaylistElement();
+  var src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" + song.id;
+  function handler() {
+    if(this.readyState == this.DONE) {
+      FileApi.createFolder(song.artist+'/'+song.album);
+      FileApi.writeFile(this.response, null, song);
+    }
+  }
+
+  var client = new XMLHttpRequest();
+  client.onreadystatechange = handler;
+  client.responseType = 'blob';
+  client.open("GET", src);
+  client.send(null);
+}
+
+function testGoogle(){
+  googleAuth.authorize(function() {
+    // Ready for action
+    var handler = function(){
+      if(this.readyState == this.DONE) {
+        var fileList = JSON.parse(this.response);
+        console.log(fileList);
+        var items = fileList.items;
+        var folder = {};
+        var files = {};
+        console.log(items[0]);
+        console.log(items[1]);
+        for (var idx = 0, item; item =  items[idx]; idx++) {
+          if(item.mimeType === 'application/vnd.google-apps.folder'){
+            if(typeof folder[item.id] == 'undefined'){
+              folder[item.id] = {};
+            }
+              folder[item.id].title = item.title;
+              folder[item.id].parentID = item.parents[0].id;
+          }else{
+            var file = {
+              id: item.id,
+              title: item.title,
+              parentID: item.parents[0].id,
+              url: item.downloadUrl
+            };
+            if(typeof folder[item.parents[0].id] == 'undefined'){
+              folder[item.parents[0].id] = {files: []};
+            }else if(typeof folder[item.parents[0].id].files == 'undefined'){
+              folder[item.parents[0].id].files = [];
+            }
+            folder[item.parents[0].id].files.push(file);
+            }
+          }
+        console.log(folder);
+
+//        var testUrl= item.downloadUrl;
+//        var song = {
+//          title: item.title,
+//          album: 'Test',
+//          artist: 'AAAAAAAAAAA'
+//        };
+//        var audio = audio = document.getElementById('player');
+//        console.log(audio);
+//        audio.type = 'audio/mpeg';
+//        audio.src = testUrl+'?access_token='+ googleAuth.getAccessToken();
+//        var audioHandler = function(){
+//          if(this.readyState == this.DONE) {
+//            console.log(typeof  this.response);
+//            console.log(this.response);
+//            FileApi.createFolder(song.artist+'/'+song.album);
+//            FileApi.writeFile(this.response, null, song);
+//          }
+//        };
+//
+//        var client = new XMLHttpRequest();
+//        client.onreadystatechange = audioHandler;
+//        client.open("GET", testUrl);
+//        client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
+//        client.send(null);
+      }
+    };
+    var client = new XMLHttpRequest();
+    client.onreadystatechange = handler;
+    client.open("GET", 'https://www.googleapis.com/drive/v2/files');
+    client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
+    client.send(null);
+  });
+}

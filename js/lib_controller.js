@@ -70,7 +70,8 @@ function collectSongs(event) {
         "track": songs[i].getAttribute("track") ? parseInt(songs[i].getAttribute("track")) : null, 
         "duration": songs[i].getAttribute("duration"),
         "genre": songs[i].getAttribute("genre"),
-        "year": songs[i].getAttribute("year") ? parseInt(songs[i].getAttribute("year")) : null
+        "year": songs[i].getAttribute("year") ? parseInt(songs[i].getAttribute("year")) : null,
+        "isFile":false
       };
       songList.push(song);
     }
@@ -83,14 +84,30 @@ function collectSongs(event) {
 }
 
 function startPlay(song) {
-  var audio = document.getElementById('player');
-  audio.type = song.contentType;
-  audio.src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" + song.id;
+  var audio = audio = document.getElementById('player');
+  if(!song.isFile){
+    console.log(song);
+    audio.type = song.contentType;
+    audio.src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" + song.id;
 
-  $('#coverArt').attr("src", "https://streaming.one.ubuntu.com/rest/getCoverArt.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" +song.coverArt);
-  $('#title').text(song.title);
-  $('#album').text(song.album);
-  $('#artist').text(song.artist);
+    $('#coverArt').attr("src", "https://streaming.one.ubuntu.com/rest/getCoverArt.view?u=" + JSON.parse(localStorage["authentication.login"]) + "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" +song.coverArt);
+    $('#title').text(song.title);
+    $('#album').text(song.album);
+    $('#artist').text(song.artist);
+  }else{
+    audio.type = song.contentType;
+    audio.src = song.src;
+  }
+}
+
+function playFromExplorer(path){
+  var audio = audio = document.getElementById('player');
+  audio.type = 'audio/mpeg';
+  audio.src = path;
+}
+
+function startPlayFromFileBrowser(url){
+
 }
 
 function startSearch(event) {
@@ -152,4 +169,37 @@ function fillSongBox(songs, query) {
   }
   $("#songBox").html(options);
 }
+
+function writeDirectories(artist, album, file) {
+  fileSystem.root.getDirectory('/' + artist+'/' + album, {create:true}, function (d) {
+//    fileSystem.root.getDirectory('/' + album, {create:true}, function (d) {
+        FileApi.writeFile(file, d);
+//    });
+  });
+}
+FileApi.onID3readEnd.subscribe(function(event, args){
+  writeDirectories(args.artist, args.album, args.file);
+});
+
+(function($){
+  var handleDrop = function(e){
+    var song = null;
+    e.preventDefault();
+    e.stopPropagation();
+    var files = e.dataTransfer.files;
+    for (var i = 0, file; file = files[i]; i += 1) {
+      if(file.type === 'audio/mp3' || file.type === 'audio/mpeg'){
+        FileApi.readID3Tags(file);
+      }
+    }
+  };
+
+  $.extend(true, window, {
+    Controller: {
+      handleDrop:handleDrop,
+      getFirstPlaylistElement:getFirstPlaylistElement,
+      playFromExplorer:playFromExplorer
+    }
+  })
+})(jQuery);
 

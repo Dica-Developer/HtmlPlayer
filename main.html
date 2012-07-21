@@ -3,42 +3,79 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="style.css" type="text/css">
-  </head>
-  <body>
     <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+    <script type="text/javascript" src="js/jDataView.js"></script>
     <script type="text/javascript" src="js/md5.js"></script>
+    <script type="text/javascript" src="oauth2/oauth2.js"></script>
+    <script type="text/javascript" src="js/lib_google.js"></script>
     <script type="text/javascript" src="js/lib_lastfm.js"></script>
     <script type="text/javascript" src="js/lib_ubuntuone.js"></script>
-    <script type="text/javascript" src="js/lib_controller.js"></script>
+    <script type="text/javascript" src="js/lib_utils.js"></script>
     <script type="text/javascript" src="js/lib_view.js"></script>
+    <script type="text/javascript" src="js/lib_file.js"></script>
+    <script type="text/javascript" src="js/lib_controller.js"></script>
     <script type="text/javascript" src="js/reflection.js"></script>
+    <script type="text/javascript" src="js/fileReader.js"></script>
     <script type="text/javascript" src="main.js"></script>
+  </head>
+  <body>
 
-    <div id="searchViewPreview"></div>
-    <div id="playerViewPreview"></div>
-    <div id="fileApiPreview"></div>
-    <div id="searchView">
-      <select id="songBox" size="10" multiple="multiple"></select>
-      <select id="playlistBox" size="10" multiple="multiple"></select>
-    </div>
-    <div id="playerView">
-      <audio id="player" autoplay="true" preload="auto"></audio>
-      <div id="descriptionBox">
-        <label id="title">title</label>
-        <br />
-        by <label id="artist">artist</label>
-        <br />
-        from <label id="album">album</label>
+    <div id="leftZone"></div>
+    <div id="rightZone"></div>
+    <div id="mainWrapper">
+      <div id="searchView" class="mainEntries">
+        <select id="songBox" size="10" multiple="multiple"></select>
+        <select id="playlistBox" size="10" multiple="multiple"></select>
       </div>
-      <div id="coverArtBox">
-        <img id="coverArt" class="reflect" src="images/wholeNote.png"/>
+      <div id="playerView" class="mainEntries">
+        <audio id="player" autoplay="true" preload="auto"></audio>
+        <div id="descriptionBox">
+          <label id="title">title</label>
+          <br />
+          by <label id="artist">artist</label>
+          <br />
+          from <label id="album">album</label>
+        </div>
+        <div id="coverArtBox">
+          <img id="coverArt" class="reflect" src="images/wholeNote.png"/>
+        </div>
+        <div id="messageBox" style="display:none;"><div id="messageContent"></div></div>
+        <div id="playerControlView">
+          <progress id="progressBar" value="0" max="100"></progress>
+          <label id="timeField">0 / 0</label>
+        </div>
       </div>
-      <div id="messageBox"><div id="messageContent"></div></div>
-    </div>
-    <div id="playerControlView">
-      <progress id="progressBar" value="0" max="100"></progress>
-      <label id="timeField">0 / 0</label>
-    </div>
+      <div id="fileView" class="mainEntries">
+        <div id="fileBrowser">
+          <div id="header"></div>
+          <div id="usage">Remaining space: <span id="usageText">N/A</span></div>
+          <div id="fileLists"></div>
+          <div id="emptyMessage"></div>
 
+        </div>
+        <!--<div id="main">-->
+          <!--&lt;!&ndash;Usage and Button For Functions&ndash;&gt;-->
+          <!--<div id="header-panel" style="overflow:hidden">-->
+            <!--<div style="float:right;">-->
+              <!--<input type="button" id="delete-all" value="Delete All" />-->
+            <!--</div>-->
+            <!--<label id="label_temporary" class="label_radio checked" for="temporary-radio">-->
+              <!--<input id="temporary-radio" type="radio" checked/>Temporary-->
+            <!--</label>-->
+            <!--<label id="label_persistent" class="label_radio unchecked" for="persistent-radio">-->
+              <!--<input id="persistent-radio" type="radio"/>Persistent-->
+            <!--</label>-->
+          <!--</div>-->
+          <!--<div class="hide" id="delete-all-confirmation">-->
+            <!--Are you sure you want to delete everything?<br />-->
+            <!--<input type="button" id="delete-all-confirmed" value="Yes" />-->
+            <!--<input type="button" id="delete-all-cancelled" value="Cancel" />-->
+          <!--</div>-->
+          <!--&lt;!&ndash;End of buttons for functions&ndash;&gt;-->
+          <!--<div id="file-list-empty-label">[empty]</div>-->
+        <!--</div>-->
+        <div id="dropZone" >DROPZONE</div>
+      </div>
+    </div>
   </body>
 </html>
