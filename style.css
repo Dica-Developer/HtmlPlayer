@@ -112,3 +112,10 @@ progress::-moz-progress-bar {
     font-size: 40px;
     margin-top: 3px;
 }
+
+#filterBox {
+  position: absolute;
+  z-index: 100;
+  display: none;
+}
+
