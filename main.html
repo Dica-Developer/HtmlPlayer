@@ -363,6 +363,7 @@
                 if ($("#filterBox").data("open")) {
                   $("#filterBox").data("open", false);
                   $("#filterBox").hide();
+                  $('#filterBox').val("");
                 } else {
                   $("#searchView").animate({
                     left: -1 * $(document).width()
