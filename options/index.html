@@ -53,6 +53,7 @@ chrome.extension.onRequest.addListener(
     <div id="navbar-content-title">Options</div>
   <ul id="navbar">
     <li id="backend" class="navbar-item navbar-item-selected">Backend</li>
+    <li id="synchronize" class="navbar-item navbar-item">Synchronize</li>
     <li id="scrobble" class="navbar-item">Scrobble</li>
     <li id="about" class="navbar-item">About</li>
   </ul>
@@ -88,20 +89,20 @@ chrome.extension.onRequest.addListener(
                 <input spellcheck="false" id="passwordBox" type="password" size="30" onchange="savePassword()" />
               </div>
             </div>
-            <div id="googleDriveParams">
-              <div class="section-group">
-                <h3>server url</h3>
-                <input spellcheck="false" id="googleDriveServerUrlBox" type="text" size="20" onchange="saveServerUrl()" />
-              </div>
-              <div id="loginBoxDiv" class="section-group">
-                <h3>login</h3>
-                <input spellcheck="false" id="googleDriveLoginBox" type="text" size="20" onchange="saveLogin()" />
-              </div>
-              <div id="passwordBoxDiv" class="section-group">
-                <h3>password</h3>
-                <input spellcheck="false" id="googleDrivePasswordBox" type="password" size="30" onchange="savePassword()" />
-              </div>
-            </div>
+            <!--<div id="googleDriveParams">-->
+              <!--<div class="section-group">-->
+                <!--<h3>server url</h3>-->
+                <!--<input spellcheck="false" id="googleDriveServerUrlBox" type="text" size="20" onchange="saveServerUrl()" />-->
+              <!--</div>-->
+              <!--<div id="loginBoxDiv" class="section-group">-->
+                <!--<h3>login</h3>-->
+                <!--<input spellcheck="false" id="googleDriveLoginBox" type="text" size="20" onchange="saveLogin()" />-->
+              <!--</div>-->
+              <!--<div id="passwordBoxDiv" class="section-group">-->
+                <!--<h3>password</h3>-->
+                <!--<input spellcheck="false" id="googleDrivePasswordBox" type="password" size="30" onchange="savePassword()" />-->
+              <!--</div>-->
+            <!--</div>-->
           </section>
         </div>
       </div>

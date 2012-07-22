@@ -1,3 +1,4 @@
+@font-face { font-family:Gruppo; src:url("/images/Gruppo-Regular.ttf"); }
 body {
   overflow: hidden;
   margin: 0;
@@ -21,29 +22,21 @@ body {
     z-index: 200;
 }
 
-#searchView {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    background-color: white;
-    /*position: absolute;*/
-    /*top: 0;*/
-    /*left: 0;*/
-    /*z-index: 1;*/
-}
 #search {
     float: left;
 }
-#playerView {
+
+#playerView, #searchView {
     height: 100%;
     width: 100%;
     overflow: hidden;
     background-color: black;
-    /*position: absolute;*/
-    /*top: 0;*/
-    /*left: 0;*/
-    /*z-index: 1;*/
 }
+
+#searchView {
+    background-color: white;
+}
+
 #descriptionBox {
     color: #bbbbbb;
     width: 49%;
@@ -68,10 +61,8 @@ body {
 #coverArtBox {
     color: #bbbbbb;
     width: 49%;
-    /*float: right;*/
-    /*padding-left: 10px;*/
-    /*margin: auto;*/
 }
+
 #searchBox {
     font-size: 18px;
     margin: 10px;
@@ -213,4 +204,39 @@ div.entry.file {
 div.entry.dir {
     cursor: pointer;
     font-weight: bold;
+}
+
+#googleView {
+    font-family: Gruppo, sans-serif;
+    position: absolute;
+    top: 10%;
+    left: 10%;
+    width: 60%;
+    height: 60%;
+    text-shadow: 1px 1px 1px white;
+}
+
+#googleFiles {
+    height: 80%;
+    background-color: #D5D5D5;
+    overflow: scroll;
+    border-top: 1px solid #EEE;
+}
+
+#userInfo {
+    padding: 0 5px;
+    height: 20%;
+    background-color: #CCC;
+    border-bottom: 1px solid #999;
+}
+#totalSize {
+    float: right;
+    position: absolute;
+    top: 0;
+    right: 10px;
+}
+#usedSize {
+    float: right;
+    right: 5px;
+    position: relative;
 }

@@ -188,25 +188,31 @@
       }
 
       function showFileList(node, nodeul) {
-        debug('Build list:');
         debug(node);
         debug(nodeul);
         // Set up the 'li' node for every entry.
         var li = $('<li title="'+node.path+'"></li>');
+        li.appendTo(nodeul);
         var entry = $('<div class="entry '+node.type+'"></div>');
-        var link = $('<span class="link">'+node.name+'</span>');
+        var name = node.name;
+        var gID = '';
+        if(node.name.indexOf('~')!== -1){
+          name = node.name.split('~')[0];
+          gID = 'gID="'+node.name.split('~')[1]+'"';
+        }
+        var link = $('<span class="link" '+gID+'>'+name+'</span>');
         var operation = $('<span class="operation" style="color:red;">X</span>');
         link.appendTo(entry);
         entry.appendTo(li);
 
         if (node.type == 'file') {
           li.addClass('listFile');
-          var divR = $('<span class="size">'+bytesToSize(node.size, 2)+'</span>').appendTo(entry);
+          $('<span class="size">'+bytesToSize(node.size, 2)+'</span>').appendTo(entry);
           link.data('path', node.url);
           operation.on('click', function(){FileApi.removeFile(node.name);});
           operation.appendTo(entry);
           link.on('click',function(){
-            Controller.playFromExplorer($(this).data('path'));
+            window.Controller.playFromExplorer($(this).data('path'));
           });
         } else {
           debug('Req type is dir: ' + node.path);
@@ -230,7 +236,6 @@
             }
           });
         }
-        li.appendTo(nodeul);
       }
 
       function command_sort(dir) {
@@ -272,40 +277,15 @@
         size = Math.floor(Math.round(size * 100) / 100);
         return size + ['', 'K', 'M', 'G', 'T'][unit] + 'B';
       }
-      function bytesToSize(bytes, precision) {
-        var kilobyte = 1024;
-        var megabyte = kilobyte * 1024;
-        var gigabyte = megabyte * 1024;
-        var terabyte = gigabyte * 1024;
-
-        if ((bytes >= 0) && (bytes < kilobyte)) {
-          return bytes + ' B';
-
-        } else if ((bytes >= kilobyte) && (bytes < megabyte)) {
-          return (bytes / kilobyte).toFixed(precision) + ' KB';
-
-        } else if ((bytes >= megabyte) && (bytes < gigabyte)) {
-          return (bytes / megabyte).toFixed(precision) + ' MB';
-
-        } else if ((bytes >= gigabyte) && (bytes < terabyte)) {
-          return (bytes / gigabyte).toFixed(precision) + ' GB';
-
-        } else if (bytes >= terabyte) {
-          return (bytes / terabyte).toFixed(precision) + ' TB';
-
-        } else {
-          return bytes + ' B';
-        }
-      }
 
       function busy_count_up() {
-        log('count up', true);
+        debug('count up', true);
         busyCount++;
         header.html('Processing...');
       }
 
       function busy_count_down() {
-        log('count down', true);
+        debug('count down', true);
         if (busyCount <= 0) {
           console.error('ERROR: busy_count_down() is called while busyCount <= 0');
           return;
@@ -337,7 +317,7 @@
       }
 
       function sendMessage(func, param, callbackfunc) {
-        log('sendMessage: ', func);
+        debug('sendMessage: ', func);
         if (busyCount != 0) {
           log('busy count is ' + busyCount + '. not sending requests.');
           return false;
@@ -367,21 +347,18 @@
 
       var onMessage = new Event();
       onMessage.subscribe(function(e, request) {
-        log('onMessage: request ->  '+request.type);
-        // show the size of storage use
+        debug('onMessage: request ->  '+request.type);
         if (request.type == 'usage') {
           var leftSize = request.quota - request.usage;
           usageDiv.html(get_unit(leftSize));
         }
         else if (request.type == 'show') {
           var current = getDir(request.path);
-          log('currentdir: ', current.dir);
+          debug('currentdir: ', current.dir);
           command_sort(current.dir);
-
-          // show the contents of currentdir
           for (var i = 0; i < current.dir.length; i++)
             showFileList(current.dir[i], current.ul);
-        }
+          }
         else if (request.type == 'finished') {
           busy_count_down();
         }
@@ -429,7 +406,7 @@
       click:handleLeftZone
     });
 
-    dropZone[0].addEventListener('drop', Controller.handleDrop, false);
+    dropZone[0].addEventListener('drop', window.Controller.handleDrop, false);
 
     log('Event binding finished');
     window.onViewRendered.notify();

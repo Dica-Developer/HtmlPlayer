@@ -14,7 +14,7 @@ function applyCoverArtStyle() {
 }
 
 function next() {
-  var song = getFirstPlaylistElement();
+  var song = window.Controller.getFirstPlaylistElement();
   if (null !== song) {
     startPlay(song);
     removeFirstPlaylistElement();
@@ -27,8 +27,8 @@ function previous() {
   if (songHistory.length > 0) {
     var song = songHistory.pop();
     if (null !== song) {
-      startPlay(song);
-      setFirstPlaylistElement(song);
+      window.Controller.startPlay(song);
+      window.Controller.setFirstPlaylistElement(song);
       applyCoverArtStyle();
     }
   }
@@ -117,9 +117,9 @@ function backgroundTasks() {
 function updateSongList() {
   var currentSongList = localStorage["songs.list"];
   if (null !== currentSongList && undefined !== currentSongList) {
-    fillSongBox(JSON.parse(currentSongList), null);
+    window.Controller.fillSongBox(JSON.parse(currentSongList), null);
   }
-  searchForSongs("", collectSongs, null, null);
+  searchForSongs("", window.Controller.collectSongs, null, null);
 }
 
 $(function () {
@@ -145,7 +145,8 @@ $(function () {
   });
 
   $(document).on("keyup", function (event) {
-    if ('player' === viewState) {
+    if ('player' === window.viewState) {
+      var audio;
       switch (event.which) {
         case 76:
           $("#songBox").focus();
@@ -178,7 +179,7 @@ $(function () {
           notScrobbled = true;
           break;
         case 32:
-          var audio = document.getElementById('player');
+          audio = document.getElementById('player');
           if (audio.paused) {
             audio.play();
           } else {
@@ -198,18 +199,18 @@ $(function () {
           $("#playerControlView").animate({
             left:"0"
           });
-          var audio = document.getElementById('player');
+          audio = document.getElementById('player');
           if (audio.paused) {
             next();
             setNowPlaying();
             notScrobbled = true;
           }
-          viewState = 'player';
+          window.viewState = 'player';
           $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
           $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
           break;
         default:
-          var songList = JSON.parse(localStorage["songs.list"]);
+//          var songList = JSON.parse(localStorage["songs.list"]);
           // open a input field (like in gtk list views)
           // fillSongBox(songList, String.fromCharCode(event.which));
           break;
@@ -219,7 +220,7 @@ $(function () {
     }
   });
 
-  $("#player").on("ended", function (event) {
+  $("#player").on("ended", function () {
     next();
     setNowPlaying();
     notScrobbled = true;
@@ -255,7 +256,7 @@ $(function () {
 });
 
 function test(){
-  var song = Controller.getFirstPlaylistElement();
+  var song = window.Controller.getFirstPlaylistElement();
   var src = "https://streaming.one.ubuntu.com/rest/stream.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&id=" + song.id;
   function handler() {
     if(this.readyState == this.DONE) {
@@ -269,74 +270,4 @@ function test(){
   client.responseType = 'blob';
   client.open("GET", src);
   client.send(null);
-}
-
-function testGoogle(){
-  googleAuth.authorize(function() {
-    // Ready for action
-    var handler = function(){
-      if(this.readyState == this.DONE) {
-        var fileList = JSON.parse(this.response);
-        console.log(fileList);
-        var items = fileList.items;
-        var folder = {};
-        var files = {};
-        console.log(items[0]);
-        console.log(items[1]);
-        for (var idx = 0, item; item =  items[idx]; idx++) {
-          if(item.mimeType === 'application/vnd.google-apps.folder'){
-            if(typeof folder[item.id] == 'undefined'){
-              folder[item.id] = {};
-            }
-              folder[item.id].title = item.title;
-              folder[item.id].parentID = item.parents[0].id;
-          }else{
-            var file = {
-              id: item.id,
-              title: item.title,
-              parentID: item.parents[0].id,
-              url: item.downloadUrl
-            };
-            if(typeof folder[item.parents[0].id] == 'undefined'){
-              folder[item.parents[0].id] = {files: []};
-            }else if(typeof folder[item.parents[0].id].files == 'undefined'){
-              folder[item.parents[0].id].files = [];
-            }
-            folder[item.parents[0].id].files.push(file);
-            }
-          }
-        console.log(folder);
-
-//        var testUrl= item.downloadUrl;
-//        var song = {
-//          title: item.title,
-//          album: 'Test',
-//          artist: 'AAAAAAAAAAA'
-//        };
-//        var audio = audio = document.getElementById('player');
-//        console.log(audio);
-//        audio.type = 'audio/mpeg';
-//        audio.src = testUrl+'?access_token='+ googleAuth.getAccessToken();
-//        var audioHandler = function(){
-//          if(this.readyState == this.DONE) {
-//            console.log(typeof  this.response);
-//            console.log(this.response);
-//            FileApi.createFolder(song.artist+'/'+song.album);
-//            FileApi.writeFile(this.response, null, song);
-//          }
-//        };
-//
-//        var client = new XMLHttpRequest();
-//        client.onreadystatechange = audioHandler;
-//        client.open("GET", testUrl);
-//        client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
-//        client.send(null);
-      }
-    };
-    var client = new XMLHttpRequest();
-    client.onreadystatechange = handler;
-    client.open("GET", 'https://www.googleapis.com/drive/v2/files');
-    client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
-    client.send(null);
-  });
 }

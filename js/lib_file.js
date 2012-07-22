@@ -1,9 +1,7 @@
-(function($, View , JDV, log, debug){
+(function($, View , JDV, log){
   var fileSystem = null;
   var player = null;
   var fileReader = null;
-  var entries = [];
-  var localFilesystem = {};
   var onFileSystemChanged = new Event();
   var onID3readEnd = new Event();
 
@@ -29,7 +27,6 @@
         msg = 'Unknown Error: '+e;
         break;
     }
-    console.log(e);
     throw msg;
   };
 
@@ -45,30 +42,29 @@
 
   var writeFile = function(file, folder, songData) {
     log('Write file');
-    var name, dirEntry;
+    var name;
     if(typeof songData !== 'undefined'){
       name = songData.title;//+'.mp3'; TODO do we need an extension?
+      if(file.gID)name += '~'+file.gID;
       folder = '/'+songData.artist+'/'+songData.album;
       fileSystem.root.getDirectory(folder, {create: true}, function(dirEntry){
-        write(file, dirEntry, name);
+        write(file, dirEntry);
       }, errorHandler);
     }else if(typeof folder == 'string'){
       fileSystem.root.getDirectory(folder, {create: true}, function(dirEntry){
-        write(file, dirEntry, name);
+        write(file, dirEntry);
       }, errorHandler);
     }else{
       folder = folder || fileSystem.root;
-      write(file, folder, name);
+      write(file, folder);
     }
 
-    function write(f, dirEntry, name){
-      debug(file);
+    function write(f, dirEntry){
       var fileName = f.name || name;
       dirEntry.getFile(fileName, {create: true}, function(fileEntry) {
         fileEntry.createWriter(function(fileWriter) {
           fileWriter.write(f); // Note: write() can take a File or Blob object.
-          fileWriter.onwriteend = function(a,b,c,d){
-            console.log(a,b,c,d);
+          fileWriter.onwriteend = function(){
             log('Write end');
             addFileToFileList(f, dirEntry);
             onFileSystemChanged.notify();
@@ -88,32 +84,32 @@
   };
 
   var readID3Tags = function(file){
-    var me = this;
+    log('ID3 read', false);
     var reader = new FileReader();
     reader.onerror = function(e){
-      errorHandler(e)
+      errorHandler(e);
+      console.log('ID3'+e);
     };
-    reader.onloadend = function(e) {
+    reader.onloadend = function() {
+      log('ID3 eingelesen', false);
+
       var dv = new JDV(this.result);
       var title = '';
       var artist = '';
       var album = '';
-      if (dv.getString(4, dv.byteLength - 227) == 'TAG+') {
-        title = dv.getString(60, dv.tell());
-        artist = dv.getString(60, dv.tell());
-        album = dv.getString(60, dv.tell());
-      }else if(dv.getString(3, dv.byteLength - 128) == 'TAG') {
+      if(dv.getString(3, dv.byteLength - 128) == 'TAG') {
         title = dv.getString(30, dv.tell());
         artist = dv.getString(30, dv.tell());
         album = dv.getString(30, dv.tell());
       }
-      log(title);
-      onID3readEnd.notify({
-        artist: artist,
-        album: album,
-        name: title,
+      dv.seek(0);
+      var song = {
+        artist: artist.trim(),
+        album: album.trim(),
+        title: title.trim(),
         file: file
-      });
+      };
+      onID3readEnd.notify(song);
 
     };
     reader.readAsArrayBuffer(file);
@@ -122,16 +118,19 @@
   var createFolder = function(folders, root){
     log(folders);
     root = root || fileSystem.root;
-    folders = folders.split('/');
+    if(typeof folders === 'string'){
+      folders = folders.split('/');
+    }
     if (folders[0] == '.' || folders[0] == '') {
       folders = folders.slice(1);
     }
     root.getDirectory(folders[0], {create: true}, function(dirEntry) {
+      folders = folders.slice(1);
       if (folders.length) {
-        createFolder(folders.slice(1),dirEntry);
+        createFolder(folders,dirEntry);
       }
       onFileSystemChanged.notify();
-    }, errorHandler);
+    }, function(e){console.log(e);});
   };
 
   var removeFolder = function(folderName){
@@ -192,4 +191,4 @@
     onID3readEnd: onID3readEnd,
     onFileSystemChanged: onFileSystemChanged
   };
-})(jQuery,window.View, window.jDataView, window.log, window.debug);
+})(jQuery, window.View, window.jDataView, window.log);

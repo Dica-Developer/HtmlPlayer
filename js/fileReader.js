@@ -41,7 +41,7 @@
     finishRequest();
   }
 
-  function readFileSystem(listEntries) {
+  function readFileSystem(callBack) {
     if (!lock) throw 'fs_list is called without lock.';
     reader.readEntries(function (results) {
       if (results.length == 0) {
@@ -50,10 +50,10 @@
       }
       currentPendingEntries = results.length;
       for (var i = 0; i < results.length; i++) {
-        if (listEntries)
-          listEntries(results[i]);
+        if (callBack)
+          callBack(results[i]);
       }
-      readFileSystem(listEntries);
+      readFileSystem(callBack);
     }, function (e) {
       fileSystemErrorAndFinishRequest(e);
     });
@@ -69,7 +69,7 @@
   }
 
   function updateFileList(){
-    log('File reader: Update List');
+    debug('File reader: Update List');
     if (!startRequest()) return;
     reader = fileSystemCopy.root.createReader();
     displayUsage(window.PERSISTENT);
@@ -94,7 +94,7 @@
   function listEntry(entry) {
     var request = {};
     if (entry.isFile) {
-      entry.file(function (newFile) {
+      entry.file(function (newFile,b,c,d) {
         request = {
           'type':'file',
           'name':entry.name,
@@ -102,6 +102,8 @@
           'path':entry.fullPath,
           'url':entry.toURL()
         };
+        console.log(newFile, entry,b,c,d);
+        if(entry.gID)request.gID = entry.gId;
         debug('currentPendingEntries = ' + currentPendingEntries);
         debug('Send: ');
         debug(request);
@@ -144,7 +146,6 @@
 // Called only from delete_all.
   function removeEntry(entry) {
     if (!lock) throw 'remove_file is called without lock.';
-
     debug('remove entry');
     if (entry.isFile) {
       entry.remove(function () {
@@ -202,6 +203,7 @@
       return false;
   });
 
-  window.FileExplorer = {};
-  window.FileExplorer.onMessage = onMessage;
+  window.FileExplorer = {
+    onMessage:onMessage
+  };
 })(jQuery, window, window.log, window.debug);
