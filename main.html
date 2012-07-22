@@ -388,7 +388,10 @@
               default:
                 if (!$("#filterBox").data("open")) {
                   $("#filterBox").data("open", true);
-                  $('#filterBox').val(String.fromCharCode(event.which));
+                  // todo the first key should be fille in the filterBox
+                  // but with keyup we only get one normal keys and not chars that are created with two keys like !
+                  // this works only with keypress
+                  // $('#filterBox').val(String.fromCharCode(event.which));
                   $("#filterBox").show();
                 }
                 $('#filterBox').focus();
