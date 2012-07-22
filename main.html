@@ -17,8 +17,9 @@
     <div id="playerViewPreview">
     </div>
     <div id="searchView">
-      <select id="songBox" size="10" multiple="multiple"></select>
-      <select id="playlistBox" size="10" multiple="multiple"></select>
+      <input id="filterBox" type="text"></input>
+      <select id="songBox" size="1" multiple="multiple"></select>
+      <select id="playlistBox" size="1" multiple="multiple"></select>
     </div>
     <div id="playerView">
       <audio id="player" autoplay="true" preload="auto"></audio>
@@ -173,7 +174,7 @@
         }
         searchForSongs("", collectSongs, null, null);
       }
-
+      
       $(function() {
         if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
           document.location = chrome.extension.getURL("options/index.html");
@@ -313,6 +314,7 @@
           }
         });
 
+        var filterBoxTimeout = null;
         $(document).on("keyup", function(event) {
           if ('player' === viewState) {
             switch (event.which) {
@@ -358,29 +360,44 @@
           } else if ('search' === viewState) {
             switch (event.which) {
               case 27:
-                $("#searchView").animate({
-                  left: -1 * $(document).width()
-                });
-                $("#playerView").animate({
-                  left: "0"
-                });
-                $("#playerControlView").animate({
-                  left: "0"
-                });
-                var audio = document.getElementById('player');
-                if (audio.paused) {
-                  next();
-                  setNowPlaying();
-                  notScrobbled = true;
+                if ($("#filterBox").data("open")) {
+                  $("#filterBox").data("open", false);
+                  $("#filterBox").hide();
+                } else {
+                  $("#searchView").animate({
+                    left: -1 * $(document).width()
+                  });
+                  $("#playerView").animate({
+                    left: "0"
+                  });
+                  $("#playerControlView").animate({
+                    left: "0"
+                  });
+                  var audio = document.getElementById('player');
+                  if (audio.paused) {
+                    next();
+                    setNowPlaying();
+                    notScrobbled = true;
+                  }
+                  viewState = 'player';
+                  $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
+                  $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
                 }
-                viewState = 'player';
-                $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
-                $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
                 break;
               default:
-                var songList = JSON.parse(localStorage["songs.list"]);
-                // open a input field (like in gtk list views)
-                // fillSongBox(songList, String.fromCharCode(event.which));
+                if (!$("#filterBox").data("open")) {
+                  $("#filterBox").data("open", true);
+                  $('#filterBox').val(String.fromCharCode(event.which));
+                  $("#filterBox").show();
+                }
+                $('#filterBox').focus();
+                if (null !== filterBoxTimeout) {
+                  clearTimeout(filterBoxTimeout);
+                }
+                filterBoxTimeout = setTimeout(function() {
+                  var songList = JSON.parse(localStorage["songs.list"]);
+                  fillSongBox(songList, $('#filterBox').val());
+                }, 500);
                 break;
             }
           } else {
