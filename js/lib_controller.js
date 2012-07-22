@@ -22,17 +22,17 @@ function descending(songA, songB) {
     } 
 
     if (0 === result) {
-        if (songA.album === null && songB.album !== null) {
-          result = 1
-        } else if (songA.album !== null && songB.album === null) {
+      if (songA.album === null && songB.album !== null) {
+        result = 1
+      } else if (songA.album !== null && songB.album === null) {
+        result = -1;
+      } else if (songA.album !== null && songB.album !== null) {
+        if (songA.album.toLowerCase() < songB.album.toLowerCase()) {
           result = -1;
-        } else if (songA.album !== null && songB.album !== null) {
-          if (songA.album.toLowerCase() < songB.album.toLowerCase()) {
-            result = -1;
-          } else if (songA.album.toLowerCase() > songB.album.toLowerCase()) {
-            result = 1;
-          }
-        } 
+        } else if (songA.album.toLowerCase() > songB.album.toLowerCase()) {
+          result = 1;
+        }
+      } 
 
       if (0 === result) {
         if (songA.track === null && songB.track !== null) {
