@@ -21,43 +21,31 @@
     }
 
     if (0 === result) {
-      if (songA.year !== null && songB.year !== null) {
-        if (songA.year < songB.year) {
+      if (songA.album === null && songB.album !== null) {
+        result = 1
+      } else if (songA.album !== null && songB.album === null) {
+        result = -1;
+      } else if (songA.album !== null && songB.album !== null) {
+        if (songA.album.toLowerCase() < songB.album.toLowerCase()) {
           result = -1;
-        } else if (songA.year > songB.year) {
+        } else if (songA.album.toLowerCase() > songB.album.toLowerCase()) {
           result = 1;
         }
-      }
-
+      } 
       if (0 === result) {
-        if (songA.album === null && songB.album !== null) {
+        if (songA.track === null && songB.track !== null) {
           result = 1
-        } else if (songA.album !== null && songB.album === null) {
+        } else if (songA.track !== null && songB.track === null) {
           result = -1;
-        } else if (songA.album !== null && songB.album !== null) {
-          if (songA.album.toLowerCase() < songB.album.toLowerCase()) {
+        } else if (songA.track !== null && songB.track !== null) {
+          if (songA.track < songB.track) {
             result = -1;
-          } else if (songA.album.toLowerCase() > songB.album.toLowerCase()) {
+          } else if (songA.track > songB.track) {
             result = 1;
-          }
-        }
-
-        if (0 === result) {
-          if (songA.track === null && songB.track !== null) {
-            result = 1
-          } else if (songA.track !== null && songB.track === null) {
-            result = -1;
-          } else if (songA.track !== null && songB.track !== null) {
-            if (songA.track < songB.track) {
-              result = -1;
-            } else if (songA.track > songB.track) {
-              result = 1;
-            }
           }
         }
       }
     }
-
     return result;
   }
 

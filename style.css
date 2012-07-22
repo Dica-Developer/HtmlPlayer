@@ -105,7 +105,6 @@ progress::-moz-progress-bar {
     margin-top: 3px;
 }
 
-
 /*Message Box*/
 #messageBox {
     position: absolute;
@@ -239,4 +238,9 @@ div.entry.dir {
     float: right;
     right: 5px;
     position: relative;
+}
+#filterBox {
+  position: absolute;
+  z-index: 100;
+  display: none;
 }

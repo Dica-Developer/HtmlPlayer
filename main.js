@@ -144,9 +144,10 @@ $(function () {
     }
   });
 
-  $(document).on("keyup", function (event) {
+  var filterBoxTimeout = null;
+  $(document).on("keyup", function(event) {
+    var audio;
     if ('player' === window.viewState) {
-      var audio;
       switch (event.which) {
         case 76:
           $("#songBox").focus();
@@ -158,13 +159,13 @@ $(function () {
           $("#playlistBox").height(boxHeight);
           $("#searchView").height($(document).height());
           $("#searchView").animate({
-            left:"0"
+            left: "0"
           });
           $("#playerView").animate({
-            left:$(document).width()
+            left: $(document).width()
           });
           $("#playerControlView").animate({
-            left:$(document).width()
+            left: $(document).width()
           });
           viewState = 'search';
           break;
@@ -187,32 +188,51 @@ $(function () {
           }
           break;
       }
-    } else if ('search' === viewState) {
+    } else if ('search' === window.viewState) {
       switch (event.which) {
         case 27:
-          $("#searchView").animate({
-            left:-1 * $(document).width()
-          });
-          $("#playerView").animate({
-            left:"0"
-          });
-          $("#playerControlView").animate({
-            left:"0"
-          });
-          audio = document.getElementById('player');
-          if (audio.paused) {
-            next();
-            setNowPlaying();
-            notScrobbled = true;
+          if ($("#filterBox").data("open")) {
+            $("#filterBox").data("open", false);
+            $("#filterBox").hide();
+            $('#filterBox').val("");
+          } else {
+            $("#searchView").animate({
+              left: -1 * $(document).width()
+            });
+            $("#playerView").animate({
+              left: "0"
+            });
+            $("#playerControlView").animate({
+              left: "0"
+            });
+            audio = document.getElementById('player');
+            if (audio.paused) {
+              next();
+              setNowPlaying();
+              notScrobbled = true;
+            }
+            viewState = 'player';
+            $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
+            $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
           }
-          window.viewState = 'player';
-          $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
-          $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
           break;
         default:
-//          var songList = JSON.parse(localStorage["songs.list"]);
-          // open a input field (like in gtk list views)
-          // fillSongBox(songList, String.fromCharCode(event.which));
+          if (!$("#filterBox").data("open")) {
+            $("#filterBox").data("open", true);
+            // todo the first key should be fille in the filterBox
+            // but with keyup we only get one normal keys and not chars that are created with two keys like !
+            // this works only with keypress
+            // $('#filterBox').val(String.fromCharCode(event.which));
+            $("#filterBox").show();
+          }
+          $('#filterBox').focus();
+          if (null !== filterBoxTimeout) {
+            clearTimeout(filterBoxTimeout);
+          }
+          filterBoxTimeout = setTimeout(function() {
+            var songList = JSON.parse(localStorage["songs.list"]);
+            window.Controller.fillSongBox(songList, $('#filterBox').val());
+          }, 500);
           break;
       }
     } else {
