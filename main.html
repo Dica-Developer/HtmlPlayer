@@ -393,8 +393,16 @@
                   $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
                 }
                 break;
+              case 37:
+              case 38:
+              case 39:
+              case 40:
+              case 9:
+              case 16:
+              case 18:
+              case 17:
+                break;
               default:
-                // todo ignore cursor keys
                 if (!$("#filterBox").data("open")) {
                   $("#filterBox").data("open", true);
                   // todo the first key should be filled in the filterBox
