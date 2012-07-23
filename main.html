@@ -318,6 +318,14 @@
         $(document).on("keyup", function(event) {
           if ('player' === viewState) {
             switch (event.which) {
+              case 187:
+                var audio = document.getElementById('player');
+                audio.playbackRate = audio.playbackRate + 0.05;
+                break;
+              case 189:
+                var audio = document.getElementById('player');
+                audio.playbackRate = audio.playbackRate - 0.05;
+                break;
               case 76:
                 $("#songBox").focus();
                 var boxWidth = ($(document).width() / 2) - 20 - 2;
@@ -386,10 +394,11 @@
                 }
                 break;
               default:
+                // todo ignore cursor keys
                 if (!$("#filterBox").data("open")) {
                   $("#filterBox").data("open", true);
-                  // todo the first key should be fille in the filterBox
-                  // but with keyup we only get one normal keys and not chars that are created with two keys like !
+                  // todo the first key should be filled in the filterBox
+                  // but with keyup we only get a normal key and not chars that are created with two keys like !
                   // this works only with keypress
                   // $('#filterBox').val(String.fromCharCode(event.which));
                   $("#filterBox").show();
