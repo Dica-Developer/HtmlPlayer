@@ -318,6 +318,14 @@
         $(document).on("keyup", function(event) {
           if ('player' === viewState) {
             switch (event.which) {
+              case 39:
+                var audio = document.getElementById('player');
+                audio.currentTime = audio.currentTime + 10;
+                break;
+              case 37:
+                var audio = document.getElementById('player');
+                audio.currentTime = audio.currentTime - 10;
+                break;
               case 187:
                 var audio = document.getElementById('player');
                 audio.playbackRate = audio.playbackRate + 0.05;
