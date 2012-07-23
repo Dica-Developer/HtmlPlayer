@@ -378,6 +378,7 @@
               case 27:
                 if ($("#filterBox").data("open")) {
                   $("#filterBox").data("open", false);
+                  $("#songBox").focus();
                   $("#filterBox").hide();
                   $('#filterBox').val("");
                 } else {
