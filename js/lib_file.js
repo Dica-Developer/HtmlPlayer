@@ -94,9 +94,9 @@
       log('ID3 eingelesen', false);
 
       var dv = new JDV(this.result);
-      var title = '';
-      var artist = '';
-      var album = '';
+      var title = 'unknown';
+      var artist = 'unknown';
+      var album = 'unknown';
       if(dv.getString(3, dv.byteLength - 128) == 'TAG') {
         title = dv.getString(30, dv.tell());
         artist = dv.getString(30, dv.tell());
