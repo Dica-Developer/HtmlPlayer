@@ -123,15 +123,15 @@ function updateSongList() {
 }
 
 $(function () {
-//  if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
-//    if (window.File && window.FileReader && window.FileList && window.Blob) {
-//      View.showNoSongsMessage();
-//    } else {
-//      console.log('no');
-//    }
-//  } else {
-//    updateSongList();
-//  }
+ if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
+   if (window.File && window.FileReader && window.FileList && window.Blob) {
+     View.showNoSongsMessage();
+   } else {
+     console.log('no');
+   }
+ } else {
+   updateSongList();
+ }
 
   $("#songBox").on("keyup", function (event) {
     if (39 === event.which) {
