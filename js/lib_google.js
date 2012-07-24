@@ -25,51 +25,38 @@
 
   function buildList(response) {
     log('Start building list', true);
+    var roots = null;
+    var folder = {};
     var fileList = JSON.parse(response);
     var items = fileList.items;
-    var folder = {};
     for (var idx = 0, item; item = items[idx]; idx++) {
+      var file = {
+        id:item.id,
+        title:item.title,
+        parentID:item.parents[0].id,
+        url:item.downloadUrl,
+        size:item.fileSize,
+        isFolder:false,
+        children: []
+      };
       if (item.mimeType === 'application/vnd.google-apps.folder') {
-        if (typeof folder[item.id] == 'undefined') {
-          folder[item.id] = {};
+        if (folder[item.id] !== undefined) {
+          file.children = folder[item.id].children;
         }
-        folder[item.id].title = item.title;
-        folder[item.id].isFolder = true;
-        folder[item.id].parentID = item.parents[0].id;
-        folder[item.id].id = item.id;
-      } else {
-        var file = {
-          id:item.id,
-          title:item.title,
-          parentID:item.parents[0].id,
-          url:item.downloadUrl,
-          size:item.fileSize,
-          isFolder:false
+        file.isFolder = true;
+        folder[item.id] = file;
+      }
+      if (folder[item.parents[0].id] === undefined || folder[item.parents[0].id] === null) {
+        folder[item.parents[0].id] = {
+          children: []
         };
-        if (typeof folder[item.parents[0].id] == 'undefined') {
-          folder[item.parents[0].id] = {children:[]};
-        } else if (typeof folder[item.parents[0].id].children == 'undefined') {
-          folder[item.parents[0].id].children = [];
-        }
-        folder[item.parents[0].id].children.push(file);
-        folder[item.parents[0].id].children.sort(gDescending.bind({'title':true}));
       }
+      folder[item.parents[0].id].children.push(file);
+      folder[item.parents[0].id].children.sort(gDescending.bind({'title':true}));
     }
-    var roots = {};
     for (var root in folder) {
-      if (folder.hasOwnProperty(root)) {
-        if (typeof folder[root].children == 'undefined') {
-          roots[root] = folder[root];
-          roots[root].children = [];
-        }
-      }
-    }
-    for (var entry in folder) {
-      if (folder.hasOwnProperty(entry)) {
-        if (typeof roots[folder[entry].parentID] !== 'undefined') {
-          if (roots[folder[entry].parentID].children == 'undefined') roots[folder[entry].parentID].children = [];
-          roots[folder[entry].parentID].children.push(folder[entry]);
-        }
+      if (!folder[root].hasOwnProperty("parentID")) {
+        roots = folder[root];
       }
     }
     var req = getUserInfo();
@@ -83,35 +70,32 @@
   }
 
   function buildHtml(roots) {
-    if (typeof roots === 'undefined' || roots.length === 0) {
+    if (roots === null) {
       log('No list from google drive received', false);
     } else {
       var mainDiv = $('#googleFiles');
       var ul = $('<ul></ul>');
+      ul.appendTo(mainDiv);
       var li;
-      for (var entry in roots) {
-        if (roots.hasOwnProperty(entry)) {
-          if (roots[entry].isFolder) {
-            ul.attr('folder', roots[entry].parentID);
-            li = $('<li id="' + roots[entry].id + '">' + roots[entry].title + '</li>');
+      for (var i = 0, children; children = roots.children[i]; i++) {
+          if (children.isFolder) {
+            ul.attr('folder', children.parentID);
+            li = $('<li id="' + children.id + '">' + children.title + '</li>');
             li.appendTo(ul);
-            if (elemExist(roots[entry].parentID)) {
-              ul.appendTo('#' + roots[entry].parentID);
-            } else {
-              ul.appendTo(mainDiv);
+            if (elemExist(children.parentID)) {
+              ul.appendTo('#' + children.parentID);
             }
-            if (typeof roots[entry].children !== undefined) {
-              buildHtml(roots[entry].children);
+            if (children.children.length > 0) {
+              buildHtml(children);
             }
           } else {
-            ul.attr('folder', roots[entry].parentID);
-            var isSynced = isSynchronized(roots[entry].id) ? 'X' : 'O';
-            var sync = 'syncTool(\'' + roots[entry].url + '\',\'' + roots[entry].id + '\',\'' + roots[entry].title + '\')';
-            li = $('<li id="' + roots[entry].id + '">' + roots[entry].title + ' : ' + bytesToSize(roots[entry].size, 2) + '<a href="#" onclick="' + sync + '">SYNC</a> ' + isSynced + '</li>');
+            ul.attr('folder', children.parentID);
+            var isSynced = isSynchronized(roots.children[i].id) ? 'X' : 'O';
+            var sync = 'syncTool(\'' + children.url + '\',\'' + children.id + '\',\'' + children.title + '\')';
+            li = $('<li id="' + children.id + '">' + children.title + ' : ' + bytesToSize(children.size, 2) + '<a href="#" onclick="' + sync + '">SYNC</a> ' + isSynced + '</li>');
             li.appendTo(ul);
-            ul.appendTo('#' + roots[entry].parentID);
+            ul.appendTo('#' + children.parentID);
           }
-        }
       }
     }
   }
