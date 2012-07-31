@@ -24,6 +24,6 @@
   "options_page": "options/index.html",
   "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://streaming.one.ubuntu.com/rest/*"],
   "manifest_version": 2,
-  "content_security_policy": "default-src 'self'; style-src 'self'; script-src 'self'; object-src 'self'; connect-src * 'self'; img-src http://cdn.last.fm 'self'"
+  "content_security_policy": "default-src *; style-src 'self'; script-src 'self'; object-src 'self'; connect-src * ; img-src http://cdn.last.fm https://streaming.one.ubuntu.com 'self'"
 }
 

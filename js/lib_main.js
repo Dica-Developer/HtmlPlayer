@@ -270,7 +270,7 @@ $(function() {
           height : "50px"
         });
       }
-      closePlayerControlViewTimerId = setTimeout("closePlayerControlView()", 3000);
+      closePlayerControlViewTimerId = setTimeout(closePlayerControlView, 3000);
     }
   });
 
@@ -422,5 +422,5 @@ $(function() {
     }
     alert(errorMsg);
   });
-  setInterval("backgroundTasks()", 1000);
+  setInterval(backgroundTasks, 1000);
 });
