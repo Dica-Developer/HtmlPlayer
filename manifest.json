@@ -20,7 +20,10 @@
 	  "48": "images/icon48.png",
 	  "16": "images/icon16.png"
 	},
+	"offline_enabled": false,
   "options_page": "options/index.html",
-  "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://streaming.one.ubuntu.com/rest/*"]
+  "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://streaming.one.ubuntu.com/rest/*"],
+  "manifest_version": 2,
+  "content_security_policy": "default-src 'self'; style-src 'self'; script-src 'self'; object-src 'self'; connect-src * 'self'; img-src http://cdn.last.fm 'self'"
 }
 
