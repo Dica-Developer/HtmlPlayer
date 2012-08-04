@@ -110,7 +110,7 @@ function handleFileSelect(evt) {
 }
 
 function getFirstPlaylistElement() {
-  var elements = $("#playlistBox :first");
+  var elements = $("#playlistBox option :first");
   if (elements.length > 0) {
     return JSON.parse(unescape(elements[0].value));
   } else {
@@ -124,7 +124,7 @@ function setFirstPlaylistElement(song) {
   var optionText = document.createTextNode(song.artist + " / " + song.album + " / " + song.track + ". " + song.title);
   option.appendChild(optionText);
   var container = document.getElementById("playlistBox");
-  var elements = $("#playlistBox :first");
+  var elements = $("#playlistBox option :first");
   if (elements.length > 0) {
     container.insertBefore(option, elements[0]);
   } else {
@@ -133,7 +133,7 @@ function setFirstPlaylistElement(song) {
 }
 
 function removeFirstPlaylistElement() {
-  $("#playlistBox :first").detach();
+  $("#playlistBox option :first").detach();
 }
 
 function fillSongBox(songs, query) {
