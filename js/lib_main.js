@@ -385,7 +385,7 @@ $(function() {
             clearTimeout(filterBoxTimeout);
           }
           filterBoxTimeout = setTimeout(function() {
-            var currentSongList = songDb.query();
+            var currentSongList = songDb.query().get();
             fillSongBox(currentSongList, $('#filterBox').val());
           }, 500);
           break;
