@@ -232,7 +232,7 @@ $(function() {
         });
       } else if ("click" === event.type) {
         $("#songBox").focus();
-        var boxWidth = ($(document).width() / 2) - 20 - 2;
+        var boxWidth = ($(document).width() / 2) - 22 - 2;
         var boxHeight = $(document).height() - 22;
         $("#songBox").width(boxWidth);
         $("#songBox").height(boxHeight);
@@ -296,7 +296,7 @@ $(function() {
           break;
         case 76:
           $("#songBox").focus();
-          var boxWidth = ($(document).width() / 2) - 20 - 2;
+          var boxWidth = ($(document).width() / 2) - 22 - 2;
           var boxHeight = $(document).height() - 22;
           $("#songBox").width(boxWidth);
           $("#songBox").height(boxHeight);
