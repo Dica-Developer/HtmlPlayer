@@ -56,6 +56,8 @@ function descending(songA, songB) {
 function collectSongs(event) {
   // TODO this should be moved out to a music backend specific code
   // collectSongs should get from all backends a list of songs
+  var backend = "SUBSONIC";
+  var timestamp = (new Date()).getTime();
   var req = event.target;
   var ssr = req.responseXML.getElementsByTagName("subsonic-response");
   if (null !== ssr && undefined !== ssr && ssr.length > 0 && "ok" === ssr[0].getAttribute("status")) {
@@ -72,13 +74,15 @@ function collectSongs(event) {
         "track": songs[i].getAttribute("track") ? parseInt(songs[i].getAttribute("track")) : null, 
         "duration": songs[i].getAttribute("duration"),
         "genre": songs[i].getAttribute("genre"),
-        "year": songs[i].getAttribute("year") ? parseInt(songs[i].getAttribute("year")) : null
+        "year": songs[i].getAttribute("year") ? parseInt(songs[i].getAttribute("year")) : null,
+        "addedOn" : timestamp,
+        "backendId": backend
       };
       songList.push(song);
       songDb.query.insert(song);
     }
-    // TODO parsisting the db should be done on closing the app
-    // TODO then also clean out old objects
+    songDb.query({backendId:{is:backend}, addedOn:{lt:timestamp}}).remove();
+    // TODO persisting the db should be done on closing the app
     songDb.save();
     // TODO fire event to fill songbox
     songList.sort(descending);
