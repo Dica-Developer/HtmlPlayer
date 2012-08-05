@@ -1,6 +1,7 @@
 var songHistory = new Array();
 var viewState = 'player';
 var notScrobbled = true;
+var songDb = Object.create(Db);
 
 function addToHistory(song) {
   songHistory.push(song)
@@ -126,14 +127,13 @@ function closePlayerControlView() {
 }
 
 function updateSongList() {
-  var currentSongList = localStorage["songs.list"];
-  if (null !== currentSongList && undefined !== currentSongList) {
-    fillSongBox(JSON.parse(currentSongList), null);
-  }
+  var currentSongList = songDb.query().get();
+  fillSongBox(currentSongList, null);
   searchForSongs("", collectSongs, null, null);
 }
 
 $(function() {
+  songDb.init('songs');
   if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
     document.location = chrome.extension.getURL("options/index.html");
   }
@@ -385,8 +385,8 @@ $(function() {
             clearTimeout(filterBoxTimeout);
           }
           filterBoxTimeout = setTimeout(function() {
-            var songList = JSON.parse(localStorage["songs.list"]);
-            fillSongBox(songList, $('#filterBox').val());
+            var currentSongList = songDb.query();
+            fillSongBox(currentSongList, $('#filterBox').val());
           }, 500);
           break;
       }

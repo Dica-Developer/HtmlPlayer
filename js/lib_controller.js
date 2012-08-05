@@ -54,6 +54,8 @@ function descending(songA, songB) {
 }
 
 function collectSongs(event) {
+  // TODO this should be moved out to a music backend specific code
+  // collectSongs should get from all backends a list of songs
   var req = event.target;
   var ssr = req.responseXML.getElementsByTagName("subsonic-response");
   if (null !== ssr && undefined !== ssr && ssr.length > 0 && "ok" === ssr[0].getAttribute("status")) {
@@ -73,9 +75,13 @@ function collectSongs(event) {
         "year": songs[i].getAttribute("year") ? parseInt(songs[i].getAttribute("year")) : null
       };
       songList.push(song);
+      songDb.query.insert(song);
     }
+    // TODO parsisting the db should be done on closing the app
+    // TODO then also clean out old objects
+    songDb.save();
+    // TODO fire event to fill songbox
     songList.sort(descending);
-    localStorage["songs.list"] = JSON.stringify(songList);
     fillSongBox(songList, null);
   } else {
     error = "fetching songs failed with status '" +ssr.getAttribute("status")+ "'";
