@@ -1,59 +1,3 @@
-function descending(songA, songB) {
-  var result = 0;
-  if (songA.artist === null && songB.artist !== null) {
-    result = 1
-  } else if (songA.artist !== null && songB.artist === null) {
-    result = -1;
-  } else if (songA.artist !== null && songB.artist !== null) {
-    if (songA.artist.toLowerCase() < songB.artist.toLowerCase()) {
-      result = -1;
-    } else if (songA.artist.toLowerCase() > songB.artist.toLowerCase()) {
-      result = 1;
-    }
-  }
-
-  if (0 === result) {
-    if (songA.year !== null && songB.year !== null) {
-      if (songA.year < songB.year) {
-        result = -1;
-      } else if (songA.year > songB.year) {
-        result = 1;
-      }
-    } 
-
-    if (0 === result) {
-      if (songA.album === null && songB.album !== null) {
-        result = 1
-      } else if (songA.album !== null && songB.album === null) {
-        result = -1;
-      } else if (songA.album !== null && songB.album !== null) {
-        if (songA.album.toLowerCase() < songB.album.toLowerCase()) {
-          result = -1;
-        } else if (songA.album.toLowerCase() > songB.album.toLowerCase()) {
-          result = 1;
-        }
-      } 
-
-      // TODO If album medium number is available sort by it first
-      if (0 === result) {
-        if (songA.track === null && songB.track !== null) {
-          result = 1
-        } else if (songA.track !== null && songB.track === null) {
-          result = -1;
-        } else if (songA.track !== null && songB.track !== null) {
-          if (songA.track < songB.track) {
-            result = -1;
-          } else if (songA.track > songB.track) {
-            result = 1;
-          }
-        } 
-      }
-    }
-  }
-  
-  return result;
-}
-
 function collectSongs(event) {
   // TODO this should be moved out to a music backend specific code
   // collectSongs should get from all backends a list of songs
@@ -86,7 +30,6 @@ function collectSongs(event) {
     // TODO persisting the db should be done on closing the app
     songDb.save();
     // TODO fire event to fill songbox
-    songList.sort(descending);
     fillSongBox(songList);
   } else {
     error = "fetching songs failed with status '" +ssr.getAttribute("status")+ "'";

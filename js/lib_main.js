@@ -127,8 +127,8 @@ function closePlayerControlView() {
 }
 
 function updateSongList() {
-  var currentSongList = songDb.query().get();
-  fillSongBox(currentSongList, null);
+  var currentSongList = songDb.query().order('artist asec').order('album asec').order('year asec').order('track asec').get();
+  fillSongBox(currentSongList);
   searchForSongs("", collectSongs, null, null);
 }
 
@@ -388,7 +388,9 @@ $(function() {
             var currentSongList = [];
             var filterQuery = $('#filterBox').val();
             if (null !== filterQuery && undefined !== filterQuery) {
-              currentSongList = songDb.query([{artist:{likenocase:filterQuery}}, {album:{likenocase:filterQuery}}, {genre:{likenocase:filterQuery}}, {title:{likenocase:filterQuery}}]).get();
+              // TODO If album medium number is available sort by it first
+              var dbQuery = [{artist:{likenocase:filterQuery}}, {album:{likenocase:filterQuery}}, {genre:{likenocase:filterQuery}}, {title:{likenocase:filterQuery}}];
+              currentSongList = songDb.query(dbQuery).order('artist asec').order('album asec').order('year asec').order('track asec').get();
             } else {
               currentSongList = songDb.query().get();
             }
