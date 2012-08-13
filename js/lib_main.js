@@ -385,8 +385,14 @@ $(function() {
             clearTimeout(filterBoxTimeout);
           }
           filterBoxTimeout = setTimeout(function() {
-            var currentSongList = songDb.query().get();
-            fillSongBox(currentSongList, $('#filterBox').val());
+            var currentSongList = [];
+            var filterQuery = $('#filterBox').val();
+            if (null !== filterQuery && undefined !== filterQuery) {
+              currentSongList = songDb.query([{artist:{likenocase:filterQuery}}, {album:{likenocase:filterQuery}}, {genre:{likenocase:filterQuery}}, {title:{likenocase:filterQuery}}]).get();
+            } else {
+              currentSongList = songDb.query().get();
+            }
+            fillSongBox(currentSongList);
           }, 500);
           break;
       }

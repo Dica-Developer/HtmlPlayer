@@ -34,6 +34,7 @@ function descending(songA, songB) {
         }
       } 
 
+      // TODO If album medium number is available sort by it first
       if (0 === result) {
         if (songA.track === null && songB.track !== null) {
           result = 1
@@ -86,7 +87,7 @@ function collectSongs(event) {
     songDb.save();
     // TODO fire event to fill songbox
     songList.sort(descending);
-    fillSongBox(songList, null);
+    fillSongBox(songList);
   } else {
     error = "fetching songs failed with status '" +ssr.getAttribute("status")+ "'";
   }
@@ -146,19 +147,15 @@ function removeFirstPlaylistElement() {
   $("#playlistBox option :first").detach();
 }
 
-function fillSongBox(songs, query) {
+function fillSongBox(songs) {
   var options = "";
   for (var i = 0; i < songs.length; i++) {
     var song = songs[i];
-    var patt = new RegExp(query, "i");
-    if (null === query || (null != song.artist && -1 !== song.artist.search(patt)) || (null != song.title && -1 !== song.title.search(patt))
-        || (null != song.album && -1 !== song.album.search(patt)) || (null != song.genre && -1 !== song.genre.search(patt))) {
-      var option = "<option ";
-      option = option + "value='" + escape(JSON.stringify(song)) + "'>";
-      option = option + song.artist + " / " + song.album + " / " + song.track + ". " + song.title;
-      option = option + "</option>";
-      options = options + option;
-    } 
+    var option = "<option ";
+    option = option + "value='" + escape(JSON.stringify(song)) + "'>";
+    option = option + song.artist + " / " + song.album + " / " + song.track + ". " + song.title;
+    option = option + "</option>";
+    options = options + option;
   }
   $("#songBox").html(options);
 }
