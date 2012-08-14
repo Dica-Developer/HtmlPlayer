@@ -1,40 +1,14 @@
-function collectSongs(event) {
-  // TODO this should be moved out to a music backend specific code
-  // collectSongs should get from all backends a list of songs
-  var backend = "SUBSONIC";
-  var timestamp = (new Date()).getTime();
-  var req = event.target;
-  var ssr = req.responseXML.getElementsByTagName("subsonic-response");
-  if (null !== ssr && undefined !== ssr && ssr.length > 0 && "ok" === ssr[0].getAttribute("status")) {
-    var songs = req.responseXML.getElementsByTagName("match");
-    var songList = new Array();
-    for (var i = 0; i < songs.length; i++) {
-      var song = {
-        "artist": songs[i].getAttribute("artist"),
-        "album": songs[i].getAttribute("album"),
-        "title": songs[i].getAttribute("title"),
-        "id": songs[i].getAttribute("id"),
-        "coverArt": songs[i].getAttribute("coverArt"),
-        "contentType": songs[i].getAttribute("contentType"),
-        "track": songs[i].getAttribute("track") ? parseInt(songs[i].getAttribute("track")) : null, 
-        "duration": songs[i].getAttribute("duration"),
-        "genre": songs[i].getAttribute("genre"),
-        "year": songs[i].getAttribute("year") ? parseInt(songs[i].getAttribute("year")) : null,
-        "addedOn" : timestamp,
-        "backendId": backend
-      };
-      songList.push(song);
-      songDb.query.insert(song);
-    }
-    songDb.query({backendId:{is:backend}, addedOn:{lt:timestamp}}).remove();
-    // TODO persisting the db should be done on closing the app
-    songDb.save();
-    // TODO fire event to fill songbox
-    var currentSongList = songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
-    fillSongBox(currentSongList);
-  } else {
-    error = "fetching songs failed with status '" +ssr.getAttribute("status")+ "'";
+function collectSongs(songList, backendId, timestamp) {
+  for (var i = 0; i < songList.length; i++) {
+    var song = songList[i];
+    songDb.query.insert(song);
   }
+  songDb.query({backendId:{is:backendId}, addedOn:{lt:timestamp}}).remove();
+  // TODO persisting the db should be done on closing the app
+  songDb.save();
+  // TODO fire event to fill songbox
+  var currentSongList = songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
+  fillSongBox(currentSongList);
 }
 
 function startPlay(song) {
@@ -46,22 +20,6 @@ function startPlay(song) {
   $('#title').text(song.title);
   $('#album').text(song.album);
   $('#artist').text(song.artist);
-}
-
-function startSearch(event) {
-  searchForSongs(event.target.value, collectSongs, null, null);
-}
-
-function handleFileSelect(evt) {
-  var files = evt.target.files;
-  for (var i = 0, f; f = files[i]; i++) {
-    var reader = new FileReader();
-    reader.onload = function(evt) {
-      var audio = document.getElementById('player');
-      audio.src = evt.target.result;
-    };
-    reader.readAsDataURL(f);
-  }
 }
 
 function getFirstPlaylistElement() {
