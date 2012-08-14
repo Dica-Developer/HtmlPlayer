@@ -30,7 +30,8 @@ function collectSongs(event) {
     // TODO persisting the db should be done on closing the app
     songDb.save();
     // TODO fire event to fill songbox
-    fillSongBox(songList);
+    var currentSongList = songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
+    fillSongBox(currentSongList);
   } else {
     error = "fetching songs failed with status '" +ssr.getAttribute("status")+ "'";
   }
