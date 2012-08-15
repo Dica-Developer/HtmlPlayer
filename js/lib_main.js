@@ -89,7 +89,7 @@ function updateProgress() {
 function setNowPlaying() {
   var song = getLastSong();
   if (null !== song) {
-    (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).setNowPlaying(song.artist, song.title, song.album, song.duration, function(data, textStatus, jqXHR) {
+    (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).setNowPlaying(song.artist, song.title, song.album, song.duration, function(data) {
       if (undefined !== data.error) {
         switch (data.error) {
           case 6:
@@ -121,7 +121,7 @@ function scrobble() {
       var song = getLastSong();
       if (null !== song) {
         var timestamp = parseInt((new Date()).getTime() / 1000.0);
-        (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).scrobble(song.artist, song.title, song.album, song.duration, timestamp, function(data, textStatus, jqXHR) {
+        (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).scrobble(song.artist, song.title, song.album, song.duration, timestamp, function(data) {
           if (undefined !== data.error) {
             switch (data.error) {
               case 6:
@@ -166,6 +166,7 @@ function updateSongList() {
 $(function() {
   songDb.init('songs');
   if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
+    //noinspection JSUnresolvedVariable,JSUnresolvedFunction
     document.location = chrome.extension.getURL("options/index.html");
   }
   updateSongList();
@@ -290,7 +291,7 @@ $(function() {
     click : handleLeftZone
   });
 
-  $(document).mousemove(function(event) {
+  $(document).mousemove(function() {
     if ('player' === viewState) {
       if (null !== closePlayerControlViewTimerId) {
         clearTimeout(closePlayerControlViewTimerId);
@@ -307,22 +308,23 @@ $(function() {
 
   var filterBoxTimeout = null;
   $(document).on("keyup", function(event) {
+    var audio =null;
     if ('player' === viewState) {
       switch (event.which) {
         case 39:
-          var audio = document.getElementById('player');
+          audio = document.getElementById('player');
           audio.currentTime = audio.currentTime + 10;
           break;
         case 37:
-          var audio = document.getElementById('player');
+          audio = document.getElementById('player');
           audio.currentTime = audio.currentTime - 10;
           break;
         case 187:
-          var audio = document.getElementById('player');
+          audio = document.getElementById('player');
           audio.playbackRate = audio.playbackRate + 0.05;
           break;
         case 189:
-          var audio = document.getElementById('player');
+          audio = document.getElementById('player');
           audio.playbackRate = audio.playbackRate - 0.05;
           break;
         case 76:
@@ -356,7 +358,7 @@ $(function() {
           notScrobbled = true;
           break;
         case 32:
-          var audio = document.getElementById('player');
+          audio = document.getElementById('player');
           if (audio.paused) {
             audio.play();
           } else {
@@ -382,7 +384,7 @@ $(function() {
             $("#playerControlView").animate({
               left : "0"
             });
-            var audio = document.getElementById('player');
+            audio = document.getElementById('player');
             if (audio.paused) {
               next();
               setNowPlaying();
@@ -434,7 +436,7 @@ $(function() {
     }
   });
 
-  $("#player").on("ended", function(event) {
+  $("#player").on("ended", function() {
     next();
     setNowPlaying();
     notScrobbled = true;
