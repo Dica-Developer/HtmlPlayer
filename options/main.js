@@ -87,7 +87,7 @@ function lastFmLoginClick(e) {
   e.target.href = (new Scrobbler(null, null)).getTokenUrl();
 }
 
-function lastFmLoginClick(e) {
+function lastfmUserLink(e) {
   e.target.href = 'http://last.fm/user/' + e.target.innerHTML;
 }
 
@@ -96,7 +96,7 @@ $(function() {
 
   document.querySelector('#lastfmLoginLink').addEventListener('click', lastFmLoginClick);
   document.querySelector('#lastfmLogoutLink').addEventListener('click', logoutFromLastFm);
-  document.querySelector('#lastfmUserLink').addEventListener('click', logoutFromLastFm);
+  document.querySelector('#lastfmUserLink').addEventListener('click', lastfmUserLink);
   document.querySelector('#backendSelection').addEventListener('change', initBackend);
   document.querySelector('#serverUrlBox').addEventListener('change', saveServerUrl);
   document.querySelector('#loginBox').addEventListener('change', saveLogin);
