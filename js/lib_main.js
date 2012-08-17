@@ -1,82 +1,82 @@
 var songHistory = new Array();
 var viewState = 'player';
 var notScrobbled = true;
-var songDb = new Db();
-function EventData() {
-  var isPropagationStopped = false;
-  var isImmediatePropagationStopped = false;
-  this.stopPropagation = function () {isPropagationStopped = true;};
-  this.isPropagationStopped = function () {return isPropagationStopped;};
-  this.stopImmediatePropagation = function () {isImmediatePropagationStopped = true;};
-  this.isImmediatePropagationStopped = function () {return isImmediatePropagationStopped;}
-}
-
-function Event() {
-  var handlers = [];
-  this.subscribe = function (fn) {handlers.push(fn);};
-  this.unsubscribe = function (fn) {
-    for (var i = handlers.length - 1; i >= 0; i--) {
-      if (handlers[i] === fn) {
-        handlers.splice(i, 1);
-      }
-    }
-  };
-  this.notify = function (args, e, scope) {
-    e = e || new EventData();
-    scope = scope || this;
-
-    var returnValue;
-    for (var i = 0; i < handlers.length && !(e.isPropagationStopped() || e.isImmediatePropagationStopped()); i++) {
-      returnValue = handlers[i].call(scope, e, args);
-    }
-
-    return returnValue;
-  };
-}
-var updateSongListEvent = new Event();
-function addToHistory(song) {
-  songHistory.push(song);
-  if (songHistory.length > 1000) {
-    songHistory.shift();
-  }
-}
-
-function applyCoverArtStyle() {
-  document.getElementById("coverArt").height = $(document).height() * 0.6;
-  $("#coverArt").reflect({
-    height : 0.165,
-    opacity : 0.25
-  });
-}
-
-function next() {
-  var song = getFirstPlaylistElement();
-  if (null !== song) {
-    startPlay(song);
-    removeFirstPlaylistElement();
-    addToHistory(song);
-    applyCoverArtStyle();
-  }
-}
-
-function previous() {
-  if (songHistory.length > 0) {
-    var song = songHistory.pop();
-    if (null !== song) {
-      startPlay(song);
-      setFirstPlaylistElement(song);
-      applyCoverArtStyle();
-    }
-  }
-}
-
-function getLastSong() {
-  var song = null;
-  if (songHistory.length > 0) {
-    song = songHistory[songHistory.length - 1];
-  }
-  return song;
-}
+//var songDb = new Db();
+//function EventData() {
+//  var isPropagationStopped = false;
+//  var isImmediatePropagationStopped = false;
+//  this.stopPropagation = function () {isPropagationStopped = true;};
+//  this.isPropagationStopped = function () {return isPropagationStopped;};
+//  this.stopImmediatePropagation = function () {isImmediatePropagationStopped = true;};
+//  this.isImmediatePropagationStopped = function () {return isImmediatePropagationStopped;}
+//}
+//
+//function Event() {
+//  var handlers = [];
+//  this.subscribe = function (fn) {handlers.push(fn);};
+//  this.unsubscribe = function (fn) {
+//    for (var i = handlers.length - 1; i >= 0; i--) {
+//      if (handlers[i] === fn) {
+//        handlers.splice(i, 1);
+//      }
+//    }
+//  };
+//  this.notify = function (args, e, scope) {
+//    e = e || new EventData();
+//    scope = scope || this;
+//
+//    var returnValue;
+//    for (var i = 0; i < handlers.length && !(e.isPropagationStopped() || e.isImmediatePropagationStopped()); i++) {
+//      returnValue = handlers[i].call(scope, e, args);
+//    }
+//
+//    return returnValue;
+//  };
+//}
+//var updateSongListEvent = new Event();
+//function addToHistory(song) {
+//  songHistory.push(song);
+//  if (songHistory.length > 1000) {
+//    songHistory.shift();
+//  }
+//}
+//
+//function applyCoverArtStyle() {
+//  document.getElementById("coverArt").height = $(document).height() * 0.6;
+//  $("#coverArt").reflect({
+//    height : 0.165,
+//    opacity : 0.25
+//  });
+//}
+//
+//function next() {
+//  var song = getFirstPlaylistElement();
+//  if (null !== song) {
+//    startPlay(song);
+//    removeFirstPlaylistElement();
+//    addToHistory(song);
+//    applyCoverArtStyle();
+//  }
+//}
+//
+//function previous() {
+//  if (songHistory.length > 0) {
+//    var song = songHistory.pop();
+//    if (null !== song) {
+//      startPlay(song);
+//      setFirstPlaylistElement(song);
+//      applyCoverArtStyle();
+//    }
+//  }
+//}
+//
+//function getLastSong() {
+//  var song = null;
+//  if (songHistory.length > 0) {
+//    song = songHistory[songHistory.length - 1];
+//  }
+//  return song;
+//}
 
 function updateProgress() {
   var audio = document.getElementById('player');
@@ -164,12 +164,12 @@ function updateSongList() {
 }
 
 $(function() {
-  songDb.init('songs');
+//  songDb.init('songs');
   if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
     //noinspection JSUnresolvedVariable,JSUnresolvedFunction
     document.location = chrome.extension.getURL("options/index.html");
   }
-  updateSongList();
+//  updateSongList();
   $("#searchView").css("left", -1 * $(document).width());
   $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
   $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
