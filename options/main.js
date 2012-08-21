@@ -62,12 +62,18 @@ function selectTab() {
 }
 
 function initBackend() {
-  if ($("#backendSelection :selected").length > 0 && "ubuntuone" === $("#backendSelection :selected")[0].value) {
+  if ("ubuntuone" === $("#backendSelection :selected")[0].value) {
     document.querySelector("#ubuntuoneAuthenticationHelp").style.display = "block";
     document.querySelector("#subsonicAuthParams").style.display = "none";
-  } else {
+    document.querySelector("#fileImporterFields").style.display = "none";
+  } else if ("subsonic" === $("#backendSelection :selected")[0].value) {
     document.querySelector("#ubuntuoneAuthenticationHelp").style.display = "none";
     document.querySelector("#subsonicAuthParams").style.display = "block";
+    document.querySelector("#fileImporterFields").style.display = "none";
+  } else {
+    document.querySelector("#ubuntuoneAuthenticationHelp").style.display = "none";
+    document.querySelector("#subsonicAuthParams").style.display = "none";
+    document.querySelector("#fileImporterFields").style.display = "block";
   }
 }
 
@@ -103,6 +109,16 @@ $(function() {
   document.querySelector('#serverUrlBox').addEventListener('change', saveServerUrl);
   document.querySelector('#loginBox').addEventListener('change', saveLogin);
   document.querySelector('#passwordBox').addEventListener('change', savePassword);
+
+  var fileImporter = new FileImporter();
+  fileImporter.init();
+  document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
+    event.preventDefault();
+    fileImporter.writeFiles(event.dataTransfer.files);
+  }, false);
+  document.querySelector('#fileImporter_upload').addEventListener('change', function(event) {
+    fileImporter.writeFiles(event.target.files);
+  }, false);
 
   //noinspection JSUnresolvedVariable,JSUnresolvedFunction
   chrome.extension.onRequest.addListener(function(request, sender) {

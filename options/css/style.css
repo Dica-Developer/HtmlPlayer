@@ -109,3 +109,11 @@ body {
 #backendPage {
   display:block;
 }
+#fileImporter_dropZone {
+  width: 40%;
+  background-color: #EEE;
+  border: 5px dashed #CCC;
+  color: #CCC;
+  border-radius: 10px;
+  margin: 0 10px;
+}
