@@ -4,39 +4,54 @@
  */
 function AUDICA() {
   /**
+   * @description The current song object
    * @type {Object|Null}
    * @private
    */
   var _song = null;
   /**
-   * @type {Array}
-   * @private
-   */
-  var _songHistory = [];
-  /**
+   * @description Options object
    * @type {Object}
    * @private
    */
   var _options = {};
   /**
+   * @description Current view state possible states are: player, search
    * @type {String|Null}
    * @private
    */
   var _viewState = 'player';
   /**
+   * @description Flag if a song is scrobbled
    * @type {Boolean}
    * @private
    */
   var _notScrobbled = true;
   /**
+   * description
    * @type {Number|Null}
    * @private
    */
   var _closePlayerControlViewTimerId = null;
+
+  var resizeEventTimeoutId = null;
+
   /**
+   * @description Local song history for prev song handling
+   * TODO find a better solution by using the {@link this.historyDb}
+   * @type {Array}
+   * @private
+   */
+  var _songHistory = [];
+  /**
+   * @description New instance of {@link _Db}
    * @type {Function}
    */
   this.songDb = new _Db();
+  /**
+   * @type {Function}
+   */
+  this.historyDb = new _Db();
   /**
    * @namespace
    * @type {Object}
@@ -140,7 +155,6 @@ function AUDICA() {
         this.play(song);
         Audica.Playlist.removeFirstElement();
         Audica.History.add(song);
-        Audica.View.applyCoverArtStyle();
       } else {
         Audica.trigger('ERROR', {message:'No song found. Possible reason: Empty Playlist'});
       }
@@ -151,11 +165,11 @@ function AUDICA() {
      */
     previous:function () {
       if (_songHistory.length > 0) {
-        var song = _songHistory.pop();
+        var history = _songHistory.pop();
+        var song = Audica.songDb.query({id:history.id, backendId:history.backendId}).get()[0];
         if (null !== song) {
           this.play(song);
           Audica.Dom.setFirstPlaylistElement(song);
-          Audica.View.applyCoverArtStyle();
         } else {
           Audica.trigger('ERROR', {message:'No song found. Possible reason: Empty Playlist'});
         }
@@ -210,23 +224,6 @@ function AUDICA() {
       Audica.Dom.artist.text(artist);
       Audica.trigger('updateMainView');
     },
-    initView:function () {
-      Audica.Dom.searchView.css("left", -1 * $(document).width());
-      Audica.Dom.coverArtBox.css("padding-top", ($(document).height() - Audica.Dom.coverArtBox.height()) / 2);
-      Audica.Dom.descriptionBox.css("padding-top", ($(document).height() - Audica.Dom.descriptionBox.height()) / 2);
-
-      Audica.Dom.songBox.on("keyup", function (event) {
-        if (39 === event.which) {
-          $(this).find(":selected").clone().appendTo(Audica.Dom.playListBox);
-        }
-      });
-      Audica.Dom.playListBox.on("keyup", function (event) {
-        if (37 === event.which) {
-          $(this).find(":selected").detach();
-        }
-      });
-      Audica.trigger('initMainView');
-    },
     /**
      * @param {Array}songs
      */
@@ -240,7 +237,6 @@ function AUDICA() {
         options = options + option;
       }
       Audica.Dom.songBox.html(options);
-      Audica.trigger('fillSongBox');
     },
     closePlayerControlView:function () {
       Audica.Dom.playerControlView.data("open", false);
@@ -248,8 +244,12 @@ function AUDICA() {
       Audica.Dom.playerControlView.animate({height:"4px"});
     },
     applyCoverArtStyle:function () {
-      Audica.Dom.coverArt.height(Audica.Dom.documentHeight * 0.6);
+      // Use original window elem to set height because reflect is need this
+      Audica.Dom.coverArt[0].height = Audica.Dom.documentHeight * 0.6;
+      Audica.Dom.coverArt[0].width = Audica.Dom.coverArt[0].height;
       Audica.Dom.coverArt.reflect({height:0.165, opacity:0.25});
+      Audica.Dom.coverArtBox.css("padding-top", (Audica.Dom.documentHeight - Audica.Dom.coverArtBox.height()) / 2);
+      Audica.Dom.descriptionBox.css("padding-top", (Audica.Dom.documentHeight - Audica.Dom.descriptionBox.height()) / 2);
     },
     updateProgress:function () {
       if (!Audica.Dom.player.paused) {
@@ -275,19 +275,14 @@ function AUDICA() {
       Audica.songDb.query.insert(song);
     }
     Audica.songDb.query({backendId:{is:backendId}, addedOn:{lt:timestamp}}).remove();
-    // TODO persisting the db should be done on closing the app
-    Audica.songDb.save();
-    // TODO fire event to fill song box
-    var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
-    Audica.View.fillSongBox(currentSongList);
+    Audica.trigger('fillSongBox');
     Audica.trigger('collectSongs');
   };
   /**
    *
    */
   this.updateSongList = function () {
-    var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
-    Audica.View.fillSongBox(currentSongList);
+    Audica.trigger('fillSongBox');
     Audica.trigger('updateSongList', {timestamp:$.now()});
   };
   /**
@@ -370,10 +365,16 @@ function AUDICA() {
      * @function
      */
     add:function () {
-      _songHistory.push(_song);
-      if (_songHistory.length > 1000) {
-        _songHistory.shift();
-      }
+      var historyElem = {
+        timestamp: $.now(),
+        backendId: _song.backendId,
+        songId: _song.id
+      };
+      _songHistory.push(historyElem);
+      Audica.historyDb.query.insert(historyElem);
+    },
+    showByTime:function(dir){
+      return Audica.historyDb.query().order('timestamp '+dir).get();
     }
   };
   /**
@@ -383,6 +384,7 @@ function AUDICA() {
   this.Scrobbler = null;
   //Private
   /**
+   * @name _Db
    * @private
    * @class
    */
@@ -510,7 +512,7 @@ function AUDICA() {
     this.isAuthenticated = function () {
       return null !== this.sessionKey && null !== this.login && undefined !== this.sessionKey && undefined !== this.login;
     };
-  }
+  };
 
   /**
    * @function
@@ -641,6 +643,7 @@ function AUDICA() {
         console.log("Unknown view state '" + _viewState + "'.");
       }
     });
+
     $(document).mousemove(function () {
       var playerControlView = Audica.Dom.playerControlView;
       if ('player' === _viewState) {
@@ -657,6 +660,7 @@ function AUDICA() {
 
       }
     });
+
     function handleRightZone(event) {
       if ('search' === _viewState) {
         var searchView = Audica.Dom.searchView;
@@ -763,12 +767,45 @@ function AUDICA() {
       }
       alert(errorMsg);
     });
+
     Audica.on('ERROR', function (args) {
       console.log(args.message);
     });
 
+    Audica.on('fillSongBox', function(){
+      var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
+      Audica.View.fillSongBox(currentSongList);
+    });
+
+    Audica.Dom.songBox.on("keyup", function (event) {
+      if (39 === event.which) {
+        $(this).find(":selected").clone().appendTo(Audica.Dom.playListBox);
+      }
+    });
+
+    Audica.Dom.playListBox.on("keyup", function (event) {
+      if (37 === event.which) {
+        $(this).find(":selected").detach();
+      }
+    });
+
+    $(window).on('beforeunload',function(e){
+      Audica.songDb.save();
+      Audica.historyDb.save();
+    });
+
+    $(window).on('resize', function(){
+      if (null !== resizeEventTimeoutId) {
+        clearTimeout(resizeEventTimeoutId);
+      }
+      resizeEventTimeoutId = setTimeout(function() {
+        Audica.Dom.updateDocumentDimensions();
+        Audica.View.applyCoverArtStyle();
+      } , 250);
+    });
+
     Audica.trigger('registerEvents');
-  }
+  };
 
   /**
    * TODO make private if init method is ready
@@ -843,8 +880,9 @@ window.onerror = function (error, src, row) {
   console.log('Error: %s in %s row %s', error, src, row);
 };
 //TODO define an init method which initiates db, dom objects, options, events, etc.
-Audica.on('domElementsSet', Audica.View.initView);
-Audica.songDb.init('Audica');
+Audica.on('domElementsSet', Audica.View.applyCoverArtStyle);
+Audica.songDb.init('song');
+Audica.historyDb.init('history');
 Audica.setScrobble();
 Audica.on('readyCollectingSongs', function (args) {
   //maybe 'new Audica.collectSongs()' depends on performance and how many times this event is triggered at the same time
@@ -854,7 +892,7 @@ Audica.on('readyCollectingSongs', function (args) {
 $(function () {
   Audica.Dom.initDom();
   Audica.registerEvents();
-
+//TODO should checked by plugin itself
   if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
     //noinspection JSUnresolvedVariable,JSUnresolvedFunction
     document.location = chrome.extension.getURL("options/index.html");

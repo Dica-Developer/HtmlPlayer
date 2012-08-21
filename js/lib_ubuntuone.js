@@ -2,7 +2,6 @@
  * @class
  */
 function SUBSONIC(){
-  var that = this;
   /**
    * @type {String}
    */
@@ -64,11 +63,11 @@ function SUBSONIC(){
           "year": song.getAttribute("year") ? parseInt(song.getAttribute("year"), 0) : null,
           "addedOn" : timestamp,
           "src" : _serviceUrl +'/stream.view?u=' +_login+ '&p=' +_password+ '&v=1.2.0&c=chrome&id=' + song.getAttribute("id"),
-          "backendId": that.backendId
+          "backendId": Audica.Subsonic.backendId
         };
         songList.push(songObj);
       }
-      Audica.trigger('readyCollectingSongs', {songList:songList, backendId:that.backendId, timestamp:timestamp});
+      Audica.trigger('readyCollectingSongs', {songList:songList, backendId:Audica.Subsonic.backendId, timestamp:timestamp});
     } else {
       console.error("fetching songs failed with status '" +ssr.getAttribute("status")+ "'");
     }
