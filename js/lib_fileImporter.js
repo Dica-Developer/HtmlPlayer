@@ -1,6 +1,6 @@
 function FileImporter() {
+  var idx = 0;
   var fileSystem = null;
-  var fileReader = null;
 
   function errorHandler(e) {
     var msg = '';
@@ -29,7 +29,6 @@ function FileImporter() {
 
   function onInitFs(fs) {
     fileSystem = fs;
-    fileReader = new FileReader();
   }
 
   this.init = function(){
@@ -41,7 +40,8 @@ function FileImporter() {
   };
 
   function writeFile(file) {
-    var fileName = 'fileImporter_' + $.now();
+    // TODO reset index per timestamp and check for file name exists
+    var fileName = 'fileImporter_' + $.now() + '_' + (++idx);
     fileSystem.root.getFile(fileName, {create: true}, function(fileEntry) {
       fileEntry.createWriter(function(fileWriter) {
         fileWriter.write(file);

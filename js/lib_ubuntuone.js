@@ -81,4 +81,3 @@ function SUBSONIC(){
   });
 }
 
-Audica.Subsonic = new SUBSONIC();

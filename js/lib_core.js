@@ -888,15 +888,3 @@ Audica.on('readyCollectingSongs', function (args) {
   //maybe 'new Audica.collectSongs()' depends on performance and how many times this event is triggered at the same time
   Audica.collectSongs(args.songList, args.backendId, args.timestamp);
 });
-
-$(function () {
-  Audica.Dom.initDom();
-  Audica.registerEvents();
-//TODO should checked by plugin itself
-  if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
-    //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-    document.location = chrome.extension.getURL("options/index.html");
-  }
-  Audica.updateSongList();
-  setInterval(Audica.backgroundTasks, 1000);
-});
