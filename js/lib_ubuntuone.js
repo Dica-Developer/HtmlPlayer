@@ -55,7 +55,7 @@ function SUBSONIC(){
           "album": song.getAttribute("album"),
           "title": song.getAttribute("title"),
           "id": song.getAttribute("id"),
-          "coverArt":_serviceUrl+'/getCoverArt.view?u=' + _login + '&p=' +_password+ "&v=1.2.0&c=chrome&id=" +song.getAttribute('coverArt'),
+          "coverArt": _serviceUrl+'/getCoverArt.view?u=' + _login + '&p=' +_password+ "&v=1.2.0&c=chrome&id=" +song.getAttribute('coverArt'),
           "contentType": song.getAttribute("contentType"),
           "track": song.getAttribute("track") ? parseInt(song.getAttribute("track"), 0) : null,
           "duration": song.getAttribute("duration"),
