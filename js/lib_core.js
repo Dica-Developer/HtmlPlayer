@@ -166,7 +166,7 @@ function AUDICA() {
     previous:function () {
       if (_songHistory.length > 0) {
         var history = _songHistory.pop();
-        var song = Audica.songDb.query({id:history.id, backendId:history.backendId}).get()[0];
+        var song = Audica.songDb.query({id:history.songId, backendId:history.backendId}).get()[0];
         if (null !== song) {
           this.play(song);
           Audica.Dom.setFirstPlaylistElement(song);
@@ -298,59 +298,54 @@ function AUDICA() {
    * @type {Object}
    */
   this.Scrobbling = {
-    /**
-     *
-     * @return {Boolean}
-     */
     setNowPlaying:function () {
       if (Audica.Scrobbler === null) {
         return false;
       }
-      /**
-       *
-       * @type {Object|Null}
-       */
-      var song = Audica.Playlist.getLastSong();
+      var history = Audica.Playlist.getLastSong();
       if (null !== song) {
-        Audica.Scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function (data) {
-          if (undefined !== data.error) {
-            switch (data.error) {
-              case 6:
-              case 13:
-                console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
-                break;
-              default:
-                alert("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
+        var song = Audica.songDb.query({id:history.songId, backendId:history.backendId}).get()[0];
+        if (null !== song) {
+          Audica.Scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function (data) {
+            if (undefined !== data.error) {
+              switch (data.error) {
+                case 6:
+                case 13:
+                  console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
+                  break;
+                default:
+                  alert("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
+              }
             }
-          }
-        }, null);
+          }, null);
+        }
       }
     },
-    /**
-     *
-     */
     scrobble:function () {
       var audio = Audica.Dom.player;
       if (!audio.paused) {
         if (Math.round((audio.currentTime * 100) / audio.duration) > 50 && _notScrobbled) {
-          var song = Audica.Playlist.getLastSong();
-          if (null !== song) {
-            var timestamp = parseInt((new Date()).getTime() / 1000.0);
-            Audica.Scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function (data) {
-              if (undefined !== data.error) {
-                switch (data.error) {
-                  case 6:
-                  case 13:
-                    console.warn("Cannot scrobble the song there is a parameter missing/wrong!", data.message);
-                    _notScrobbled = true;
-                    break;
-                  default:
-                    alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
-                }
-              } else {
+          var history = Audica.Playlist.getLastSong();
+          if (null !== history) {
+            var song = Audica.songDb.query({id:history.songId, backendId:history.backendId}).get()[0];
+            if (null !== song) {
+              var timestamp = parseInt((new Date()).getTime() / 1000.0);
+              Audica.Scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function (data) {
+                if (undefined !== data.error) {
+                  switch (data.error) {
+                    case 6:
+                    case 13:
+                      console.warn("Cannot scrobble the song there is a parameter missing/wrong!", data.message);
+                      _notScrobbled = true;
+                      break;
+                   default:
+                      alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
+                  }
+                } else {
                 _notScrobbled = false;
-              }
-            }, null);
+                }
+              }, null);
+            }
           }
         }
       }
@@ -503,7 +498,7 @@ function AUDICA() {
     this.scrobble = function (artist, track, album, duration, playStartTime, successCB, errorCB) {
       if (this.isAuthenticated()) {
         var signature = hex_md5("album" + album + "api_key" + _apiKey + "artist" + artist + "duration" + duration + "methodtrack.scrobblesk" + this.sessionKey + "timestamp" + playStartTime + "track" + track + _secret);
-        $.ajax(this._serviceUrl + "?format=json&method=track.scrobble&api_key=" + this._apiKey + "&api_sig=" + signature + "&sk=" + this.sessionKey + "&artist=" + encodeURIComponent(artist) + "&track=" + encodeURIComponent(track) + "&album=" + encodeURIComponent(album) + "&duration=" + duration + "&timestamp=" + playStartTime, {type:"POST", success:successCB, error:errorCB});
+        $.ajax(_serviceUrl + "?format=json&method=track.scrobble&api_key=" + _apiKey + "&api_sig=" + signature + "&sk=" + this.sessionKey + "&artist=" + encodeURIComponent(artist) + "&track=" + encodeURIComponent(track) + "&album=" + encodeURIComponent(album) + "&duration=" + duration + "&timestamp=" + playStartTime, {type:"POST", success:successCB, error:errorCB});
       }
     };
     /**
