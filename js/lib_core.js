@@ -133,7 +133,7 @@ function AUDICA() {
    * @namespace
    * @type {Object}
    */
-  this.PlayerControll = {
+  this.PlayerControl = {
     /**
      * @param {Object} song
      */
@@ -310,7 +310,7 @@ function AUDICA() {
        *
        * @type {Object|Null}
        */
-      var song = Audica.Dom.getLastSong();
+      var song = Audica.Playlist.getLastSong();
       if (null !== song) {
         Audica.Scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function (data) {
           if (undefined !== data.error) {
@@ -333,7 +333,7 @@ function AUDICA() {
       var audio = Audica.Dom.player;
       if (!audio.paused) {
         if (Math.round((audio.currentTime * 100) / audio.duration) > 50 && _notScrobbled) {
-          var song = getLastSong();
+          var song = Audica.Playlist.getLastSong();
           if (null !== song) {
             var timestamp = parseInt((new Date()).getTime() / 1000.0);
             Audica.Scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function (data) {
@@ -559,12 +559,12 @@ function AUDICA() {
             _viewState = 'search';
             break;
           case 80:
-            Audica.PlayerControll.previous();
+            Audica.PlayerControl.previous();
             Audica.Scrobbling.setNowPlaying();
             _notScrobbled = true;
             break;
           case 78:
-            Audica.PlayerControll.next();
+            Audica.PlayerControl.next();
             Audica.Scrobbling.setNowPlaying();
             _notScrobbled = true;
             break;
@@ -589,7 +589,7 @@ function AUDICA() {
                 left:"0"
               });
               if (audio.paused) {
-                Audica.PlayerControll.next();
+                Audica.PlayerControl.next();
                 Audica.Scrobbling.setNowPlaying();
                 _notScrobbled = true;
               }
@@ -741,8 +741,8 @@ function AUDICA() {
     });
 
     $(Audica.Dom.player).on("ended", function () {
-      Audica.PlayerControll.next();
-      Audica.PlayerControll.setNowPlaying();
+      Audica.PlayerControl.next();
+      Audica.Scrobbling.setNowPlaying();
       _notScrobbled = true;
     });
 
