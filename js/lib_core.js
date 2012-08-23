@@ -314,7 +314,7 @@ function AUDICA() {
                   console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
                   break;
                 default:
-                  alert("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
+                  console.error("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
               }
             }
           }, null);
