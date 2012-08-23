@@ -449,7 +449,7 @@ function AUDICA() {
      * @private
      */
     var _errorCB = function (data, textStatus, jqXHR) {
-      console.log(data, textStatus, jqXHR);
+      console.error(data, textStatus, jqXHR);
     };
     /**
      * @type {String}
@@ -811,7 +811,6 @@ function AUDICA() {
    * TODO make private if init method is ready
    */
   this.setScrobble = function () {
-//      Audica.scrobbler = new Scrobbler('bla','blubb'); // TODO remove
     if (localStorage["audica.lastfm.sessionKey"]) {
       Audica.Scrobbler = new _SCROBBLER(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"]);
       Audica.trigger('scrobblerInitiated');
