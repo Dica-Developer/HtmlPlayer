@@ -89,6 +89,10 @@ function selectOption(selectElement, optionValue) {
 function logoutFromLastFm() {
   delete localStorage["audica.lastfm.sessionKey"];
   delete localStorage["audica.lastfm.login"];
+  document.querySelector("#lastfmUserLink").style.display = "none";
+  document.querySelector("#lastfmLogoutLink").style.display = "none";
+  document.querySelector("#lastfmLoginLink").style.display = "block";
+  document.querySelector("#lastfmUserLabel").style.display = "none";
 }
 
 function lastFmLoginClick(e) {
@@ -126,9 +130,8 @@ $(function() {
   chrome.extension.onRequest.addListener(function(request, sender) {
     var pattLastFM = new RegExp("^chrome-extension://.+/options/authenticate_lastfm\.html.token=(.+)$");
     var patt = new RegExp("^ubuntuone://(.+):(.+)@syncml\.one\.ubuntu\.com$");
-    var match = null;
     if (patt.test(request.url)) {
-      match = patt.exec(request.url);
+      var match = patt.exec(request.url);
       document.querySelector("#loginBox").value = match[1];
       document.querySelector("#passwordBox").value = match[2];
       document.querySelector("#serverUrlBox").value = "https://streaming.one.ubuntu.com";
@@ -136,7 +139,7 @@ $(function() {
       savePassword();
       saveServerUrl();
     } else if (pattLastFM.test(request.url)) {
-      match = pattLastFM.exec(request.url);
+      var match = pattLastFM.exec(request.url);
       (new Scrobbler(null, null)).getSession(match[1], function(data) {
         if (undefined === data.error) {
           /** @namespace data.session */
