@@ -72,7 +72,8 @@ function Filesystem () {
           "year": 1900,
           "addedOn" : timestamp,
           "src" : entry.toURL(),
-          "backendId": 'filesystem'
+          "backendId": 'filesystem',
+          "stream": 'false'
         };
     } else {
       console.log('Cannot handle "' + entry.name + '". It is a file.');
@@ -100,5 +101,9 @@ function Filesystem () {
 
   Audica.on('updateSongList', function(args){
     _searchForSongs(args.timestamp);
+  });
+
+  Audica.on('filesImported', function(args){
+    _searchForSongs($.now());
   });
 }

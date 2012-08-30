@@ -63,7 +63,8 @@ function SUBSONIC(){
           "year": song.getAttribute("year") ? parseInt(song.getAttribute("year"), 0) : null,
           "addedOn" : timestamp,
           "src" : _serviceUrl +'/stream.view?u=' +_login+ '&p=' +_password+ '&v=1.2.0&c=chrome&id=' + song.getAttribute("id"),
-          "backendId": Audica.Subsonic.backendId
+          "backendId": Audica.Subsonic.backendId,
+          "stream": 'true'
         };
         songList.push(songObj);
       }
