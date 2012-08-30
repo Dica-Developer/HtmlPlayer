@@ -274,7 +274,7 @@ function AUDICA() {
     for (var i = 0, song; song = songList[i]; i++) {
       Audica.songDb.query.insert(song);
     }
-    Audica.songDb.query({backendId:{is:backendId}, addedOn:{lt:timestamp}}).remove();
+    Audica.songDb.query({backendId:{is:backendId}, addedOn:{'!is':timestamp}}).remove();
     Audica.trigger('fillSongBox');
     Audica.trigger('collectSongs');
   };
