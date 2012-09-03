@@ -303,7 +303,7 @@ function AUDICA() {
         return false;
       }
       var history = Audica.Playlist.getLastSong();
-      if (null !== song) {
+      if (null !== history) {
         var song = Audica.songDb.query({id:history.songId, backendId:history.backendId}).get()[0];
         if (null !== song) {
           Audica.Scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function (data) {
