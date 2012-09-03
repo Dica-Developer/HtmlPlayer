@@ -5,6 +5,16 @@ $(function () {
   // TODO init plugins automatically and put them under Audica.Plugins
   var fileSystem = new Filesystem();
   fileSystem.init();
+  var fileImporter = new FileImporter();
+  fileImporter.init();
+  // TODO move this to FileImporter.init()
+  // TODO add dropzone dive also in FileImporter.init()
+  document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    fileImporter.writeFiles(event.dataTransfer.files);
+  }, false);
   Audica.Subsonic = new SUBSONIC();
 
 //TODO should checked by plugin itself

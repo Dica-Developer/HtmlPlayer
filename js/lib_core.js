@@ -883,13 +883,3 @@ Audica.on('readyCollectingSongs', function (args) {
   Audica.collectSongs(args.songList, args.backendId, args.timestamp);
 });
 
-$(function() {
-  var fileImporter = new FileImporter();
-  fileImporter.init();
-  document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-    fileImporter.writeFiles(event.dataTransfer.files);
-  }, false);
-});
