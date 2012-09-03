@@ -54,5 +54,8 @@ function FileImporter() {
       var file = files[i];
       writeFile(file);
     }
+    if (Audica) {
+      Audica.trigger('filesImported');
+    }
   };
 }
