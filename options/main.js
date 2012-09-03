@@ -117,14 +117,14 @@ $(function() {
   var fileImporter = new FileImporter();
   fileImporter.init();
   document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'copy';
-    fileImporter.writeFiles(event.dataTransfer.files);
+      event.stopPropagation();
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'copy';
+      fileImporter.writeFiles(event.dataTransfer.files);
     }, false);
   document.querySelector('#fileImporter_upload').addEventListener('change', function(event) {
-    fileImporter.writeFiles(event.target.files);
-  }, false);
+      fileImporter.writeFiles(event.target.files);
+    }, false);
 
   //noinspection JSUnresolvedVariable,JSUnresolvedFunction
   chrome.extension.onRequest.addListener(function(request, sender) {
