@@ -1,6 +1,5 @@
 function Filesystem () {
   var backendId = 'filesystem';
-  var reader = null;
   var fileSystem = null;
 
   /**
@@ -38,6 +37,7 @@ function Filesystem () {
    * @private
    */
   function _searchForSongs(timestamp) {
+    var reader = fileSystem.root.createReader();
     reader.readEntries(function (results) {
       var songList = [];
       for (var i = 0; i < results.length; i++) {
@@ -87,7 +87,6 @@ function Filesystem () {
    */
   function onInitFs(fs) {
     fileSystem = fs;
-    reader = fileSystem.root.createReader();
     Audica.trigger('initReady');
   }
 
