@@ -8,7 +8,7 @@ $(function () {
   var fileImporter = new FileImporter();
   fileImporter.init();
   // TODO move this to FileImporter.init()
-  // TODO add dropzone dive also in FileImporter.init()
+  // TODO add dropzone div also in FileImporter.init()
   document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
     event.stopPropagation();
     event.preventDefault();
