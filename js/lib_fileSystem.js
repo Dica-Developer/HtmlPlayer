@@ -67,6 +67,7 @@ function Filesystem () {
           "coverArt": '',
           "contentType": entry.type,
           "track": 0,
+          "cd": 0,
           "duration": 0,
           "genre": '',
           "year": 1900,
