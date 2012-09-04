@@ -7,13 +7,22 @@ $(function () {
   fileSystem.init();
   var fileImporter = new FileImporter();
   fileImporter.init();
+  var radioImporter = new RadioImporter();
+  radioImporter.init();
   // TODO move this to FileImporter.init()
   // TODO add dropzone div also in FileImporter.init()
   document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
     event.stopPropagation();
     event.preventDefault();
     event.dataTransfer.dropEffect = 'copy';
-    fileImporter.writeFiles(event.dataTransfer.files);
+    // TODO use own dropzone for type
+    if (event.dataTransfer.files.length >0) {
+      fileImporter.writeFiles(event.dataTransfer.files);
+    } else if (event.dataTransfer.items.length >0) {
+      radioImporter.addUrls(event.dataTransfer.items);
+    } else {
+      console.error('Not handled drop item!');
+    }
   }, false);
   Audica.Subsonic = new SUBSONIC();
 
