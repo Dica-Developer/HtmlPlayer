@@ -9,6 +9,8 @@ $(function () {
   fileImporter.init();
   var radioImporter = new RadioImporter();
   radioImporter.init();
+  var googleDrive = new GoogleDrive();
+  googleDrive.init();
   // TODO move this to FileImporter.init()
   // TODO add dropzone div also in FileImporter.init()
   document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
