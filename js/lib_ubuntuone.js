@@ -20,7 +20,7 @@ function SUBSONIC(){
    * @type {String}
    * @private
    */
-  var _serviceUrl = 'https://streaming.one.ubuntu.com/rest';
+  var _serviceUrl = 'https://one.ubuntu.com/music/api/1.0';
 
   /**
    * @param {Number} timestamp
@@ -29,7 +29,7 @@ function SUBSONIC(){
    * @private
    */
   function _searchForSongs(timestamp, collectErrors, collectProgress) { //TODO collectErrors, collectProgress
-    var url = JSON.parse(localStorage["serverUrl"]) + "/rest/search.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&count=100000&any=";
+    var url = JSON.parse(localStorage["serverUrl"]) + "/search.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&count=100000&any=";
     var req = new XMLHttpRequest();
     req.open("GET", url, true);
     req.onload = function(event) { _collect(event, timestamp)};
