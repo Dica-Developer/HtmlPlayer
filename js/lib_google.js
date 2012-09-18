@@ -49,12 +49,13 @@ function GoogleDrive() {
         };
         songList.push(song);
       }
-      Audica.trigger('readyCollectingSongs', {
-        songList : songList,
-        backendId : 'googledrive',
-        timestamp : timestamp
-      });
     }
+    Audica.trigger('readyCollectingSongs', {
+      songList : songList,
+      backendId : 'googledrive',
+      timestamp : timestamp
+    }); 
+
   }
 
 
