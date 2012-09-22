@@ -29,6 +29,6 @@
   "options_page": "options/index.html",
   "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://one.ubuntu.com/music/api/1.0/*", "https://accounts.google.com/o/oauth2/token"],
   "manifest_version": 2,
-  "content_security_policy": "default-src *; style-src 'self'; script-src 'self'; object-src 'self'; connect-src * ; img-src http://cdn.last.fm https://streaming.one.ubuntu.com 'self'"
+  "content_security_policy": "default-src *; style-src 'self'; script-src 'self'; object-src 'self'; connect-src * ; img-src http://cdn.last.fm https://one.ubuntu.com/music/api/1.0/ 'self'"
 }
 
