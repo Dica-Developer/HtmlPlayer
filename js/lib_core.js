@@ -128,6 +128,31 @@ function AUDICA() {
       }
     }
   };
+
+  // TODO this should go to the google drive plugin
+  function download(downloadUrl, resultHandler) {
+    var googleAuth = new OAuth2('google', {
+      client_id : '1063427035831-k99scrsm000891i5e5ao3fs2jh6pj0hr.apps.googleusercontent.com',
+      client_secret : 'iMc4u5GP41LRkQsxIfewE_jv',
+      api_scope : ' https://www.googleapis.com/auth/drive'
+    });
+    googleAuth.authorize(function () {
+      var handler = function () {
+        var file = this.response;
+        console.log('End receive file');
+        resultHandler(file);
+      };
+
+      console.log('Start receive file');
+      var client = new XMLHttpRequest();
+      client.onload = handler;
+      client.responseType = 'blob';
+      client.open("GET", downloadUrl);
+      client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
+      client.send(null);
+    });
+  }
+
   /**
    * @description Holds all player methods
    * @namespace
@@ -141,9 +166,25 @@ function AUDICA() {
       _song = song;
       Audica.trigger('onStartPlayingSong', {song:song});
       Audica.Dom.player.type = song.contentType;
-      Audica.Dom.player.src = song.src;
-      Audica.View.updateMain(song.artist, song.album, song.title);
+      // TODO this is backend dependent code and should go do it
+      if (song.stream) {
+        Audica.Dom.player.src = song.src;
+      } else {
+        // TODO download and play then
+        // TODO get backend plugin by backend id
+        if ('googledrive' === song.backendId) {
+          download(song.src, function(file) {
+            Audica.Dom.player.src = URL.createObjectURL(file);
+          });
+        } else {
+          Audica.trigger('ERROR', {message:'Cannot handle songs from backend ' + song.backendId + '.'});
+        }
+      }
+      // /TODO
+      // TODO handle this the same like the audio url
       Audica.Dom.coverArt.attr("src", song.coverArt);
+      // /TODO
+      Audica.View.updateMain(song.artist, song.album, song.title);
       Audica.trigger('playSong');
     },
     /**
