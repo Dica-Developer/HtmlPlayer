@@ -11,6 +11,7 @@ $(function () {
   radioImporter.init();
   var googleDrive = new GoogleDrive();
   googleDrive.init();
+  // /TODO
   // TODO move this to FileImporter.init()
   // TODO add dropzone div also in FileImporter.init()
   document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
@@ -26,6 +27,7 @@ $(function () {
       console.error('Not handled drop item!');
     }
   }, false);
+  // /TODO
   Audica.Subsonic = new SUBSONIC();
 
 //TODO should checked by plugin itself
@@ -33,8 +35,7 @@ $(function () {
     //noinspection JSUnresolvedVariable,JSUnresolvedFunction
     document.location = chrome.extension.getURL("options/index.html");
   }
-  // TODO fire it after all backend plugins are initialized
+
   Audica.on('initReady', Audica.updateSongList);
-//  Audica.updateSongList();
   setInterval(Audica.backgroundTasks, 1000);
 });
