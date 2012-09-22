@@ -9,12 +9,12 @@ function GoogleDrive() {
     googleAuth.authorize(function() {
       var handler = function() {
         if (this.readyState == this.DONE) {
-          console.log('Finished receive google drive information', true);
+          console.log('Finished receive google drive information');
           buildList(this.response, timestamp);
         }
       };
 
-      console.log('Start receive google drive information', true);
+      console.log('Start receive google drive information');
       var client = new XMLHttpRequest();
       client.onreadystatechange = handler;
       client.open("GET", 'https://www.googleapis.com/drive/v2/files');
@@ -24,7 +24,7 @@ function GoogleDrive() {
   }
 
   function buildList(response, timestamp) {
-    console.log('Start building list', true);
+    console.log('Start building list');
     var songList = [];
     var fileList = JSON.parse(response);
     var items = fileList.items;
@@ -45,7 +45,7 @@ function GoogleDrive() {
           "addedOn" : timestamp,
           "src" : item.downloadUrl,
           "backendId" : 'googledrive',
-          "stream" : 'false'
+          "stream" : false
         };
         songList.push(song);
       }
@@ -55,7 +55,6 @@ function GoogleDrive() {
       backendId : 'googledrive',
       timestamp : timestamp
     }); 
-
   }
 
 
