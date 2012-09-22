@@ -21,6 +21,8 @@ function SUBSONIC(){
    * @private
    */
   var _serviceUrl = 'https://one.ubuntu.com/music/api/1.0';
+  
+  var _streamingUrl = 'https://streaming.one.ubuntu.com';
 
   /**
    * @param {Number} timestamp
@@ -63,9 +65,9 @@ function SUBSONIC(){
           "genre": song.getAttribute("genre"),
           "year": song.getAttribute("year") ? parseInt(song.getAttribute("year"), 0) : null,
           "addedOn" : timestamp,
-          "src" : _serviceUrl +'/stream.view?u=' +_login+ '&p=' +_password+ '&v=1.2.0&c=chrome&id=' + song.getAttribute("id"),
+          "src" : _streamingUrl +'/stream.view?u=' +_login+ '&p=' +_password+ '&v=1.2.0&c=chrome&id=' + song.getAttribute("id"),
           "backendId": Audica.Subsonic.backendId,
-          "stream": 'true'
+          "stream": true
         };
         songList.push(songObj);
       }
