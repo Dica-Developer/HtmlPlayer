@@ -134,7 +134,7 @@ $(function() {
       var match = patt.exec(request.url);
       document.querySelector("#loginBox").value = match[1];
       document.querySelector("#passwordBox").value = match[2];
-      document.querySelector("#serverUrlBox").value = "https://streaming.one.ubuntu.com";
+      document.querySelector("#serverUrlBox").value = "https://one.ubuntu.com/music/api/1.0";
       saveLogin();
       savePassword();
       saveServerUrl();
