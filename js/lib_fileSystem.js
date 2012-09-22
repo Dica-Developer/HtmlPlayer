@@ -74,7 +74,7 @@ function Filesystem () {
           "addedOn" : timestamp,
           "src" : entry.toURL(),
           "backendId": 'filesystem',
-          "stream": 'false'
+          "stream": true
         };
     } else {
       console.log('Cannot handle "' + entry.name + '". It is a file.');
