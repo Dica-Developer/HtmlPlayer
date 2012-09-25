@@ -3,14 +3,15 @@ $(function () {
   Audica.registerEvents();
 
   // TODO init plugins automatically and put them under Audica.Plugins
-  var fileSystem = new Filesystem();
-  fileSystem.init();
-  var fileImporter = new FileImporter();
-  fileImporter.init();
-  var radioImporter = new RadioImporter();
-  radioImporter.init();
-  var googleDrive = new GoogleDrive();
-  googleDrive.init();
+  Audica.plugins.fileSystem = new Filesystem()
+  Audica.plugins.fileSystem.init();
+  Audica.plugins.fileImporter = new FileImporter();
+  Audica.plugins.fileImporter.init();
+  Audica.plugins.radioImporter = new RadioImporter();
+  Audica.plugins.radioImporter.init();
+  Audica.plugins.googleDrive = new GoogleDrive();
+  Audica.plugins.googleDrive.init();
+  Audica.plugins.subsonic = new Subsonic();
   // /TODO
   // TODO move this to FileImporter.init()
   // TODO add dropzone div also in FileImporter.init()
@@ -20,15 +21,14 @@ $(function () {
     event.dataTransfer.dropEffect = 'copy';
     // TODO use own dropzone for type
     if (event.dataTransfer.files.length >0) {
-      fileImporter.writeFiles(event.dataTransfer.files);
+      Audica.plugins.fileImporter.writeFiles(event.dataTransfer.files);
     } else if (event.dataTransfer.items.length >0) {
-      radioImporter.addUrls(event.dataTransfer.items);
+      Audica.plugins.radioImporter.addUrls(event.dataTransfer.items);
     } else {
       console.error('Not handled drop item!');
     }
   }, false);
   // /TODO
-  Audica.Subsonic = new SUBSONIC();
 
 //TODO should checked by plugin itself
   if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {

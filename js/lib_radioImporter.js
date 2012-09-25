@@ -45,13 +45,19 @@ function RadioImporter() {
         "year":1900,
         "addedOn":timestamp,
         "src":entries[i].url,
-        "backendId":backendId,
-        "stream":'true'
+        "backendId":backendId
       };
       songList.push(song);
     }
     if (Audica) {
       Audica.trigger('readyCollectingSongs', {songList:songList, backendId:backendId, timestamp:timestamp});
     }
+  }
+
+  this.setPlaySrc = function(src, player) {
+    player.src = src;
+  }
+  
+  this.setCoverArt = function(src, coverArt) {
   }
 }

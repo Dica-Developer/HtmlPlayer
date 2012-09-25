@@ -1,4 +1,6 @@
 function GoogleDrive() {
+  var backendId = 'googleDrive';
+
   var googleAuth = new OAuth2('google', {
     client_id : '1063427035831-k99scrsm000891i5e5ao3fs2jh6pj0hr.apps.googleusercontent.com',
     client_secret : 'iMc4u5GP41LRkQsxIfewE_jv',
@@ -20,6 +22,32 @@ function GoogleDrive() {
       client.open("GET", 'https://www.googleapis.com/drive/v2/files');
       client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
       client.send(null);
+    });
+  }
+  
+  // TODO this should go to the google drive plugin
+  function download(downloadUrl, resultHandler) {
+    googleAuth.authorize(function () {
+      var handler = function () {
+        var file = this.response;
+        console.log('End receive file');
+        resultHandler(file);
+      };
+
+      console.log('Start receive file');
+      var client = new XMLHttpRequest();
+      client.onload = handler;
+      client.responseType = 'blob';
+      client.open("GET", downloadUrl);
+      client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
+      client.send(null);
+    });
+  }
+
+  this.setPlaySrc = function(src, player) {
+    download(src, function(file) {
+      var url = window.URL || window.webkitURL;
+      player.src = url.createObjectURL(file);
     });
   }
 
@@ -44,19 +72,20 @@ function GoogleDrive() {
           "year" : 1900,
           "addedOn" : timestamp,
           "src" : item.downloadUrl,
-          "backendId" : 'googledrive',
-          "stream" : false
+          "backendId" : backendId
         };
         songList.push(song);
       }
     }
     Audica.trigger('readyCollectingSongs', {
       songList : songList,
-      backendId : 'googledrive',
+      backendId : backendId,
       timestamp : timestamp
     }); 
   }
 
+  this.setCoverArt = function(src, coverArt) {
+  }
 
   this.init = function() {
     // nothing todo

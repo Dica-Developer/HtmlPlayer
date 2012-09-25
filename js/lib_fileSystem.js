@@ -73,13 +73,19 @@ function Filesystem () {
           "year": 1900,
           "addedOn" : timestamp,
           "src" : entry.toURL(),
-          "backendId": 'filesystem',
-          "stream": true
+          "backendId": 'filesystem'
         };
     } else {
       console.log('Cannot handle "' + entry.name + '". It is a file.');
     }
     return song;
+  }
+
+  this.setPlaySrc = function(src, player) {
+    player.src = src;
+  }
+
+  this.setCoverArt = function(src, coverArt) {
   }
 
   /**

@@ -1,11 +1,11 @@
 /**
  * @class
  */
-function SUBSONIC(){
+function Subsonic(){
   /**
    * @type {String}
    */
-  this.backendId = 'subsonic';
+  var backendId = 'subsonic';
   /**
    * @type {String}
    * @private
@@ -66,15 +66,22 @@ function SUBSONIC(){
           "year": song.getAttribute("year") ? parseInt(song.getAttribute("year"), 0) : null,
           "addedOn" : timestamp,
           "src" : _streamingUrl +'/stream.view?u=' +_login+ '&p=' +_password+ '&v=1.2.0&c=chrome&id=' + song.getAttribute("id"),
-          "backendId": Audica.Subsonic.backendId,
-          "stream": true
+          "backendId": backendId
         };
         songList.push(songObj);
       }
-      Audica.trigger('readyCollectingSongs', {songList:songList, backendId:Audica.Subsonic.backendId, timestamp:timestamp});
+      Audica.trigger('readyCollectingSongs', {songList:songList, backendId:backendId, timestamp:timestamp});
     } else {
       console.error("fetching songs failed with status '" +ssr.getAttribute("status")+ "'");
     }
+  }
+
+  this.setPlaySrc = function(src, player) {
+    player.src = src;
+  }
+
+  this.setCoverArt = function(src, coverArt) {
+    coverArt.attr("src", src);
   }
 
   /**
