@@ -24,8 +24,7 @@ function GoogleDrive() {
       client.send(null);
     });
   }
-  
-  // TODO this should go to the google drive plugin
+
   function download(downloadUrl, resultHandler) {
     googleAuth.authorize(function () {
       var handler = function () {
