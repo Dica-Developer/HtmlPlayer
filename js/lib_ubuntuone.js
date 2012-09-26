@@ -22,7 +22,7 @@ function Subsonic(){
    */
   var _serviceUrl = 'https://one.ubuntu.com/music/api/1.0';
   
-  var _streamingUrl = 'https://streaming.one.ubuntu.com';
+  var _streamingUrl = 'https://streaming.one.ubuntu.com/rest';
 
   /**
    * @param {Number} timestamp
@@ -57,7 +57,7 @@ function Subsonic(){
           "album": song.getAttribute("album"),
           "title": song.getAttribute("title"),
           "id": song.getAttribute("id"),
-          "coverArt": _serviceUrl+'/getCoverArt.view?u=' + _login + '&p=' +_password+ "&v=1.2.0&c=chrome&id=" +song.getAttribute('coverArt'),
+          "coverArt": JSON.parse(localStorage["serverUrl"]) +'/getCoverArt.view?u=' + _login + '&p=' +_password+ "&v=1.2.0&c=chrome&id=" +song.getAttribute('coverArt'),
           "contentType": song.getAttribute("contentType"),
           "track": song.getAttribute("track") ? parseInt(song.getAttribute("track"), 0) : null,
           "cd": 0,
