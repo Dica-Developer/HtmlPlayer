@@ -12,6 +12,8 @@ $(function () {
   Audica.plugins.googleDrive = new GoogleDrive();
   Audica.plugins.googleDrive.init();
   Audica.plugins.subsonic = new Subsonic();
+  Audica.plugins.scrobbler = new Scrobbler();
+  Audica.plugins.scrobbler.init();
   // /TODO
   // TODO move this to FileImporter.init()
   // TODO add dropzone div also in FileImporter.init()

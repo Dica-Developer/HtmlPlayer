@@ -84,9 +84,6 @@ function Subsonic(){
     coverArt.attr("src", src);
   }
 
-  /**
-   *
-   */
   Audica.on('updateSongList', function(args){
     _searchForSongs(args.timestamp, null, null);
   });

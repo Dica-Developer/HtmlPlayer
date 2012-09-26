@@ -307,52 +307,53 @@ function AUDICA() {
    */
   this.Scrobbling = {
     setNowPlaying:function () {
-      if (Audica.Scrobbler === null) {
-        return false;
-      }
-      var history = Audica.Playlist.getLastSong();
-      if (null !== history) {
-        var song = Audica.songDb.query({id:history.songId, backendId:history.backendId}).get()[0];
-        if (null !== song) {
-          Audica.Scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function (data) {
-            if (undefined !== data.error) {
-              switch (data.error) {
-                case 6:
-                case 13:
-                  console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
-                  break;
-                default:
-                  console.error("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
+      if (Audica.plugins.scrobbler) {
+        var history = Audica.Playlist.getLastSong();
+        if (null !== history) {
+          var song = Audica.songDb.query({id:history.songId, backendId:history.backendId}).get()[0];
+          if (null !== song) {
+            Audica.plugins.scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function (data) {
+              if (undefined !== data.error) {
+                switch (data.error) {
+                  case 6:
+                  case 13:
+                    console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
+                    break;
+                  default:
+                    console.error("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
+                }
               }
-            }
-          }, null);
+            }, null);
+          }
         }
       }
     },
     scrobble:function () {
-      var audio = Audica.Dom.player;
-      if (!audio.paused) {
-        if (Math.round((audio.currentTime * 100) / audio.duration) > 50 && _notScrobbled) {
-          var history = Audica.Playlist.getLastSong();
-          if (null !== history) {
-            var song = Audica.songDb.query({id:history.songId, backendId:history.backendId}).get()[0];
-            if (null !== song) {
-              var timestamp = parseInt((new Date()).getTime() / 1000.0);
-              Audica.Scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function (data) {
-                if (undefined !== data.error) {
-                  switch (data.error) {
-                    case 6:
-                    case 13:
-                      console.warn("Cannot scrobble the song there is a parameter missing/wrong!", data.message);
-                      _notScrobbled = true;
-                      break;
-                   default:
-                      alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
+      if (Audica.plugins.scrobbler) {
+        var audio = Audica.Dom.player;
+        if (!audio.paused) {
+          if (Math.round((audio.currentTime * 100) / audio.duration) > 50 && _notScrobbled) {
+            var history = Audica.Playlist.getLastSong();
+            if (null !== history) {
+              var song = Audica.songDb.query({id:history.songId, backendId:history.backendId}).get()[0];
+              if (null !== song) {
+                var timestamp = parseInt((new Date()).getTime() / 1000.0);
+                Audica.plugins.scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function (data) {
+                  if (undefined !== data.error) {
+                    switch (data.error) {
+                      case 6:
+                      case 13:
+                        console.warn("Cannot scrobble the song there is a parameter missing/wrong!", data.message);
+                        _notScrobbled = true;
+                        break;
+                     default:
+                        alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
+                    }
+                  } else {
+                  _notScrobbled = false;
                   }
-                } else {
-                _notScrobbled = false;
-                }
-              }, null);
+                }, null);
+              }
             }
           }
         }
@@ -380,12 +381,7 @@ function AUDICA() {
       return Audica.historyDb.query().order('timestamp '+dir).get();
     }
   };
-  /**
-   * @namespace
-   * @type {*}
-   */
-  this.Scrobbler = null;
-  //Private
+
   /**
    * @name _Db
    * @private
@@ -419,103 +415,6 @@ function AUDICA() {
       localStorage[_dbName] = JSON.stringify(this.query().get());
     }
   }
-
-  /**
-   * @param {String} sessionKey
-   * @param {String} login
-   * @class
-   * @private
-   */
-  var _SCROBBLER = function(sessionKey, login) {
-    /**
-     * @type {String}
-     * @private
-     */
-    var _serviceUrl = "http://ws.audioscrobbler.com/2.0/";
-    /**
-     * @type {String}
-     * @private
-     */
-    var _apiKey = "ac2f676e5b95231ac4706b3dcb5d379d";
-    /**
-     * @type {String}
-     * @private
-     */
-    var _secret = "29d73236629ddab3d9688d5378756134";
-    /**
-     * @private
-     */
-    var _successCB = function (data, textStatus, jqXHR) {
-      console.log(data, textStatus, jqXHR);
-    };
-    /**
-     * @private
-     */
-    var _errorCB = function (data, textStatus, jqXHR) {
-      console.error(data, textStatus, jqXHR);
-    };
-    /**
-     * @type {String}
-     */
-    this.sessionKey = sessionKey;
-    /**
-     * @type {String}
-     */
-    this.login = login;
-    /**
-     * @return {String}
-     */
-    this.getTokenUrl = function () {
-      //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-      return "http://www.last.fm/api/auth/?api_key=" + _apiKey + "&cb=" + chrome.extension.getURL("options/authenticate_lastfm.html");
-    };
-    /**
-     * @param {String} token
-     * @param successCB
-     * @param errorCB
-     */
-    this.getSession = function (token, successCB, errorCB) {
-      successCB = successCB || _successCB;
-      errorCB = errorCB || _errorCB;
-      var signature = hex_md5("api_key" + _apiKey + "methodauth.getSessiontoken" + token + _secret);
-      $.ajax(_serviceUrl + "?format=json&method=auth.getSession&api_key=" + _apiKey + "&api_sig=" + signature + "&token=" + token, {type:"GET", success:successCB, error:errorCB});
-    };
-    /**
-     * @param {String} artist
-     * @param {String} track
-     * @param {String} album
-     * @param {String} duration
-     * @param successCB
-     * @param errorCB
-     */
-    this.setNowPlaying = function (artist, track, album, duration, successCB, errorCB) {
-      if (this.isAuthenticated()) {
-        var signature = hex_md5("album" + album + "api_key" + _apiKey + "artist" + artist + "duration" + duration + "methodtrack.updateNowPlayingsk" + this.sessionKey + "track" + track + _secret);
-        $.ajax(_serviceUrl + "?format=json&method=track.updateNowPlaying&api_key=" + _apiKey + "&api_sig=" + signature + "&sk=" + this.sessionKey + "&artist=" + encodeURIComponent(artist) + "&track=" + encodeURIComponent(track) + "&album=" + encodeURIComponent(album) + "&duration=" + duration, {type:"POST", success:successCB, error:errorCB});
-      }
-    };
-    /**
-     * @param {String} artist
-     * @param {String} track
-     * @param {String} album
-     * @param {String} duration
-     * @param {String} playStartTime
-     * @param successCB
-     * @param errorCB
-     */
-    this.scrobble = function (artist, track, album, duration, playStartTime, successCB, errorCB) {
-      if (this.isAuthenticated()) {
-        var signature = hex_md5("album" + album + "api_key" + _apiKey + "artist" + artist + "duration" + duration + "methodtrack.scrobblesk" + this.sessionKey + "timestamp" + playStartTime + "track" + track + _secret);
-        $.ajax(_serviceUrl + "?format=json&method=track.scrobble&api_key=" + _apiKey + "&api_sig=" + signature + "&sk=" + this.sessionKey + "&artist=" + encodeURIComponent(artist) + "&track=" + encodeURIComponent(track) + "&album=" + encodeURIComponent(album) + "&duration=" + duration + "&timestamp=" + playStartTime, {type:"POST", success:successCB, error:errorCB});
-      }
-    };
-    /**
-     * @return {Boolean}
-     */
-    this.isAuthenticated = function () {
-      return null !== this.sessionKey && null !== this.login && undefined !== this.sessionKey && undefined !== this.login;
-    };
-  };
 
   /**
    * @function
@@ -810,17 +709,6 @@ function AUDICA() {
     Audica.trigger('registerEvents');
   };
 
-  /**
-   * TODO make private if init method is ready
-   */
-  this.setScrobble = function () {
-    if (localStorage["audica.lastfm.sessionKey"]) {
-      Audica.Scrobbler = new _SCROBBLER(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"]);
-      Audica.trigger('scrobblerInitiated');
-    } else {
-      Audica.Scrobbler = null;
-    }
-  };
   this.registerEvents = _registerEvents;
 
   //TODO remove debug helper
@@ -885,7 +773,6 @@ window.onerror = function (error, src, row) {
 Audica.on('domElementsSet', Audica.View.applyCoverArtStyle);
 Audica.songDb.init('song');
 Audica.historyDb.init('history');
-Audica.setScrobble();
 Audica.on('readyCollectingSongs', function (args) {
   //maybe 'new Audica.collectSongs()' depends on performance and how many times this event is triggered at the same time
   Audica.collectSongs(args.songList, args.backendId, args.timestamp);
