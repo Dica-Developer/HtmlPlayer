@@ -170,7 +170,6 @@ OAuth2.prototype.refreshAccessToken = function(refreshToken, callback) {
   xhr.onreadystatechange = function(event) {
     if (xhr.readyState == 4) {
       if(xhr.status == 200) {
-        console.log(xhr.responseText);
         // Parse response with JSON
         var obj = JSON.parse(xhr.responseText);
         // Callback with the tokens
