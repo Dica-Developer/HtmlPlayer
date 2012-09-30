@@ -25,10 +25,7 @@ function GoogleDrive() {
     });
   }
 
-  function download(downloadUrl, player) {
-    console.log(player);
-    var url = window.URL || window.webkitURL;
-
+  function download(downloadUrl, resultHandler) {
     googleAuth.authorize(function () {
       var handler = function () {
         var file = this.response;
@@ -36,19 +33,9 @@ function GoogleDrive() {
         resultHandler(file);
       };
 
-      var newHandler = function(event){
-        if(event.loaded >= 1000000){
-          var bla = $.extend(true, {}, event);
-//          player.src = url.createObjectURL(bla.srcElement.response);
-          this.onprogress = null;
-          console.log(bla);
-        }
-      };
-
       console.log('Start receive file');
       var client = new XMLHttpRequest();
-      client.onprogress = newHandler;
-//      client.onload = handler;
+      client.onload = handler;
       client.responseType = 'blob';
       client.open("GET", downloadUrl);
       client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
@@ -57,12 +44,11 @@ function GoogleDrive() {
   }
 
   this.setPlaySrc = function(src, player) {
-    download(src, player);
-//      function(file) {
-//      var url = window.URL || window.webkitURL;
-//      player.src = url.createObjectURL(file);
-//    });
-  };
+    download(src, function(file) {
+      var url = window.URL || window.webkitURL;
+      player.src = url.createObjectURL(file);
+    });
+  }
 
   function buildList(response, timestamp) {
     console.log('Start building list');
