@@ -1,4 +1,20 @@
 $(function () {
+
+  Audica = new AUDICA();
+  window.onerror = function (error, src, row) {
+//    window.event.preventDefault();
+    console.log('Error: %s in %s row %s', error, src, row);
+  };
+//TODO define an init method which initiates db, dom objects, options, events, etc.
+  Audica.on('domElementsSet', Audica.View.applyCoverArtStyle);
+  Audica.songDb.init('song');
+  Audica.historyDb.init('history');
+  Audica.on('readyCollectingSongs', function (args) {
+    //maybe 'new Audica.collectSongs()' depends on performance and how many times this event is triggered at the same time
+    Audica.collectSongs(args.songList, args.backendId, args.timestamp);
+  });
+
+
   Audica.Dom.initDom();
   Audica.registerEvents();
 
