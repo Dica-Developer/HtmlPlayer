@@ -1,5 +1,5 @@
 describe("Player core", function() {
-
+  var keyup = jQuery.Event("keyup");
   it("Audica should be initialized", function() {
     //TODO find an other way to define Audica global and once
     Audica = new AUDICA();
@@ -84,5 +84,72 @@ describe("Player core", function() {
     });
   });
 
+  describe('Dom events', function(){
+    it('Hover on Audica.Dom.searchViewPreview', function(){
+      var mouseenterEvent = spyOnEvent(Audica.Dom.searchViewPreview, 'mouseenter');
+      Audica.Dom.searchViewPreview.mouseenter();
+      expect('mouseenter').toHaveBeenTriggeredOn(Audica.Dom.searchViewPreview);
+      expect(mouseenterEvent).toHaveBeenTriggered();
+
+
+      var mouseleaveEvent = spyOnEvent(Audica.Dom.searchViewPreview, 'mouseleave');
+      Audica.Dom.searchViewPreview.mouseleave();
+      expect('mouseleave').toHaveBeenTriggeredOn(Audica.Dom.searchViewPreview);
+      expect(mouseleaveEvent).toHaveBeenTriggered();
+    });
+
+    it('Click on Audica.Dom.searchViewPreview', function(){
+      var clickEvent = spyOnEvent(Audica.Dom.searchViewPreview, 'click');
+      Audica.Dom.searchViewPreview.click();
+      expect('click').toHaveBeenTriggeredOn(Audica.Dom.searchViewPreview);
+      expect(clickEvent).toHaveBeenTriggered();
+    });
+
+    it('Click on Audica.Dom.playerViewPreview', function(){
+      var clickEvent = spyOnEvent(Audica.Dom.playerViewPreview, 'click');
+      Audica.Dom.playerViewPreview.click();
+      expect('click').toHaveBeenTriggeredOn(Audica.Dom.playerViewPreview);
+      expect(clickEvent).toHaveBeenTriggered();
+    });
+
+    it('Mousemove on document should open player controls', function(){
+      var mousemoveEvent = spyOnEvent($(document), 'mousemove');
+      expect(Audica.Dom.playerControlView.data('open')).toBeFalsy();
+      $(document).trigger('mousemove');
+      expect('mousemove').toHaveBeenTriggeredOn($(document));
+      expect(mousemoveEvent).toHaveBeenTriggered();
+      expect(Audica.Dom.playerControlView.data('open')).toBeTruthy();
+    });
+
+    it('Key "p" should play previous song', function(){
+      spyOn(Audica,'trigger');
+      keyup.which = 80;
+      $(document).trigger(keyup);
+
+      var eventObject = {message:'No song found. Possible reason: Empty History'};
+      expect(Audica.trigger).toHaveBeenCalled();
+      expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
+    });
+
+    it('Key "n" should play next song', function(){
+      spyOn(Audica,'trigger');
+      keyup.which = 78;
+      $(document).trigger(keyup);
+
+      var eventObject = {message:'No song found. Possible reason: Empty Playlist'};
+      expect(Audica.trigger).toHaveBeenCalled();
+      expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
+    });
+
+    it('Key "Space" should play/pause song', function(){
+      keyup.which = 32;
+      $(document).trigger(keyup);
+      expect(Audica.Dom.player.paused).toBeFalsy();
+
+      keyup.which = 32;
+      $(document).trigger(keyup);
+      expect(Audica.Dom.player.paused).toBeTruthy();
+    });
+  });
 
 });
