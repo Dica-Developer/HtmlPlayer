@@ -50,6 +50,23 @@ function GoogleDrive() {
     });
   }
 
+  function stream(downloadUrl, resultHandler) {
+    googleAuth.authorize(function () {
+      var handler = function (evt) {
+        console.log('End receive file');
+        resultHandler(this, evt);
+      };
+
+      console.log('Start receive file');
+      var client = new XMLHttpRequest();
+      client.onprogress = handler;
+      //client.responseType = 'blob';
+      client.open("GET", downloadUrl);
+      client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
+      client.send(null);
+    });
+  }
+
   function buildList(response, timestamp) {
     console.log('Start building list');
     var songList = [];
@@ -57,6 +74,22 @@ function GoogleDrive() {
     var items = fileList.items;
     for (var idx = 0, item; item = items[idx]; idx++) {
       if (item.mimeType === 'audio/mpeg') {
+        stream(item.downloadUrl, function(req, evt) {
+          if (evt.loaded >= 9440) {
+            var str = req.response;
+            console.log(str.substr(0, 3));
+            console.log("version: 2." + str.charCodeAt(3) + "." + str.charCodeAt(4));
+            console.log("flags: " + str.charCodeAt(5));
+            console.log("size: " + (str.charCodeAt(6)+ "" + str.charCodeAt(7)+ "" + str.charCodeAt(8) +""+ str.charCodeAt(9)));
+            var reader = getTagReader(str);
+            reader.loadData(data, function() {
+              ID3.readTags(reader, data, item.downloadUrl, options["tags"]);
+              var tags = ID3.getAllTags(item.downloadUrl);
+              console.log(tags.artist + " - " + tags.title + ", " + tags.album);
+            });
+            req.abort();
+          }
+        });
         song = {
           "artist" : 'Unknown',
           "album" : 'Unkown',
