@@ -33,7 +33,7 @@
 
   ID3.getTags = function(reader, data, tags) {
     var tagsFound = reader.readTagsFromData(data, tags);
-    var tags = _files[url] || {};
+    var tags = {};
     for (var tag in tagsFound )
     if (tagsFound.hasOwnProperty(tag)) {
       tags[tag] = tagsFound[tag];
