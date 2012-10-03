@@ -50,17 +50,17 @@ function GoogleDrive() {
       player.src = url.createObjectURL(file);
     });
   }
-  function getSongData(resultHandler) {
+  function getSongData(item, resultHandler) {
     googleAuth.authorize(function() {
       var handler = function(evt) {
         console.log('End receive part of file');
-        resultHandler(this, evt);
+        resultHandler(this, evt, item);
       };
 
       console.log('Start receive part of file');
       var client = new XMLHttpRequest();
       client.onprogress = handler;
-      client.open("GET", downloadUrl);
+      client.open("GET", item.downloadUrl);
       client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
       client.send(null);
     });
@@ -73,23 +73,24 @@ function GoogleDrive() {
     var items = fileList.items;
     for (var idx = 0, item; item = items[idx]; idx++) {
       if (item.mimeType === 'audio/mpeg') {
-      song = {
-        "artist" : 'Unknown',
-        "album" : 'Unkown',
-        "title" : item.title,
-        "id" : item.id,
-        "coverArt" : '',
-        "contentType" : item.mimeType,
-        "track" : 0,
-        "cd" : 0,
-        "duration" : 0,
-        "genre" : '',
-        "year" : 1900,
-        "addedOn" : timestamp,
-        "src" : item.downloadUrl,
-        "backendId" : backendId
-      };
-      songList.push(song); 
+        song = {
+          "artist" : 'Unknown',
+          "album" : 'Unkown',
+          "title" : item.title,
+          "id" : item.id,
+          "coverArt" : '',
+          "contentType" : item.mimeType,
+          "track" : 0,
+          "cd" : 0,
+          "duration" : 0,
+          "genre" : '',
+          "year" : 1900,
+          "addedOn" : timestamp,
+          "src" : item.downloadUrl,
+          "backendId" : backendId
+        };
+        songList.push(song);
+      }
     }
     Audica.trigger('readyCollectingSongs', {
       songList : songList,
@@ -98,7 +99,7 @@ function GoogleDrive() {
     });
     for (var idx = 0, item; item = items[idx]; idx++) {
       if (item.mimeType === 'audio/mpeg') {
-        getSongData(item.id, function(req, evt, id) {
+        getSongData(item, function(req, evt, item) {
           if (evt.loaded >= 10000) {
             var str = req.response;
             var reader = ID3.getTagReader(str);
