@@ -26,8 +26,8 @@ function GoogleDrive() {
   }
 
   function download(downloadUrl, resultHandler) {
-    googleAuth.authorize(function () {
-      var handler = function () {
+    googleAuth.authorize(function() {
+      var handler = function() {
         var file = this.response;
         console.log('End receive file');
         resultHandler(file);
@@ -43,24 +43,23 @@ function GoogleDrive() {
     });
   }
 
+
   this.setPlaySrc = function(src, player) {
     download(src, function(file) {
       var url = window.URL || window.webkitURL;
       player.src = url.createObjectURL(file);
     });
   }
-
-  function stream(downloadUrl, resultHandler) {
-    googleAuth.authorize(function () {
-      var handler = function (evt) {
-        console.log('End receive file');
+  function getSongData(resultHandler) {
+    googleAuth.authorize(function() {
+      var handler = function(evt) {
+        console.log('End receive part of file');
         resultHandler(this, evt);
       };
 
-      console.log('Start receive file');
+      console.log('Start receive part of file');
       var client = new XMLHttpRequest();
       client.onprogress = handler;
-      //client.responseType = 'blob';
       client.open("GET", downloadUrl);
       client.setRequestHeader('Authorization', 'OAuth ' + googleAuth.getAccessToken());
       client.send(null);
@@ -74,47 +73,46 @@ function GoogleDrive() {
     var items = fileList.items;
     for (var idx = 0, item; item = items[idx]; idx++) {
       if (item.mimeType === 'audio/mpeg') {
-        stream(item.downloadUrl, function(req, evt) {
-          if (evt.loaded >= 9440) {
-            var str = req.response;
-            console.log(str.substr(0, 3));
-            console.log("version: 2." + str.charCodeAt(3) + "." + str.charCodeAt(4));
-            console.log("flags: " + str.charCodeAt(5));
-            console.log("size: " + (str.charCodeAt(6)+ "" + str.charCodeAt(7)+ "" + str.charCodeAt(8) +""+ str.charCodeAt(9)));
-            var reader = getTagReader(str);
-            reader.loadData(data, function() {
-              ID3.readTags(reader, data, item.downloadUrl, options["tags"]);
-              var tags = ID3.getAllTags(item.downloadUrl);
-              console.log(tags.artist + " - " + tags.title + ", " + tags.album);
-            });
-            req.abort();
-          }
-        });
-        song = {
-          "artist" : 'Unknown',
-          "album" : 'Unkown',
-          "title" : item.title,
-          "id" : item.id,
-          "coverArt" : '',
-          "contentType" : item.mimeType,
-          "track" : 0,
-          "cd" : 0,
-          "duration" : 0,
-          "genre" : '',
-          "year" : 1900,
-          "addedOn" : timestamp,
-          "src" : item.downloadUrl,
-          "backendId" : backendId
-        };
-        songList.push(song);
-      }
+      song = {
+        "artist" : 'Unknown',
+        "album" : 'Unkown',
+        "title" : item.title,
+        "id" : item.id,
+        "coverArt" : '',
+        "contentType" : item.mimeType,
+        "track" : 0,
+        "cd" : 0,
+        "duration" : 0,
+        "genre" : '',
+        "year" : 1900,
+        "addedOn" : timestamp,
+        "src" : item.downloadUrl,
+        "backendId" : backendId
+      };
+      songList.push(song); 
     }
     Audica.trigger('readyCollectingSongs', {
       songList : songList,
       backendId : backendId,
       timestamp : timestamp
     });
+    for (var idx = 0, item; item = items[idx]; idx++) {
+      if (item.mimeType === 'audio/mpeg') {
+        getSongData(item.id, function(req, evt, id) {
+          if (evt.loaded >= 10000) {
+            var str = req.response;
+            var reader = ID3.getTagReader(str);
+            // TODO define the tags that should be read title, album, artist, year, cd number, track number, duration, year and genre
+            var tags = ID3.getTags(reader, str, null);
+            req.abort();
+            console.log(tags.artist + " - " + tags.title + ", " + tags.album);
+            // TODO fill db with song data for id and backendid
+          }
+        });
+      }
+    }
   }
+
 
   this.setCoverArt = function(src, coverArt) {
   }
