@@ -97,6 +97,8 @@ function GoogleDrive() {
       backendId : backendId,
       timestamp : timestamp
     });
+    // TODO this can fail because it isn't guaranteed that the songs in the db after we triggered the previous event.
+    // we should: 1. some how synchronize, 2. trottle the requests to avoid killing the device
     for (var idx = 0, item; item = items[idx]; idx++) {
       if (item.mimeType === 'audio/mpeg') {
         getSongData(item, function(req, evt, item) {
@@ -106,8 +108,14 @@ function GoogleDrive() {
             // TODO define the tags that should be read title, album, artist, year, cd number, track number, duration, year and genre
             var tags = ID3.getTags(reader, str, null);
             req.abort();
-            console.log(tags.artist + " - " + tags.title + ", " + tags.album);
-            // TODO fill db with song data for id and backendid
+            Audica.songDb.query({
+              id : item.id,
+              backendId : backendId
+            }).update({
+              artist : tags.artist,
+              title : tags.title,
+              album : tags.album
+            });
           }
         });
       }
