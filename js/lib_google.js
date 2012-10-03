@@ -97,7 +97,7 @@ function GoogleDrive() {
       backendId : backendId,
       timestamp : timestamp
     });
-    // TODO this can fail because it isn't guaranteed that the songs in the db after we triggered the previous event.
+    // TODO this can fail because it isn't guaranteed that the songs are in the db after we triggered the previous event.
     // we should: 1. some how synchronize, 2. trottle the requests to avoid killing the device
     for (var idx = 0, item; item = items[idx]; idx++) {
       if (item.mimeType === 'audio/mpeg') {
