@@ -76,9 +76,22 @@ body {
     font-size: 12px;
     margin: 10px;
 }
+.selected{
+  background: #4169e1;
+}
+
 #playlistBox {
     font-size: 12px;
     margin: 10px;
+}
+#songBoxContainer, #playlistBoxContainer {
+  height: 100%;
+  width: 45%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+#songBoxContainer {
+  float: left;
 }
 #playerControlView {
     background: rgba(44, 44, 44, 0.5);
