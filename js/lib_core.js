@@ -239,6 +239,8 @@ function AUDICA() {
    * @type {Object}
    */
   this.View = {
+    songBoxPositionX:null,
+    songBoxPositionY:0,
     /**
      * @param {String} artist
      * @param {String} album
@@ -277,8 +279,9 @@ function AUDICA() {
     bindSongBoxEvents: function () {
       Audica.Dom.songBox.find('span').on('click', function () {
         var value = $(this).data("value");
-        var elems = $('[data-value="' + value + '"]');
-        $(this).closest('ul').find('.selected').removeClass('selected');
+        var ul = $(this).closest('ul');
+        var elems = ul.find('[data-value="' + value + '"]');
+        ul.find('.selected').removeClass('selected');
         elems.parent().addClass('selected');
       });
     },
@@ -470,7 +473,7 @@ function AUDICA() {
     };
     this.save = function () {
       localStorage[_dbName] = JSON.stringify(this.query().get());
-    }
+    };
   }
 
   /**
@@ -565,10 +568,15 @@ function AUDICA() {
               descriptionBox.css("padding-top", (Audica.Dom.documentHeight - descriptionBox.height()) / 2);
             }
             break;
-          case 37:
-          case 38:
-          case 39:
-            var clones = Audica.Dom.songBox.find(".selected").clone();
+          case 13:
+            var elemsToMove = Audica.Dom.songBox.find(".selected");
+            var clones = elemsToMove.clone();
+            clones.animate({opacity: 0}, function(){
+                elemsToMove.removeClass('selected');
+                clones.removeClass('selected');
+                clones.css({opacity: 1});
+            });
+            elemsToMove.addClass('added');
             clones.appendTo(Audica.Dom.playListBox);
             Audica.Dom.playListBox.find('span').on('click', function () {
               var thisUL = $(this).closest('ul');
@@ -577,7 +585,57 @@ function AUDICA() {
               thisUL.find('.selected').removeClass('selected');
               elems.parent().addClass('selected');
             });
+            break;
+          case 37:
+            if (0 === Audica.View.songBoxPositionY) {
+              Audica.View.songBoxPositionY = 3;
+            } else {
+              Audica.View.songBoxPositionY--;
+            }
+            Audica.View.songBoxPositionX.find('span').eq(Audica.View.songBoxPositionY).trigger('click');
+            return false;
           case 40:
+            var next = null;
+            if (!Audica.View.songBoxPositionX) {
+              Audica.View.songBoxPositionX = Audica.Dom.songBox.find('li').eq(0);
+              next = Audica.View.songBoxPositionX;
+            } else {
+              next = Audica.View.songBoxPositionX.next();
+              Audica.View.songBoxPositionX.removeClass('active');
+              if (next.length === 0) {
+                next = Audica.Dom.songBox.find('li').eq(0);
+              }
+            }
+            Audica.Dom.songBox.parent().scrollTop(Math.abs(next.position().top + Audica.Dom.songBox.parent().scrollTop()));
+            next.addClass('active');
+            Audica.View.songBoxPositionX = next;
+            next.find('span').eq(Audica.View.songBoxPositionY).trigger('click');
+            return false;
+          case 39:
+            if (3 === Audica.View.songBoxPositionY) {
+              Audica.View.songBoxPositionY = 0;
+            } else {
+              Audica.View.songBoxPositionY++;
+            }
+            Audica.View.songBoxPositionX.find('span').eq(Audica.View.songBoxPositionY).trigger('click');
+            return false;
+          case 38:
+            var prev = null;
+            if (!Audica.View.songBoxPositionX) {
+              Audica.View.songBoxPositionX = Audica.Dom.songBox.find('li').eq(0);
+              prev = Audica.View.songBoxPositionX;
+            } else {
+              prev = Audica.View.songBoxPositionX.prev();
+              Audica.View.songBoxPositionX.removeClass('active');
+              if (prev.length === 0) {
+                prev = Audica.Dom.songBox.find('li').last();
+              }
+            }
+            Audica.Dom.songBox.parent().scrollTop(Math.abs(Audica.Dom.songBox.parent().scrollTop() + prev.position().top));
+            prev.addClass('active');
+            Audica.View.songBoxPositionX = prev;
+            prev.find('span').eq(Audica.View.songBoxPositionY).trigger('click');
+            return false;
           case 9:
           case 16:
           case 18:
@@ -628,8 +686,13 @@ function AUDICA() {
           }
         } else if ('playlist' === _viewState) {
           switch (event.which) {
-          case 37:
-            Audica.Dom.playListBox.find(".selected").remove();
+          case 46:
+            var elems = Audica.Dom.playListBox.find(".selected");
+            elems.each(function () {
+              var song = Audica.Dom.songBox.find('[data-song="' + $(this).data('song') + '"]');
+              song.removeClass('added');
+            });
+            elems.remove();
           }
         } else {
           console.log("Unknown view state '" + _viewState + "'.");

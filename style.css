@@ -79,7 +79,12 @@ body {
 .selected{
   background: #4169e1;
 }
-
+.added{
+  background: red;
+}
+.active{
+  border: 1px solid black;
+}
 #playlistBox {
     font-size: 12px;
     margin: 10px;
