@@ -314,6 +314,12 @@ function AUDICA() {
           Audica.Dom.timeField.text(Math.round(Audica.Dom.player.currentTime) + " / " + Math.round(Audica.Dom.player.duration));
         }
       }
+    },
+    getViewState: function(){
+      return _viewState;
+    },
+    setViewState: function(viewState){
+      _viewState = viewState;
     }
   };
   /**
@@ -417,6 +423,12 @@ function AUDICA() {
           }
         }
       }
+    },
+    getNotScrobbled: function(){
+      return _notScrobbled;
+    },
+    setNotScrobbled: function(notScrobbled){
+      _notScrobbled = notScrobbled;
     }
   };
   /**
@@ -480,224 +492,9 @@ function AUDICA() {
    * @function
    * @private
    */
-  var _registerEvents = function () {
+  this.registerEvents = function () {
+      window.bindKeyEvents(Audica);
       var filterBoxTimeout = null;
-      $(document).on("keyup", function (event) {
-        var audio = Audica.Dom.player;
-        var songBox = Audica.Dom.songBox;
-        var playListBox = Audica.Dom.playListBox;
-        var searchView = Audica.Dom.searchView;
-        var boxWidth = (Audica.Dom.documentWidth / 2) - 22 - 2;
-        var boxHeight = Audica.Dom.documentHeight - 22;
-        var playerView = Audica.Dom.playerView;
-        var playerControlView = Audica.Dom.playerControlView;
-        var coverArtBox = Audica.Dom.coverArtBox;
-        var filterBox = Audica.Dom.filterBox;
-        var descriptionBox = Audica.Dom.descriptionBox;
-        if ('player' === _viewState) {
-          switch (event.which) {
-          case 39:
-            audio.currentTime = audio.currentTime + 10;
-            break;
-          case 37:
-            audio.currentTime = audio.currentTime - 10;
-            break;
-          case 187:
-            audio.playbackRate = audio.playbackRate + 0.05;
-            break;
-          case 189:
-            audio.playbackRate = audio.playbackRate - 0.05;
-            break;
-          case 76:
-            songBox.focus();
-            songBox.width(boxWidth);
-            songBox.height(boxHeight);
-            playListBox.width(boxWidth);
-            playListBox.height(boxHeight);
-            searchView.height($(document).height());
-            searchView.animate({
-              left: 0
-            });
-            playerView.animate({
-              left: Audica.Dom.documentWidth
-            });
-            playerControlView.animate({
-              left: Audica.Dom.documentWidth
-            });
-            _viewState = 'search';
-            break;
-          case 80:
-            Audica.PlayerControl.previous();
-            Audica.Scrobbling.setNowPlaying();
-            _notScrobbled = true;
-            break;
-          case 78:
-            Audica.PlayerControl.next();
-            Audica.Scrobbling.setNowPlaying();
-            _notScrobbled = true;
-            break;
-          case 32:
-            audio.paused ? audio.play() : audio.pause();
-            break;
-          }
-        } else if ('search' === _viewState) {
-          switch (event.which) {
-          case 27:
-            if (filterBox.data("open")) {
-              filterBox.data("open", false);
-              songBox.focus();
-              filterBox.hide();
-              filterBox.val("");
-            } else {
-              searchView.animate({
-                left: -1 * Audica.Dom.documentWidth
-              });
-              playerView.animate({
-                left: "0"
-              });
-              playerControlView.animate({
-                left: "0"
-              });
-              if (audio.paused) {
-                Audica.PlayerControl.next();
-                Audica.Scrobbling.setNowPlaying();
-                _notScrobbled = true;
-              }
-              _viewState = 'player';
-              coverArtBox.css("padding-top", (Audica.Dom.documentHeight - coverArtBox.height()) / 2);
-              descriptionBox.css("padding-top", (Audica.Dom.documentHeight - descriptionBox.height()) / 2);
-            }
-            break;
-          case 13:
-            var elemsToMove = Audica.Dom.songBox.find(".selected");
-            var clones = elemsToMove.clone();
-            clones.animate({opacity: 0}, function(){
-                elemsToMove.removeClass('selected');
-                clones.removeClass('selected');
-                clones.css({opacity: 1});
-            });
-            elemsToMove.addClass('added');
-            clones.appendTo(Audica.Dom.playListBox);
-            Audica.Dom.playListBox.find('span').on('click', function () {
-              var thisUL = $(this).closest('ul');
-              var value = $(this).data("value");
-              var elems = thisUL.find('[data-value="' + value + '"]');
-              thisUL.find('.selected').removeClass('selected');
-              elems.parent().addClass('selected');
-            });
-            break;
-          case 37:
-            if (0 === Audica.View.songBoxPositionY) {
-              Audica.View.songBoxPositionY = 3;
-            } else {
-              Audica.View.songBoxPositionY--;
-            }
-            Audica.View.songBoxPositionX.find('span').eq(Audica.View.songBoxPositionY).trigger('click');
-            return false;
-          case 40:
-            var next = null;
-            if (!Audica.View.songBoxPositionX) {
-              Audica.View.songBoxPositionX = Audica.Dom.songBox.find('li').eq(0);
-              next = Audica.View.songBoxPositionX;
-            } else {
-              next = Audica.View.songBoxPositionX.next();
-              Audica.View.songBoxPositionX.removeClass('active');
-              if (next.length === 0) {
-                next = Audica.Dom.songBox.find('li').eq(0);
-              }
-            }
-            Audica.Dom.songBox.parent().scrollTop(Math.abs(next.position().top + Audica.Dom.songBox.parent().scrollTop()));
-            next.addClass('active');
-            Audica.View.songBoxPositionX = next;
-            next.find('span').eq(Audica.View.songBoxPositionY).trigger('click');
-            return false;
-          case 39:
-            if (3 === Audica.View.songBoxPositionY) {
-              Audica.View.songBoxPositionY = 0;
-            } else {
-              Audica.View.songBoxPositionY++;
-            }
-            Audica.View.songBoxPositionX.find('span').eq(Audica.View.songBoxPositionY).trigger('click');
-            return false;
-          case 38:
-            var prev = null;
-            if (!Audica.View.songBoxPositionX) {
-              Audica.View.songBoxPositionX = Audica.Dom.songBox.find('li').eq(0);
-              prev = Audica.View.songBoxPositionX;
-            } else {
-              prev = Audica.View.songBoxPositionX.prev();
-              Audica.View.songBoxPositionX.removeClass('active');
-              if (prev.length === 0) {
-                prev = Audica.Dom.songBox.find('li').last();
-              }
-            }
-            Audica.Dom.songBox.parent().scrollTop(Math.abs(Audica.Dom.songBox.parent().scrollTop() + prev.position().top));
-            prev.addClass('active');
-            Audica.View.songBoxPositionX = prev;
-            prev.find('span').eq(Audica.View.songBoxPositionY).trigger('click');
-            return false;
-          case 9:
-          case 16:
-          case 18:
-          case 17:
-            break;
-          default:
-            if (!filterBox.data("open")) {
-              filterBox.data("open", true);
-              // todo the first key should be filled in the filterBox
-              // but with keyup we only get a normal key and not chars that are created with two keys like !
-              // this works only with keypress
-              // $('#filterBox').val(String.fromCharCode(event.which));
-              filterBox.show();
-            }
-            filterBox.focus();
-            if (null !== filterBoxTimeout) {
-              clearTimeout(filterBoxTimeout);
-            }
-            filterBoxTimeout = setTimeout(function () {
-              var currentSongList = [];
-              var filterQuery = filterBox.val();
-              if (null !== filterQuery && undefined !== filterQuery) {
-                // TODO If album medium number is available sort by it first
-                var dbQuery = [{
-                  artist: {
-                    likenocase: filterQuery
-                  }
-                }, {
-                  album: {
-                    likenocase: filterQuery
-                  }
-                }, {
-                  genre: {
-                    likenocase: filterQuery
-                  }
-                }, {
-                  title: {
-                    likenocase: filterQuery
-                  }
-                }];
-                currentSongList = Audica.songDb.query(dbQuery).order('artist asec, album asec, year asec, track asec, title asec').get();
-              } else {
-                currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
-              }
-              Audica.View.fillSongBox(currentSongList);
-            }, 500);
-            break;
-          }
-        } else if ('playlist' === _viewState) {
-          switch (event.which) {
-          case 46:
-            var elems = Audica.Dom.playListBox.find(".selected");
-            elems.each(function () {
-              var song = Audica.Dom.songBox.find('[data-song="' + $(this).data('song') + '"]');
-              song.removeClass('added');
-            });
-            elems.remove();
-          }
-        } else {
-          console.log("Unknown view state '" + _viewState + "'.");
-        }
-      });
 
       $(document).mousemove(function () {
         var playerControlView = Audica.Dom.playerControlView;
@@ -889,10 +686,6 @@ function AUDICA() {
         Audica.historyDb.save();
       });
 
-      $('#test').find('td').on('keyup', function (ev) {
-        console.log(ev);
-      });
-
       $(window).on('resize', function () {
         if (null !== resizeEventTimeoutId) {
           clearTimeout(resizeEventTimeoutId);
@@ -905,8 +698,6 @@ function AUDICA() {
 
       Audica.trigger('registerEvents');
     };
-
-  this.registerEvents = _registerEvents;
 
   //TODO remove debug helper
   this.getOptions = function () {
