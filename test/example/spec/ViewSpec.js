@@ -53,7 +53,6 @@ describe("View", function() {
 
   describe('Audica.View.fillSongBox', function(){
     beforeEach(function(){
-      console.log(subsonicSongList);
       Audica.View.fillSongBox(subsonicSongList);
     });
 
