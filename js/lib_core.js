@@ -557,7 +557,7 @@ function AUDICA() {
               left: 0
             });
             if (audio.paused) {
-              Audica.PlayerControll.next();
+              Audica.PlayerControl.next();
               Audica.Scrobbling.setNowPlaying();
               _notScrobbled = true;
             }
