@@ -4,9 +4,13 @@
   <div id="playerViewPreview">
   </div>
   <div id="searchView">
-    <input id="filterBox" type="text"></input>
-    <select id="songBox" size="1" multiple="multiple"></select>
-    <select id="playlistBox" size="1" multiple="multiple"></select>
+    <input id="filterBox" type="text" class="mousetrap"/>
+    <div id="songBoxContainer">
+      <ul id="songBox"></ul>
+    </div>
+    <div id="playlistBoxContainer">
+      <ul id="playlistBox"></ul>
+    </div>
   </div>
   <div id="playerView">
     <audio id="player" autoplay="true" preload="auto"></audio>
@@ -18,7 +22,7 @@
       from <label id="album">album</label>
     </div>
     <div id="coverArtBox">
-      <img id="coverArt" class="reflect" src="../../images/wholeNote.png"/>
+      <img id="coverArt" class="reflect" src="images/wholeNote.png"/>
     </div>
   </div>
   <div id="playerControlView">

@@ -20,7 +20,7 @@ describe("Dom", function() {
 
   it('PLaylist should contain 1 elem', function(){
     Audica.Dom.setFirstPlaylistElement(subsonicSongList[0]);
-    expect(Audica.Dom.playListBox.find('option').length).toEqual(1);
+    expect(Audica.Dom.playListBox.find('li').length).toEqual(1);
   });
 
   it('Audica.Dom.documentHeight should equal to viewport height', function(){

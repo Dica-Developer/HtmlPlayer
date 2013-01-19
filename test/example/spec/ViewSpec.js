@@ -53,17 +53,18 @@ describe("View", function() {
 
   describe('Audica.View.fillSongBox', function(){
     beforeEach(function(){
+      console.log(subsonicSongList);
       Audica.View.fillSongBox(subsonicSongList);
     });
 
     it('Song box should contain 10 elems', function(){
-      expect(Audica.Dom.songBox.find('option').length).toEqual(10);
+      expect(Audica.Dom.songBox.find('li').length).toEqual(10);
     });
 
     it('Option value should song object as json', function(){
-      var firstOptionValue = Audica.Dom.songBox.find('option').eq(0).val();
+      var firstLiValue = Audica.Dom.songBox.find('li').eq(0).data('song');
       var firstSongValue = escape(JSON.stringify(subsonicSongList[0]));
-      expect(firstOptionValue).toEqual(firstSongValue);
+      expect(firstLiValue).toEqual(firstSongValue);
     });
   });
 

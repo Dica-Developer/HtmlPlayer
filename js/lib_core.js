@@ -147,10 +147,11 @@ function AUDICA() {
       Audica.trigger('onStartPlayingSong', {
         song: song
       });
-      Audica.Dom.player.type = song.contentType;
+      var player = Audica.Dom.player;
+      player.type = song.contentType;
       var plugin = Audica.plugins[song.backendId];
       if (plugin) {
-        plugin.setPlaySrc(song.src, Audica.Dom.player);
+        plugin.setPlaySrc(song.src, player);
         plugin.setCoverArt(song.coverArt, Audica.Dom.coverArt);
       } else {
         Audica.trigger('ERROR', {
