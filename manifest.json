@@ -1,6 +1,6 @@
 {
   "name": "Audica Player",
-  "version": "0.6",
+  "version": "0.9",
   "description": "",
   "app": {
     "launch": {
@@ -13,14 +13,22 @@
       "matches": ["https://one.ubuntu.com/phones/creds"],
       "js": ["js/ubuntuone_authentication.js"],
       "run_at": "document_end"
+    },
+    {
+      "matches": ["http://www.google.com/robots.txt*"],
+      "js": ["js/oauth2/oauth2_inject.js"],
+      "run_at": "document_start"
     }
   ],
   "icons": {
-	  "128": "images/icon.png",
-	  "48": "images/icon.png",
-	  "16": "images/icon.png"
+	  "128": "images/icon128.png",
+	  "48": "images/icon48.png",
+	  "16": "images/icon16.png"
 	},
+	"offline_enabled": false,
   "options_page": "options/index.html",
-  "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://streaming.one.ubuntu.com/rest/*"]
+  "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://one.ubuntu.com/music/api/1.0/*", "https://accounts.google.com/o/oauth2/token", "https://streaming.one.ubuntu.com/rest/*"],
+  "manifest_version": 2,
+  "content_security_policy": "default-src *; style-src 'self'; script-src 'self'; object-src 'self'; connect-src * ; img-src http://cdn.last.fm https://one.ubuntu.com/music/api/1.0/ 'self'"
 }
 

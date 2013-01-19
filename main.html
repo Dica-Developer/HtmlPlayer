@@ -1,399 +1,63 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="style.css" type="text/css">
-  </head>
-  <body>
-    <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
-    <script type="text/javascript" src="js/md5.js"></script>
-    <script type="text/javascript" src="js/sprite.js"></script>
-    <script type="text/javascript" src="js/lib_ubuntuone.js"></script>
-    <script type="text/javascript" src="js/lib_lastfm.js"></script>
-    <script type="text/javascript" src="js/lib_navigation.js"></script>
-    <script type="text/javascript" src="js/lib_controller.js"></script>
-    <script type="text/javascript" src="js/reflection.js"></script>
-
-    <div id="searchViewPreview">
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="style.css" type="text/css">
+  <script type="text/javascript" src="js/taffy-2.6.1.js"></script>
+  <script type="text/javascript" src="js/jquery.min.js"></script>
+  <script type="text/javascript" src="js/md5.js"></script>
+  <script type="text/javascript" src="js/ID3/stringutils.js"></script>
+  <script type="text/javascript" src="js/ID3/id3v1.js"></script>
+  <script type="text/javascript" src="js/ID3/id3v2.js"></script>
+  <script type="text/javascript" src="js/ID3/id3v2frames.js"></script>
+  <script type="text/javascript" src="js/ID3/id4.js"></script>
+  <script type="text/javascript" src="js/ID3/id3.js"></script>
+  <script type="text/javascript" src="js/mousetrap.min.js"></script>
+  <script type="text/javascript" src="js/lib_keys.js"></script>
+  <script type="text/javascript" src="js/lib_core.js"></script>
+  <script type="text/javascript" src="js/oauth2/oauth2.js"></script>
+  <script type="text/javascript" src="js/lib_google.js"></script>
+  <script type="text/javascript" src="js/lib_ubuntuone.js"></script>
+  <script type="text/javascript" src="js/lib_db.js"></script>
+  <script type="text/javascript" src="js/lib_radioImporter.js"></script>
+  <script type="text/javascript" src="js/lib_fileImporter.js"></script>
+  <script type="text/javascript" src="js/lib_fileSystem.js"></script>
+  <script type="text/javascript" src="js/lib_lastfm.js"></script>
+  <script type="text/javascript" src="js/reflection.js"></script>
+  <script type="text/javascript" src="js/lib_main.js"></script>
+</head>
+<body>
+<div id="fileImporter_dropZone">
+  <div id="searchViewPreview">
+  </div>
+  <div id="playerViewPreview">
+  </div>
+  <div id="searchView">
+    <input id="filterBox" type="text" class="mousetrap"/>
+    <div id="songBoxContainer">
+      <ul id="songBox"></ul>
     </div>
-    <div id="playerViewPreview">
+    <div id="playlistBoxContainer">
+      <ul id="playlistBox"></ul>
     </div>
-    <div id="searchView">
-      <input id="searchBox"/>
-      <select id="songBox" size="10" multiple="multiple"></select>
-      <select id="playlistBox" size="10" multiple="multiple"></select>
+  </div>
+  <div id="playerView">
+    <audio id="player" autoplay="true" preload="auto"></audio>
+    <div id="descriptionBox">
+      <label id="title">title</label>
+      <br />
+      by <label id="artist">artist</label>
+      <br />
+      from <label id="album">album</label>
     </div>
-    <div id="playerView">
-        <div id="descriptionBox"></div>
-      <audio id="player" autoplay="true" preload="auto"></audio>
+    <div id="coverArtBox">
+      <img id="coverArt" class="reflect" src="images/wholeNote.png"/>
     </div>
-    <div id="playerControlView">
-      <progress id="progressBar" value="0" max="100"></progress>
-      <label id="timeField">0 / 0</label>
-    </div>
-
-    <script type="text/javascript">
-      var navigation = new SongNavigation();
-      var songHistory = new Array();
-      var viewState = 'player';
-      var notScrobbled = true;
-      localStorage['nowPlaying'] = '';
-
-      function addToHistory(song) {
-        songHistory.push(song);
-        if (songHistory.length > 1000) {
-          songHistory.shift();
-        }
-      }
-
-      function applyCoverArtStyle() {
-        document.getElementById("coverArt").height = $(document).height() * 0.6;
-        $("#coverArt").reflect({height: 0.165, opacity: 0.25});
-      }
-
-      function next() {
-        navigation.nextSong();
-//        var song = getFirstPlaylistElement();
-//        if (null !== song) {
-//          startPlay(song);
-//          addToHistory(song);
-//          applyCoverArtStyle();
-//        }
-      }
-
-      function previous() {
-        navigation.prevSong();
-//        if (songHistory.length > 0) {
-//          var song = songHistory.pop();
-//          if (null !== song) {
-//            startPlay(song);
-//            setFirstPlaylistElement(song);
-//            applyCoverArtStyle();
-//          }
-//        }
-      }
-
-      function getLastSong() {
-       var song = null;
-       if (songHistory.length > 0) {
-        song = songHistory[songHistory.length - 1];
-       }
-       return song;
-      }
-
-      function updateProgress() {
-        var audio = document.getElementById('player');
-        if (!audio.paused) {
-          var progress = document.getElementById('progressBar');
-          progress.value = Math.round((audio.currentTime * 100) / audio.duration);
-        }
-      }
-      
-      function setNowPlaying() {
-        var song = getLastSong();
-        if (null !== song) {
-          (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).setNowPlaying(song.artist, song.title, song.album, song.duration,
-            function(data, textStatus, jqXHR) {
-              if (undefined !== data.error) {
-                switch (data.error) {
-                  case 6:
-                  case 13:
-                    console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
-                  break;
-                  default:
-                    alert("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
-                }
-              }
-            }, null);
-        }
-      }
-
-      function updateTimings() {
-        if ($("#playerControlView").data("open")) {
-          var audio = document.getElementById('player');
-          if (!audio.paused) {
-            var field = document.getElementById('timeField');
-            field.innerHTML = Math.round(audio.currentTime) + " / " + Math.round(audio.duration);
-          }
-        }
-      }
-
-      function scrobble() {
-        var audio = document.getElementById('player');
-        if (!audio.paused) {
-          if (Math.round((audio.currentTime * 100) / audio.duration) > 50 && notScrobbled) {
-            var song = getLastSong();
-            if (null !== song) {
-              var timestamp = parseInt((new Date()).getTime() / 1000.0);
-              (new Scrobbler(localStorage["audica.lastfm.sessionKey"], localStorage["audica.lastfm.login"])).scrobble(song.artist, song.title, song.album, song.duration,
-              timestamp,
-              function(data, textStatus, jqXHR) {
-                if (undefined !== data.error) {
-                  switch (data.error) {
-                    case 6:
-                    case 13:
-                      console.warn("Cannot scrobble the song there is a parameter missing/wrong!", data.message);
-                      notScrobbled = true;
-                    break;
-                    default:
-                      alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
-                  }
-                } else {
-                  notScrobbled = false;
-                }
-              }, null);
-            }
-          }
-        }
-      }
-
-      function backgroundTasks() {
-        updateProgress();
-        updateTimings();
-        scrobble();
-      }
-
-      var closePlayerControlViewTimerId = null;
-
-      function closePlayerControlView() {
-        $("#playerControlView").data("open", false);
-        closePlayerControlViewTimerId = null;
-        $("#playerControlView").animate({
-          height: "4px"
-        });
-      }
-
-      document.getElementById('searchBox').addEventListener('change', startSearch, false);
-
-      searchForSongs("", collectSongs, null, null);
-
-      $(function() {
-        $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
-//        $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
-
-        $("#songBox").on("keyup", function(event) {
-          if (39 === event.which) {
-            $("#songBox :selected").clone(true, true).appendTo("#playlistBox");
-          }
-        });
-        $("#playlistBox").on("keyup", function(event) {
-          if (37 === event.which) {
-            $("#playlistBox :selected").detach();
-          }
-        });
-        function handleRightZone(event) {
-          if ('search' === viewState) {
-            if ("mouseenter" === event.type) {
-              $("#searchView").height($(document).height());
-              $("#searchView").animate({
-                width:"95%"
-              });
-            } else if ("mouseleave" === event.type) {
-              $("#searchView").height($(document).height());
-              $("#searchView").animate({
-                width:"100%"
-              });
-            } else if ("click" === event.type) {
-              $("#searchView").animate({
-                width:"0"
-              });
-              var audio = document.getElementById('player');
-              if (audio.paused) {
-                next();
-                setNowPlaying();
-                notScrobbled = true;
-              }
-              viewState = 'player';
-              $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
-              $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
-            }
-          }
-        }
-
-        $("#playerViewPreview").on({
-          hover: handleRightZone,
-          click: handleRightZone
-        });
-        function handleLeftZone(event) {
-          if ('player' === viewState) {
-            if ("mouseenter" === event.type) {
-              $("#searchView").height($(document).height());
-              $("#searchView").animate({
-                width:"5%"
-              });
-            } else if ("mouseleave" === event.type) {
-              $("#searchView").height($(document).height());
-              $("#searchView").animate({
-                width:"0"
-              });
-            } else if ("click" === event.type) {
-              $("#searchBox").focus();
-              $("#searchBox").width($(document).width() - 20 - 4);
-              var boxWidth = ($(document).width() / 2) - 20 - 2;
-              var boxHeight = $(document).height() - 22 - 46;
-              $("#songBox").width(boxWidth);
-              $("#songBox").height(boxHeight);
-              $("#playlistBox").width(boxWidth);
-              $("#playlistBox").height(boxHeight);
-              $("#searchView").height($(document).height());
-              $("#searchView").animate({
-                width:"100%"
-              });
-              viewState = 'search';
-            }
-          }
-        }
-
-        $("#searchViewPreview").on({
-          hover: handleLeftZone,
-          click: handleLeftZone
-        });
-        $(document).mousemove(function(event) {
-          if ('player' === viewState) {
-            if (null !== closePlayerControlViewTimerId) {
-              clearTimeout(closePlayerControlViewTimerId);
-            }
-            if (!$("#playerControlView").data("open")) {
-              $("#playerControlView").data("open", true);
-              $("#playerControlView").animate({
-                height: "50px"
-              });
-            }
-            closePlayerControlViewTimerId = setTimeout("closePlayerControlView()", 3000);
-          }
-        });
-        $(document).on("keyup", function(event) {
-          if ('player' === viewState) {
-            switch (event.which) {
-              case 76:
-                $("#searchBox").focus();
-                $("#searchBox").width($(document).width() - 20 - 4);
-                var boxWidth = ($(document).width() / 2) - 20 - 2;
-                var boxHeight = $(document).height() - 22 - 46;
-                $("#songBox").width(boxWidth);
-                $("#songBox").height(boxHeight);
-                $("#playlistBox").width(boxWidth);
-                $("#playlistBox").height(boxHeight);
-                $("#searchView").height($(document).height());
-                $("#searchView").animate({
-                  width: "100%"
-                });
-                viewState = 'search';
-                break;
-              case 80:
-                previous();
-                setNowPlaying();
-                notScrobbled = true;
-                break;
-              case 78:
-                next();
-                setNowPlaying();
-                notScrobbled = true;
-                break;
-              case 32:
-                var audio = document.getElementById('player');
-                if (audio.paused) {
-                  audio.play();
-                } else {
-                  audio.pause();
-                }
-                break;
-            }
-          } else if ('search' === viewState) {
-            switch (event.which) {
-              case 27:
-                $("#searchView").animate({
-                  width: "0"
-                });
-                var audio = document.getElementById('player');
-                if (audio.paused) {
-                  next();
-                  setNowPlaying();
-                  notScrobbled = true;
-                }
-                viewState = 'player';
-                $("#coverArtBox").css("padding-top", ($(document).height() - $("#coverArtBox").height()) / 2);
-                $("#descriptionBox").css("padding-top", ($(document).height() - $("#descriptionBox").height()) / 2);
-                break;
-            }
-          } else {
-            console.log("Unknown view state '" + viewState + "'.");
-          }
-        });
-        $("#player").on("ended", function(event) {
-          navigation.nextSong();
-          setNowPlaying();
-          notScrobbled = true;
-        });
-        $("#player").on("error", function(event) {
-          var audio = document.getElementById('player');
-          var errorMsg = "The file '" + audio.src + "' cannot be played. The possible reasons is: ";
-          switch (event.currentTarget.error.code) {
-            case 4:
-              errorMsg += "The current media type '" + audio.type + "' isn't supported.";
-              break;
-            case 1:
-              errorMsg += "The user agent stopped fetching the media data.";
-              break;
-            case 2:
-              errorMsg += "A network error stopped the user agent fetching the media data.";
-              break;
-            case 3:
-              errorMsg += "Error on decoding the media data.";
-              break;
-            default:
-              errorMsg += "Unknown error with code '" + event.currentTarget.error.code + "' happened."
-          }
-          alert(errorMsg);
-        });
-        setInterval("backgroundTasks()", 1000);
-
-
-        var stage = Sprite3D.stage( document.getElementById("descriptionBox") );
-
-        var newSprite = new Sprite3D();
-        newSprite.rotation(0,0,0);
-        //TODO define center of the barrel
-        newSprite.position(200,100,300);
-        newSprite.update();
-        var box = stage.addChild(newSprite);
-
-        var v1 = box.addChild( new Sprite3D().className("faceNew").position( -80, -20, 40).rotationX(0).update() );
-        $(v1.domElement).html('ELement1');
-        var v2 = box.addChild( new Sprite3D().className("face").position( -80, -20, 40).rotationX(-45).update() );
-        $(v2.domElement).html('ELement2');
-        var v3 = box.addChild( new Sprite3D().className("faceNew").position( -80, -40, 10).rotationX(-90).update() );
-        $(v3.domElement).html('ELement3');
-        var v4 = box.addChild( new Sprite3D().className("face").position( -80, 25, -45).rotationX(-135).update() );
-        $(v4.domElement).html('ELement4');
-        var v5 = box.addChild( new Sprite3D().className("faceNew").position( -80, -10, -60).rotationX(-180).update() );
-        $(v5.domElement).html('ELement5');
-        var v6 = box.addChild( new Sprite3D().className("face").position( -80, -50, -40).rotationX(-225).update() );
-        $(v6.domElement).html('ELement6');
-        var v7 = box.addChild( new Sprite3D().className("faceNew").position( -80, -60, -10).rotationX(-270).update() );
-        $(v7.domElement).html('ELement7');
-        var v8 = box.addChild( new Sprite3D().className("face").position( -80, -45, 25).rotationX(-315).update() );
-        $(v8.domElement).html('ELement8');
-
-        document.addEventListener( "mousemove", onMove, false );
-        function onMove( event ) {
-          moveBox(event.pageX,event.pageY);
-        }
-// move with finger
-        document.getElementById("descriptionBox").addEventListener( "touchmove", onTouchMove, false );
-        function onTouchMove(event){
-          var t = event.changedTouches[0];
-          moveBox( t.pageX, t.pageY );
-          event.preventDefault();
-        }
-        function moveBox(x,y){
-          box.rotation(
-              y ,
-              90 ,
-              0
-          ).update();
-        }
-      });
-    </script>
-  </body>
+  </div>
+  <div id="playerControlView">
+    <progress id="progressBar" value="0" max="100"></progress>
+    <label id="timeField">0 / 0</label>
+  </div>
+</div>
+</body>
 </html>

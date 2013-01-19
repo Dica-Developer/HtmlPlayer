@@ -1,157 +1,142 @@
+body {
+  overflow: hidden;
+}
 #searchViewPreview {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    min-width: 5%;
-    z-index: 200;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  min-width: 5%;
+  z-index: 200;
 }
 #playerViewPreview {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    min-width: 5%;
-    z-index: 200;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  min-width: 5%;
+  z-index: 200;
 }
 #searchView {
-    height: 100%;
-    width: 0;
-    overflow: hidden;
-    background-color: white;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 100;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 #search {
-    float: left;
+  float: left;
 }
 #playerView {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    background-color: black;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
 #descriptionBox {
-    color:#BBB;
-    width: 50%;
-    float: left;
-    text-align: right;
-    padding-right: 10px;
-    font-size: 20px;
-    position: absolute;
-    border: 2px solid blue;
-    /*position: absolute;*/
-    /*left: 50%;*/
-    /*top: 0;*/
-    /*width: 1px;*/
-    /*height: 1px;*/
-    /*padding: 0px;*/
-    /*margin: 0px;*/
+  color: #bbbbbb;
+  width: 49%;
+  float: left;
+  text-align: right;
+  padding-right: 10px;
+  font-size: 12px;
+  position: absolute;
 }
-#descriptionBox > div {
-    border: 1px solid white;
-    font-size: 0;
-}
-/*#container {*/
-    /*position: absolute;*/
-    /*left: 15px;*/
-    /*top: 15px;*/
-    /*right: 15px;*/
-    /*height: 300px;*/
-    /*border: 3px solid black;*/
-    /*overflow: hidden;*/
-    /*-moz-border-radius: 12px;*/
-    /*-webkit-border-radius: 12px;*/
-    /*border-radius: 12px;*/
-    /*-moz-background-clip: padding; -webkit-background-clip: padding-box; background-clip: padding-box;*/
-    /*padding: 0px;*/
-    /*margin: 0px;*/
-/*}*/
 #title {
-    color: white;
-    font-size: 40px;
+  color: white;
+  font-size: 40px;
 }
 #album {
-    color: white;
-    font-size: 24px;
+  color: white;
+  font-size: 24px;
 }
 #artist {
-    color: white;
-    font-size: 24px;
+  color: white;
+  font-size: 24px;
 }
 #coverArtBox {
-    color: #bbbbbb;
-    width: 49%;
-    float: right;
-    padding-left: 10px;
-    margin: auto;
+  color: #bbbbbb;
+  width: 49%;
+  float: right;
+  padding-left: 10px;
+  margin: auto;
 }
 #searchBox {
-    font-size: 18px;
-    margin: 10px;
+  font-size: 18px;
+  margin: 10px;
 }
 #songBox {
-    font-size: 12px;
-    margin: 10px;
+  font-size: 12px;
+  margin: 10px;
+}
+.selected{
+  background: #4169e1;
+}
+.added{
+  background: red;
+}
+.active{
+  border: 1px solid black;
 }
 #playlistBox {
-    font-size: 12px;
-    margin: 10px;
+  font-size: 12px;
+  margin: 10px;
+}
+#songBoxContainer, #playlistBoxContainer {
+  height: 100%;
+  width: 45%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+#songBoxContainer {
+  float: left;
 }
 #playerControlView {
-    background: rgba(44, 44, 44, 0.5);
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    height: 4px;
-    width: 100%;
-    z-index: 10;
-    overflow: hidden;
+  background: rgba(44, 44, 44, 0.5);
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  width: 100%;
+  z-index: 10;
+  overflow: hidden;
 }
 #progressBar {
-    position: absolute;
-    height: 4px;
-    width: 100%;
-    border: 0;
+  position: absolute;
+  height: 4px;
+  width: 100%;
+  border: 0;
 }
 
 progress::-webkit-progress-bar-value,
 progress::-webkit-progress-value,
 progress::-moz-progress-bar {
-    background-color:#BBB
+  background-color:#BBB
 }
 
 #timeField {
-    position: absolute;
-    height: 20px;
-    width: 100%;
-    border: 0;
-    color: white;
-    font-size: 40px;
-    margin-top: 3px;
-}
-.prevNextTitle {
-    opacity: .3;
-
+  position: absolute;
+  height: 20px;
+  width: 100%;
+  border: 0;
+  color: white;
+  font-size: 40px;
+  margin-top: 3px;
 }
 
-.face {
-    width: 160px;
-    height: 40px;
-    background: white;
-    color:red;
-    font-size: 16px;
+#filterBox {
+  position: absolute;
+  z-index: 100;
+  display: none;
 }
-.faceNew {
-    width: 160px;
-    height: 40px;
-    background: red;
-    color:white;
-    font-size: 16px;
+
+ul {
+  list-style: none;
 }

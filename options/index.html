@@ -8,85 +8,57 @@
   <link rel="stylesheet" href="css/checkbox.css" />
   <link rel="stylesheet" href="css/button.css" />
   <link rel="stylesheet" href="css/select.css" />
-  <script type="text/javascript" src="../js/jquery-1.7.2.min.js"></script>
   <script type="text/javascript" src="../js/md5.js"></script>
+  <script type="text/javascript" src="../js/jquery.min.js"></script>
   <script type="text/javascript" src="../js/lib_lastfm.js"></script>
+  <script type="text/javascript" src="../js/lib_fileImporter.js"></script>
   <script type="text/javascript" src="main.js"></script>
 </head>
-<body onload="fill();">
-<script>
-chrome.extension.onRequest.addListener(
-  function(request, sender, sendResponse) {
-    var pattLastFM = new RegExp("^chrome-extension://.+/options/authenticate_lastfm\.html.token=(.+)$");
-    var patt = new RegExp("^ubuntuone://(.+):(.+)@syncml\.one\.ubuntu\.com$");
-    if (patt.test(request.url)) {
-      var match = patt.exec(request.url);
-      document.querySelector("#loginBox").value = match[1];
-      document.querySelector("#passwordBox").value = match[2];
-      document.querySelector("#serverUrlBox").value = "https://streaming.one.ubuntu.com";
-      saveLogin();
-      savePassword();
-      saveServerUrl();
-    } else if(pattLastFM.test(request.url)) {
-      var match = pattLastFM.exec(request.url);
-      (new Scrobbler(null, null)).getSession(match[1], function(data, textStatus, jqXHR) {
-        if (undefined === data.error) {
-          localStorage["audica.lastfm.sessionKey"] = data.session.key;
-          localStorage["audica.lastfm.login"] = data.session.name;
-          document.querySelector("#lastfmUserLink").innerHTML = data.session.name;
-          document.querySelector("#lastfmUserLink").style.display = "block";
-          document.querySelector("#lastfmLogoutLink").style.display = "block";
-          document.querySelector("#lastfmLoginLink").style.display = "none";
-          document.querySelector("#lastfmUserLabel").style.display = "block";
-        } else {
-          alert("It failed to get a session key." + data.error + " - " + data.message);
-        }
-      }, null);
-    } else {
-      alert("It failed to retreive the authentication credentials. The returned url is invalid '" + request.url + "'.");
-    }
-    chrome.tabs.remove(sender.tab.id);
-  }
-);
-</script>
+<body>
 <div id="navbar-container">
     <div id="navbar-content-title">Options</div>
   <ul id="navbar">
     <li id="backend" class="navbar-item navbar-item-selected">Backend</li>
     <li id="scrobble" class="navbar-item">Scrobble</li>
     <li id="about" class="navbar-item">About</li>
+    <li id="test" class="navbar-item"><a href="../test/example/SpecRunner.html">Run test</a></li>
   </ul>
 </div>
 <div id="mainview">
   <div id="mainview-content">
     <div id="page-container">
-      <div id="backendPage" class="page" style="display:block">
+      <div id="backendPage" class="page">
         <h1>Backend</h1>
         <div class="displaytable">
           <section>
             <div class="section-group">
-              <select id="backendSelection" onchange="initBackend(this);">
+              <select id="backendSelection">
                 <option value="" disabled="disabled">Select a backend</option>
                 <option value="ubuntuone">Ubuntu One</option>
                 <option value="subsonic">Subsonic</option>
+                <option value="fileImporter">Import files</option>
               </select>
             </div>
-            <div class="section-group" id="ubuntuoneAuthenticationHelp" style="display: none;">
+            <div class="section-group" id="ubuntuoneAuthenticationHelp">
               <a href="https://one.ubuntu.com/phones/creds" target="_blank">Click to retrieve streaming credentials!</a>
             </div>
             <div id="subsonicAuthParams">
               <div class="section-group">
                 <h3>server url</h3>
-                <input spellcheck="false" id="serverUrlBox" type="text" size="20" onchange="saveServerUrl()" />
+                <input spellcheck="false" id="serverUrlBox" type="text" size="20" />
               </div>
               <div id="loginBoxDiv" class="section-group">
                 <h3>login</h3>
-                <input spellcheck="false" id="loginBox" type="text" size="20" onchange="saveLogin()" />
+                <input spellcheck="false" id="loginBox" type="text" size="20" />
               </div>
               <div id="passwordBoxDiv" class="section-group">
                 <h3>password</h3>
-                <input spellcheck="false" id="passwordBox" type="password" size="30" onchange="savePassword()" />
+                <input spellcheck="false" id="passwordBox" type="password" size="30" />
               </div>
+            </div>
+            <div class="section-group" id="fileImporterFields">
+              <input id="fileImporter_upload" type="file" multiple="multiple" />
+              <div id="fileImporter_dropZone">Drop files here for import</div>
             </div>
           </section>
         </div>
@@ -97,10 +69,10 @@ chrome.extension.onRequest.addListener(
           <section>
             <div class="section-group">
               <a href="http://www.last.fm/" target="_blank"><img src="http://cdn.last.fm/flatness/badges/lastfm_grey_small.gif" /></a>
-              <a id="lastfmLoginLink" href="javascript:;" target="_blank" onclick="this.href = (new Scrobbler(null, null)).getTokenUrl();">Login to last.fm</a>
-              <a id="lastfmLogoutLink" href="javascript:;" onclick="logoutFromLastFm();">Logout from last.fm</a>
+              <a id="lastfmLoginLink" href="#" target="_blank">Login to last.fm</a>
+              <a id="lastfmLogoutLink" href="#">Logout from last.fm</a>
               <label id="lastfmUserLabel">Logged in as</label>
-              <a id="lastfmUserLink" href="javascript:;" target="_blank" onclick="this.href = 'http://last.fm/user/' + this.innerHTML"></a>
+              <a id="lastfmUserLink" target="_blank"></a>
             </div>
           </section>
         </div>
