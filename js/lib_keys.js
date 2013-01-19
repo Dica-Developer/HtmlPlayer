@@ -205,9 +205,8 @@
 
     filterBox.on('keyup', function(e){
       if(e.which === 27 || e.which === 37 || e.which === 38 || e.which === 39 || e.which === 40){
-        return false;
+        return;
       }
-      console.log(e.which);
       if (null !== filterBoxTimeout) {
         clearTimeout(filterBoxTimeout);
       }
