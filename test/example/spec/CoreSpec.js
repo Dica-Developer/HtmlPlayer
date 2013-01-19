@@ -1,5 +1,4 @@
 describe("Player core", function() {
-  var keyup = jQuery.Event("keyup");
   it("Audica should be initialized", function() {
     //TODO find an other way to define Audica global and once
     Audica = new AUDICA();
@@ -11,7 +10,6 @@ describe("Player core", function() {
     });
     Audica.Dom.initDom();
     Audica.registerEvents();
-
     expect(Audica).toBeDefined();
   });
 
