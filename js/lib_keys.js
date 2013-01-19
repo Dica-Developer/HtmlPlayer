@@ -179,7 +179,6 @@
 
     //delete
     Mousetrap.bind(['del'], function(){
-      console.log(viewState());
       if('playlist' === viewState()){
         var elems = dom.playListBox.find(".selected");
         elems.each(function () {
