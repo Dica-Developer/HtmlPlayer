@@ -240,8 +240,8 @@ function AUDICA() {
    * @type {Object}
    */
   this.View = {
-    songBoxPositionX:null,
-    songBoxPositionY:0,
+    songBoxPositionY:null,
+    songBoxPositionX:0,
     /**
      * @param {String} artist
      * @param {String} album

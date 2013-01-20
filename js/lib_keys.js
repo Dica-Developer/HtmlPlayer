@@ -63,31 +63,31 @@
 
     bindKeysToView.search = function(){
       Mousetrap.bind(['right'], function(){
-        if (3 === view.songBoxPositionY) {
-          view.songBoxPositionY = 0;
+        if (3 === view.songBoxPositionX) {
+          view.songBoxPositionX = 0;
         } else {
-          view.songBoxPositionY++;
+          view.songBoxPositionX++;
         }
-        view.songBoxPositionX.find('span').eq(view.songBoxPositionY).trigger('click');
+        view.songBoxPositionY.find('span').eq(view.songBoxPositionX).trigger('click');
       });
 
       Mousetrap.bind(['left'], function(){
-        if (0 === view.songBoxPositionY) {
-          view.songBoxPositionY = 3;
+        if (0 === view.songBoxPositionX) {
+          view.songBoxPositionX = 3;
         } else {
-          view.songBoxPositionY--;
+          view.songBoxPositionX--;
         }
-        view.songBoxPositionX.find('span').eq(view.songBoxPositionY).trigger('click');
+        view.songBoxPositionY.find('span').eq(view.songBoxPositionX).trigger('click');
       });
 
       Mousetrap.bind(['up'], function(){
         var prev = null;
-        if (!view.songBoxPositionX) {
-          view.songBoxPositionX = songBox.find('li').eq(0);
-          prev = view.songBoxPositionX;
+        if (!view.songBoxPositionY) {
+          view.songBoxPositionY = songBox.find('li').eq(0);
+          prev = view.songBoxPositionY;
         } else {
-          prev = view.songBoxPositionX.prev();
-          view.songBoxPositionX.removeClass('active');
+          prev = view.songBoxPositionY.prev();
+          view.songBoxPositionY.removeClass('active');
           if (prev.length === 0) {
             prev = Audica.Dom.songBox.find('li').last();
           }
@@ -96,8 +96,8 @@
         var scrollPos = Math.abs(songBox.parent().scrollTop() + prev.position().top) - halfWindowSize;
         songBox.parent().scrollTop(scrollPos);
         prev.addClass('active');
-        view.songBoxPositionX = prev;
-        prev.find('span').eq(view.songBoxPositionY).trigger('click');
+        view.songBoxPositionY = prev;
+        prev.find('span').eq(view.songBoxPositionX).trigger('click');
       });
 
       Mousetrap.bind(['down'], function(){
@@ -109,12 +109,12 @@
           filterBox.val("");
         }
         var next = null;
-        if (!view.songBoxPositionX) {
-          view.songBoxPositionX = songBox.find('li').eq(0);
-          next = view.songBoxPositionX;
+        if (!view.songBoxPositionY) {
+          view.songBoxPositionY = songBox.find('li').eq(0);
+          next = view.songBoxPositionY;
         } else {
-          next = view.songBoxPositionX.next();
-          view.songBoxPositionX.removeClass('active');
+          next = view.songBoxPositionY.next();
+          view.songBoxPositionY.removeClass('active');
           if (next.length === 0) {
             next = songBox.find('li').eq(0);
           }
@@ -123,8 +123,8 @@
         var scrollPos = Math.abs(next.position().top + songBox.parent().scrollTop()) - halfWindowSize;
         songBox.parent().scrollTop(scrollPos);
         next.addClass('active');
-        view.songBoxPositionX = next;
-        next.find('span').eq(view.songBoxPositionY).trigger('click');
+        view.songBoxPositionY = next;
+        next.find('span').eq(view.songBoxPositionX).trigger('click');
       });
 
       Mousetrap.bind(['escape'], function(){
