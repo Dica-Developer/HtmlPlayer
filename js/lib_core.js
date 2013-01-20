@@ -320,6 +320,7 @@ function AUDICA() {
       return _viewState;
     },
     setViewState: function(viewState){
+      Audica.trigger('viewStateChanged', {from: _viewState, to: viewState});
       _viewState = viewState;
     }
   };
@@ -561,7 +562,7 @@ function AUDICA() {
               Audica.Scrobbling.setNowPlaying();
               _notScrobbled = true;
             }
-            _viewState = 'player';
+            Audica.View.setViewState('player');
             coverArtBox.css("padding-top", (Audica.Dom.documentHeight - coverArtBox.height()) / 2);
             descriptionBox.css("padding-top", (Audica.Dom.documentHeight - descriptionBox.height()) / 2);
           }
@@ -569,11 +570,11 @@ function AUDICA() {
       }
 
       function selectPlayList() {
-        _viewState = 'playlist';
+        Audica.View.setViewState('playList');
       }
 
       function selectSongBox() {
-        _viewState = 'search';
+        Audica.View.setViewState('search');
       }
 
       Audica.Dom.playerViewPreview.on({
@@ -635,7 +636,7 @@ function AUDICA() {
             playerControlView.animate({
               left: Audica.Dom.documentWidth
             });
-            _viewState = 'search';
+            Audica.View.setViewState('search');
           }
         }
       }
