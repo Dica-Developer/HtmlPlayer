@@ -92,7 +92,9 @@
             prev = Audica.Dom.songBox.find('li').last();
           }
         }
-        songBox.parent().scrollTop(Math.abs(songBox.parent().scrollTop() + prev.position().top));
+        var halfWindowSize = window.innerHeight / 2;
+        var scrollPos = Math.abs(songBox.parent().scrollTop() + prev.position().top) - halfWindowSize;
+        songBox.parent().scrollTop(scrollPos);
         prev.addClass('active');
         view.songBoxPositionX = prev;
         prev.find('span').eq(view.songBoxPositionY).trigger('click');
@@ -105,7 +107,6 @@
           songBox.focus();
           filterBox.hide();
           filterBox.val("");
-          return false;
         }
         var next = null;
         if (!view.songBoxPositionX) {
@@ -118,7 +119,9 @@
             next = songBox.find('li').eq(0);
           }
         }
-        songBox.parent().scrollTop(Math.abs(next.position().top + songBox.parent().scrollTop()));
+        var halfWindowSize = window.innerHeight / 2;
+        var scrollPos = Math.abs(next.position().top + songBox.parent().scrollTop()) - halfWindowSize;
+        songBox.parent().scrollTop(scrollPos);
         next.addClass('active');
         view.songBoxPositionX = next;
         next.find('span').eq(view.songBoxPositionY).trigger('click');
@@ -165,7 +168,7 @@
         });
       });
 
-      Mousetrap.bind(['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','ä','ö','ü'], function(){
+      Mousetrap.bind(['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','ä','ö','ü','backspace'], function(){
         if (!filterBox.data("open")) {
           filterBox.data("open", true);
           filterBox.show();
