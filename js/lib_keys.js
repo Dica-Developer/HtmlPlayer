@@ -69,6 +69,7 @@
           view.songBoxPositionX++;
         }
         view.songBoxPositionY.find('span').eq(view.songBoxPositionX).trigger('click');
+        view.indicateSongBoxXPosition();
       });
 
       Mousetrap.bind(['left'], function(){
@@ -78,6 +79,7 @@
           view.songBoxPositionX--;
         }
         view.songBoxPositionY.find('span').eq(view.songBoxPositionX).trigger('click');
+        view.indicateSongBoxXPosition();
       });
 
       Mousetrap.bind(['up'], function(){
@@ -98,6 +100,7 @@
         prev.addClass('active');
         view.songBoxPositionY = prev;
         prev.find('span').eq(view.songBoxPositionX).trigger('click');
+        view.indicateSongBoxXPosition();
       });
 
       Mousetrap.bind(['down'], function(){
@@ -125,6 +128,7 @@
         next.addClass('active');
         view.songBoxPositionY = next;
         next.find('span').eq(view.songBoxPositionX).trigger('click');
+        view.indicateSongBoxXPosition();
       });
 
       Mousetrap.bind(['escape'], function(){

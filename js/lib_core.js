@@ -316,6 +316,19 @@ function AUDICA() {
         }
       }
     },
+    indicateSongBoxXPosition: function(){
+      var positionXClassMap = {
+        0: '.artist',
+        1: '.album',
+        2: '.track',
+        3: '.title'
+      };
+      var currentXClass = positionXClassMap[Audica.View.songBoxPositionX];
+      var songBox = Audica.Dom.songBox;
+      var selectedElems = songBox.find('.selected');
+      songBox.find('[positionX]').removeAttr('positionX');
+      selectedElems.find(currentXClass).attr('positionX',true);
+    },
     getViewState: function(){
       return _viewState;
     },
@@ -496,7 +509,6 @@ function AUDICA() {
    */
   this.registerEvents = function () {
       window.bindKeyEvents(Audica);
-      var filterBoxTimeout = null;
 
       $(document).mousemove(function () {
         var playerControlView = Audica.Dom.playerControlView;
