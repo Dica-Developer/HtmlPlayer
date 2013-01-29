@@ -329,10 +329,19 @@ function AUDICA() {
       songBox.find('[positionX]').removeAttr('positionX');
       selectedElems.find(currentXClass).attr('positionX',true);
     },
+    /**
+     *
+     * @return {String|Null}
+     */
     getViewState: function(){
       return _viewState;
     },
+    /**
+     *
+     * @param {String} viewState
+     */
     setViewState: function(viewState){
+      console.trace();
       Audica.trigger('viewStateChanged', {from: _viewState, to: viewState});
       _viewState = viewState;
     }
@@ -582,11 +591,15 @@ function AUDICA() {
       }
 
       function selectPlayList() {
-        Audica.View.setViewState('playList');
+        if(_viewState !== 'playList'){
+          Audica.View.setViewState('playList');
+        }
       }
 
       function selectSongBox() {
-        Audica.View.setViewState('search');
+        if(_viewState !== 'search'){
+          Audica.View.setViewState('search');
+        }
       }
 
       Audica.Dom.playerViewPreview.on({

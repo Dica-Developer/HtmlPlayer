@@ -202,6 +202,11 @@
           view.fillSongBox(currentSongList);
         }, 500);
       });
+
+      Mousetrap.bind('tab', function(){
+        view.setViewState('playList');
+        return false;
+      });
     };
 
     bindKeysToView.playList = function(){
@@ -212,6 +217,11 @@
           song.removeClass('added');
         });
         elems.remove();
+      });
+
+      Mousetrap.bind('tab', function(){
+        view.setViewState('search');
+        return false;
       });
     };
 
