@@ -280,10 +280,14 @@ function AUDICA() {
     bindSongBoxEvents: function () {
       Audica.Dom.songBox.find('span').on('click', function () {
         var value = $(this).data("value");
+        var yIndex = $(this).closest('li');
         var ul = $(this).closest('ul');
         var elems = ul.find('[data-value="' + value + '"]');
         ul.find('.selected').removeClass('selected');
         elems.parent().addClass('selected');
+        Audica.View.songBoxPositionY = yIndex;
+        Audica.View.songBoxPositionX = $(this).index();
+        Audica.View.indicateSongBoxXPosition();
       });
     },
     closePlayerControlView: function () {
