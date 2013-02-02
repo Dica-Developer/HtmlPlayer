@@ -1,11 +1,16 @@
 $(function () {
 
+  //"use strict";
+
+  /*global $, AUDICA, window, Audica, console, chrome, document, localStorage*/
+
+  //TODO should this be window.AUDICA? jslint gives readonly warning
   Audica = new AUDICA();
   window.onerror = function (error, src, row) {
-//    window.event.preventDefault();
+    //    window.event.preventDefault();
     console.log('Error: %s in %s row %s', error, src, row);
   };
-//TODO define an init method which initiates db, dom objects, options, events, etc.
+  //TODO define an init method which initiates db, dom objects, options, events, etc.
   Audica.on('domElementsSet', Audica.View.applyCoverArtStyle);
   Audica.songDb.init('song');
   Audica.historyDb.init('history');
@@ -13,7 +18,6 @@ $(function () {
     //maybe 'new Audica.collectSongs()' depends on performance and how many times this event is triggered at the same time
     Audica.collectSongs(args.songList, args.backendId, args.timestamp);
   });
-
 
   Audica.Dom.initDom();
   Audica.registerEvents();
@@ -27,29 +31,30 @@ $(function () {
   Audica.plugins.radioImporter.init();
   Audica.plugins.googleDrive = new GoogleDrive();
   Audica.plugins.googleDrive.init();
+  Audica.plugins.googleMusic = new GoogleMusic();
+  Audica.plugins.googleMusic.init();
   Audica.plugins.subsonic = new Subsonic();
   Audica.plugins.scrobbler = new Scrobbler();
   Audica.plugins.scrobbler.init();
   // /TODO
   // TODO move this to FileImporter.init()
   // TODO add dropzone div also in FileImporter.init()
-  document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
+  document.querySelector('#fileImporter_dropZone').addEventListener('drop', function (event) {
     event.stopPropagation();
     event.preventDefault();
     event.dataTransfer.dropEffect = 'copy';
     // TODO use own dropzone for type
-    if (event.dataTransfer.files.length >0) {
+    if (event.dataTransfer.files.length > 0) {
       Audica.plugins.fileImporter.writeFiles(event.dataTransfer.files);
-    } else if (event.dataTransfer.items.length >0) {
+    } else if (event.dataTransfer.items.length > 0) {
       Audica.plugins.radioImporter.addUrls(event.dataTransfer.items);
     } else {
       console.error('Not handled drop item!');
     }
   }, false);
   // /TODO
-
-//TODO should checked by plugin itself
-  if (null === localStorage["serverUrl"] || undefined === localStorage["serverUrl"]) {
+  //TODO should checked by plugin itself
+  if (null === localStorage.serverUrl || undefined === localStorage.serverUrl) {
     //noinspection JSUnresolvedVariable,JSUnresolvedFunction
     document.location = chrome.extension.getURL("options/index.html");
   }
