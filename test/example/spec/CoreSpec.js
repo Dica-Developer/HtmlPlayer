@@ -1,4 +1,6 @@
+/*global $:true, AUDICA:true, Audica:true, Mousetrap:true, describe:true, it:true, expect:true, spyOnEvent:true,spyOn:true*/
 describe("Player core", function() {
+  "use strict";
   it("Audica should be initialized", function() {
     //TODO find an other way to define Audica global and once
     Audica = new AUDICA();
@@ -145,5 +147,4 @@ describe("Player core", function() {
       expect(Audica.Dom.player.paused).toBeTruthy();
     });
   });
-
 });
