@@ -348,7 +348,7 @@ OAuth2.loadAdapter = function(adapterName, callback) {
   var head = document.querySelector('head');
   var script = document.createElement('script');
   script.type = 'text/javascript';
-  script.src = '/3rd/oauth2/adapters/' + adapterName + '.js';
+  script.src = '/nocompile/oauth2/adapters/' + adapterName + '.js';
   script.addEventListener('load', function() {
     callback();
   });

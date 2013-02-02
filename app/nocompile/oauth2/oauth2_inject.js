@@ -31,5 +31,5 @@ params += '&from=' + encodeURIComponent(url);
 
 // Redirect back to the extension itself so that we have priveledged
 // access again
-var redirect = chrome.extension.getURL('/3rd/oauth2/oauth2.html');
+var redirect = chrome.extension.getURL('/nocompile/oauth2/oauth2.html');
 window.location = redirect + params;

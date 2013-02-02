@@ -1,5 +1,5 @@
 {
-  "name": "Audica Player",
+  "name": "[DEV] Audica Player",
   "version": "0.9",
   "description": "",
   "app": {
@@ -11,12 +11,12 @@
   "content_scripts": [
     {
       "matches": ["https://one.ubuntu.com/phones/creds"],
-      "js": ["js/ubuntuone_authentication.js"],
+      "js": ["nocompile/ubuntuone_authentication.js"],
       "run_at": "document_end"
     },
     {
       "matches": ["http://www.google.com/robots.txt*"],
-      "js": ["3rd/oauth2/oauth2_inject.js"],
+      "js": ["nocompile/oauth2/oauth2_inject.js"],
       "run_at": "document_start"
     }
   ],
