@@ -34,7 +34,7 @@ var Scrobbler = function() {
       _sessionKey = localStorage["audica.lastfm.sessionKey"];
       _login = localStorage["audica.lastfm.login"];
     } else {
-      Audica.trigger('ERROR', {message:'Last.fm Scrobbler configured so not initialised!'});
+      Audica.trigger('ERROR', {message:'Last.fm Scrobbler is not configured so not initialised!'});
     }
-  }
+  };
 };
