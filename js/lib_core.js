@@ -320,14 +320,14 @@ function AUDICA() {
         }
       }
     },
+    positionXClassMap: {
+      0: '.artist',
+      1: '.album',
+      2: '.track',
+      3: '.title'
+    },
     indicateSongBoxXPosition: function(){
-      var positionXClassMap = {
-        0: '.artist',
-        1: '.album',
-        2: '.track',
-        3: '.title'
-      };
-      var currentXClass = positionXClassMap[Audica.View.songBoxPositionX];
+      var currentXClass = Audica.View.positionXClassMap[Audica.View.songBoxPositionX];
       var songBox = Audica.Dom.songBox;
       var selectedElems = songBox.find('.selected');
       songBox.find('[positionX]').removeAttr('positionX');

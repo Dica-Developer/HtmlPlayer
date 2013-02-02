@@ -90,7 +90,7 @@
           view.songBoxPositionY = songBox.find('li').eq(0);
           prev = view.songBoxPositionY;
         } else {
-          prev = view.songBoxPositionY.prev();
+          prev = findNextByPositionX('prev');
           view.songBoxPositionY.removeClass('active');
           if (prev.length === 0) {
             prev = Audica.Dom.songBox.find('li').last();
@@ -118,7 +118,7 @@
           view.songBoxPositionY = songBox.find('li').eq(0);
           next = view.songBoxPositionY;
         } else {
-          next = view.songBoxPositionY.next();
+          next = findNextByPositionX('next');
           view.songBoxPositionY.removeClass('active');
           if (next.length === 0) {
             next = songBox.find('li').eq(0);
@@ -228,5 +228,16 @@
     };
 
     bindKeysToView[view.getViewState()].call(Audica);
+
+    var findNextByPositionX = function(dir){
+      var currentXClass = view.positionXClassMap[view.songBoxPositionX];
+      var currentXValue = view.songBoxPositionY.find(currentXClass).data('value');
+      var tmpNext = view.songBoxPositionY[dir]();
+      //TODO maybe replace with for loop (secure)
+      while(tmpNext.find(currentXClass).data('value') === currentXValue){
+        tmpNext = tmpNext[dir]();
+      }
+      return tmpNext;
+    };
   };
 })(window, Mousetrap);
