@@ -72,10 +72,6 @@ module.exports = function(grunt) {
     }
   });
 
-  grunt.registerTask('test', function test(){
-    grunt.helper('writeMainHTML');
-  });
-
   grunt.registerTask('build', 'Build distribution folder with concatenated and minimized files!', function(){
     var srcFolder = grunt.config.get('appFolder');
     var destFolder = grunt.config.get('distFolder');
