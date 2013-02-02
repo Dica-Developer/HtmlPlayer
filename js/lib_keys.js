@@ -1,4 +1,6 @@
+/*global $:true, Mousetrap:true, console:true*/
 (function(window, Mousetrap){
+  "use strict";
   window.bindKeyEvents = function(Audica){
     var bindKeysToView = {};
     var dom = Audica.Dom;
@@ -56,7 +58,7 @@
       });
 
       Mousetrap.bind(['space'], function(){
-        audio.paused ? audio.play() : audio.pause();
+        return audio.paused ? audio.play() : audio.pause();
       });
 
     };
@@ -104,7 +106,7 @@
       });
 
       Mousetrap.bind(['down'], function(){
-        if(filterBox.data['open']){
+        if(filterBox.data.open){
           filterBox.data("open", false);
           filterBox.blur();
           songBox.focus();
