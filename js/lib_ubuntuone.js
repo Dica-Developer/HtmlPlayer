@@ -34,7 +34,9 @@ function Subsonic(){
     var url = JSON.parse(localStorage["serverUrl"]) + "/search.view?u=" +JSON.parse(localStorage["authentication.login"])+ "&p=" +JSON.parse(localStorage["authentication.password"])+ "&v=1.2.0&c=chrome&count=100000&any=";
     var req = new XMLHttpRequest();
     req.open("GET", url, true);
-    req.onload = function(event) { _collect(event, timestamp)};
+    req.onload = function(event) {
+      _collect(event, timestamp);
+    };
     req.onerror = collectErrors;
     req.onprogress = collectProgress;
     req.send(null);
