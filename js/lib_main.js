@@ -19,7 +19,7 @@ $(function () {
   Audica.registerEvents();
 
   // TODO init plugins automatically and put them under Audica.Plugins
-  Audica.plugins.fileSystem = new Filesystem()
+  Audica.plugins.fileSystem = new Filesystem();
   Audica.plugins.fileSystem.init();
   Audica.plugins.fileImporter = new FileImporter();
   Audica.plugins.fileImporter.init();
