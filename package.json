@@ -1,0 +1,13 @@
+{
+  "name": "Audica",
+  "description": "",
+  "version": "0.10.0",
+  "homepage": "",
+  "main": "Gruntfile.js",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt test -v"
+  }
+}

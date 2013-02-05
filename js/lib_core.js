@@ -280,9 +280,10 @@ function AUDICA() {
     bindSongBoxEvents: function () {
       Audica.Dom.songBox.find('span').on('click', function () {
         var value = $(this).data("value");
+        var clazz = $(this).attr('class');
         var yIndex = $(this).closest('li');
         var ul = $(this).closest('ul');
-        var elems = ul.find('[data-value="' + value + '"]');
+        var elems = ul.find('.' + clazz + '[data-value="' + value + '"]');
         ul.find('.selected').removeClass('selected');
         elems.parent().addClass('selected');
         Audica.View.songBoxPositionY = yIndex;
