@@ -59,7 +59,7 @@ function Subsonic(){
           "album": song.getAttribute("album"),
           "title": song.getAttribute("title"),
           "id": song.getAttribute("id"),
-          "coverArt": JSON.parse(localStorage["serverUrl"]) +'/getCoverArt.view?u=' + _login + '&p=' +_password+ "&v=1.2.0&c=chrome&id=" +song.getAttribute('coverArt'),
+          "coverArt": song.getAttribute('coverArt') ? JSON.parse(localStorage["serverUrl"]) +'/getCoverArt.view?u=' + _login + '&p=' +_password+ "&v=1.2.0&c=chrome&id=" +song.getAttribute('coverArt') : null,
           "contentType": song.getAttribute("contentType"),
           "track": song.getAttribute("track") ? parseInt(song.getAttribute("track"), 0) : null,
           "cd": 0,
@@ -80,11 +80,11 @@ function Subsonic(){
 
   this.setPlaySrc = function(src, player) {
     player.src = src;
-  }
+  };
 
   this.setCoverArt = function(src, coverArt) {
     coverArt.attr("src", src);
-  }
+  };
 
   Audica.on('updateSongList', function(args){
     _searchForSongs(args.timestamp, null, null);

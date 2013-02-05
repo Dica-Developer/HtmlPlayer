@@ -29,14 +29,22 @@ $(function () {
   Audica.plugins.fileImporter.init();
   Audica.plugins.radioImporter = new RadioImporter();
   Audica.plugins.radioImporter.init();
-//  Audica.plugins.googleDrive = new GoogleDrive();
-//  Audica.plugins.googleDrive.init();
+  Audica.plugins.googleDrive = new GoogleDrive();
+  Audica.plugins.googleDrive.init();
   Audica.plugins.googleMusic = new GoogleMusic();
   Audica.plugins.googleMusic.init();
   Audica.plugins.subsonic = new Subsonic();
   Audica.plugins.scrobbler = new Scrobbler();
   Audica.plugins.scrobbler.init();
-  Audica.plugins.gracenote = new Gracenote();
+
+
+  var gracenoteClient_ID = localStorage.gracenoteClient_ID;
+  var gracenoteWepAPI_ID = localStorage.gracenoteWepAPI_ID;
+
+  if(gracenoteWepAPI_ID && gracenoteClient_ID){
+    Audica.plugins.gracenote = new Gracenote();
+    Audica.plugins.gracenote.init();
+  }
   // /TODO
   // TODO move this to FileImporter.init()
   // TODO add dropzone div also in FileImporter.init()

@@ -33,6 +33,17 @@ function fill() {
     }
     initBackend();
   }
+
+  var gracenoteClient_ID = localStorage.gracenoteClient_ID;
+  var gracenoteWepAPI_ID = localStorage.gracenoteWepAPI_ID;
+
+  if(gracenoteWepAPI_ID){
+    $('#gracenoteWepAPI_ID').val(JSON.parse(gracenoteWepAPI_ID));
+  }
+  if(gracenoteClient_ID){
+    $('#gracenoteClient_ID').val(JSON.parse(gracenoteClient_ID));
+  }
+
   var lastFmLogin = localStorage["audica.lastfm.login"];
   if (null !== lastFmLogin && undefined !== lastFmLogin) {
     document.querySelector("#lastfmUserLink").innerHTML = lastFmLogin;
@@ -48,6 +59,7 @@ function fill() {
   }
   document.querySelector("#backend").onclick = selectTab;
   document.querySelector("#scrobble").onclick = selectTab;
+  document.querySelector("#gracenote").onclick = selectTab;
   document.querySelector("#about").onclick = selectTab;
 }
 
@@ -62,11 +74,12 @@ function selectTab() {
 }
 
 function initBackend() {
-  if ("ubuntuone" === $("#backendSelection :selected")[0].value) {
+  var value = $('#backendSelection').find(':selected').val();
+  if ("ubuntuone" === value) {
     document.querySelector("#ubuntuoneAuthenticationHelp").style.display = "block";
     document.querySelector("#subsonicAuthParams").style.display = "none";
     document.querySelector("#fileImporterFields").style.display = "none";
-  } else if ("subsonic" === $("#backendSelection :selected")[0].value) {
+  } else if ("subsonic" === value) {
     document.querySelector("#ubuntuoneAuthenticationHelp").style.display = "none";
     document.querySelector("#subsonicAuthParams").style.display = "block";
     document.querySelector("#fileImporterFields").style.display = "none";
@@ -103,6 +116,10 @@ function lastfmUserLink(e) {
   e.target.href = 'http://last.fm/user/' + e.target.innerHTML;
 }
 
+var saveField = function(){
+  localStorage[$(this).attr('id')] = JSON.stringify($(this).val());
+};
+
 $(function() {
   fill();
 
@@ -113,6 +130,8 @@ $(function() {
   document.querySelector('#serverUrlBox').addEventListener('change', saveServerUrl);
   document.querySelector('#loginBox').addEventListener('change', saveLogin);
   document.querySelector('#passwordBox').addEventListener('change', savePassword);
+  document.querySelector('#gracenoteClient_ID').addEventListener('change', saveField);
+  document.querySelector('#gracenoteWepAPI_ID').addEventListener('change', saveField);
 
   var fileImporter = new FileImporter();
   fileImporter.init();

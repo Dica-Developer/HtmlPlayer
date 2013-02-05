@@ -20,6 +20,7 @@
   <ul id="navbar">
     <li id="backend" class="navbar-item navbar-item-selected">Backend</li>
     <li id="scrobble" class="navbar-item">Scrobble</li>
+    <li id="gracenote" class="navbar-item">Gracenote</li>
     <li id="about" class="navbar-item">About</li>
     <li id="test" class="navbar-item"><a href="../test/example/SpecRunner.html">Run test</a></li>
   </ul>
@@ -59,6 +60,24 @@
             <div class="section-group" id="fileImporterFields">
               <input id="fileImporter_upload" type="file" multiple="multiple" />
               <div id="fileImporter_dropZone">Drop files here for import</div>
+            </div>
+          </section>
+        </div>
+      </div>
+      <div id="gracenotePage" class="page">
+        <h1>Gracenote</h1>
+        <p><a href="http://en.wikipedia.org/wiki/Gracenote" target="_blank">What is Gracenote?</a></p>
+        <p>To use the Gracenote service you have to <a
+            href="https://developer.gracenote.com/" target="_blank">register (Free)</a> and retrieve
+          API
+          ID.</p>
+        <div class="displaytable">
+          <section>
+            <div class="section-group" id="gracenoteFields">
+              <h3>Client ID</h3>
+              <input spellcheck="false" id="gracenoteClient_ID" type="text" size="30" />
+              <h3>Web API ID</h3>
+              <input spellcheck="false" id="gracenoteWepAPI_ID" type="text" size="30" />
             </div>
           </section>
         </div>

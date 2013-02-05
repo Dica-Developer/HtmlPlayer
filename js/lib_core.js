@@ -160,7 +160,7 @@ function AUDICA() {
       }
 
       Audica.View.updateMain(song.artist, song.album, song.title);
-      Audica.trigger('playSong');
+      Audica.trigger('playSong', {song: _song});
     },
     /**
      * @description Plays next song
