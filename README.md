@@ -1,4 +1,4 @@
-Audica
+Audica [![Build Status](https://travis-ci.org/Dica-Developer/HtmlPlayer.png?branch=master)](https://travis-ci.org/Dica-Developer/HtmlPlayer)
 =====
 
 A HTML5 player that can stream songs from a subsonic server, ubuntu one server and play local files.
