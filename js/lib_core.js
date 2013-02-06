@@ -522,8 +522,7 @@
     }
 
     /**
-     * @function
-     * @private
+     *
      */
     this.registerEvents = function () {
       window.bindKeyEvents(Audica);

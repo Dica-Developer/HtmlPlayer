@@ -137,7 +137,10 @@ describe("Player core", function() {
       expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
     });
 
-    it('Key "Space" should play/pause song', function(){
+
+    //skipped test
+    xit('Key "Space" should play/pause song', function(){
+
       Mousetrap.trigger('space');
       expect(Audica.Dom.player.paused).toBeFalsy();
 
