@@ -8,7 +8,5 @@ module.exports = function (grunt) {
       all:['Gruntfile.js', 'js/*.js', 'options/**/*.js']
     }
   });
-
-
-  grunt.registerTask('test', 'lint jasmine_node');
+  grunt.registerTask('test', 'lint');
 };
