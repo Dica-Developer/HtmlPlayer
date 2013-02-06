@@ -1,4 +1,4 @@
-/*global Audica:true, console:true*/
+/*global Audica:true, localStorage: true, XMLHttpRequest:true, console:true*/
 (function (window) {
   "use strict";
 
