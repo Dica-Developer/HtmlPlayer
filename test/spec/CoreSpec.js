@@ -19,10 +19,10 @@ describe("Player core", function() {
 
   it('Core events should be defined', function(){
     expect(Audica.eventList).toBeDefined();
-    expect(Audica.eventList.domElementsSet.length).toEqual(1);
+    expect(Audica.eventList.domElementsSet.length).toEqual(2);
     expect(Audica.eventList.fillSongBox.length).toEqual(1);
     expect(Audica.eventList.ERROR.length).toEqual(1);
-    expect(Audica.eventList.readyCollectingSongs.length).toEqual(1);
+    expect(Audica.eventList.readyCollectingSongs.length).toEqual(2);
   });
 
   describe('Core function should be defined', function(){

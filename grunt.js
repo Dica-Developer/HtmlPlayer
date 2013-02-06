@@ -7,14 +7,20 @@ module.exports = function (grunt) {
     lint:{
       all:['Gruntfile.js', 'js/*.js', 'options/**/*.js']
     },
+    concat:{
+      libs:{
+        src: ['js/lib_*.js','js/main.js'],
+        dest: 'test/tmp/libs.js'
+      }
+    },
     min: {
       test_specs:{
         src: ['test/spec/*.js'],
         dest: 'test/tmp/specs.js'
       },
       test_libs:{
-        src: ['js/*.js'],
-        dest: 'test/tmp/libs.js'
+        src: '<config:concat.libs.dest>',
+        dest: 'test/tmp/libs.min.js'
       }
     },
     clean:{
@@ -26,6 +32,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('travis', 'Runs tests',function(){
     grunt.task.run('lint');
+    grunt.task.run('concat');
     grunt.task.run('min:test_specs');
     grunt.task.run(['min:test_libs']);
   });
