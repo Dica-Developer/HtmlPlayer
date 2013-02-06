@@ -1,4 +1,4 @@
-/*global $:true, Audica:true, Db:true, console:true, alert:true */
+/*global $:true, Audica:true, Db:true, console:true, alert:true, localStorage:true */
 (function (window) {
   "use strict";
 
