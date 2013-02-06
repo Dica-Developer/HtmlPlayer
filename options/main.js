@@ -1,35 +1,40 @@
+/*global $:true, Scrobbler:true, FileImporter:true, alert:true, chrome:true */
+
+(function(){
+  "use strict";
 function saveLogin() {
-  var login = document.querySelector("#loginBox").value;
-  localStorage["authentication.login"] = JSON.stringify(login);
+  var login = $("#loginBox").val();
+  localStorage.authentication_login = JSON.stringify(login);
 }
 
 function savePassword() {
-  var password = document.querySelector("#passwordBox").value;
-  localStorage["authentication.password"] = JSON.stringify(password);
+  var password = $("#passwordBox").val();
+  localStorage.authentication_password = JSON.stringify(password);
 }
 
 function saveServerUrl() {
-  var serverUrl = document.querySelector("#serverUrlBox").value;
-  localStorage["serverUrl"] = JSON.stringify(serverUrl);
+  var serverUrl = $("#serverUrlBox").val();
+  localStorage.serverUrl = JSON.stringify(serverUrl);
 }
 
 function fill() {
-  var password = localStorage["authentication.password"];
+  var password = localStorage.authentication_password;
   if (null !== password && undefined !== password) {
-    document.querySelector("#passwordBox").value = JSON.parse(password);
+    $("#passwordBox").val(JSON.parse(password));
   }
-  var login = localStorage["authentication.login"];
+  var login = localStorage.authentication_login;
   if (null !== login && undefined !== login) {
-    document.querySelector("#loginBox").value = JSON.parse(login);
+    $("#loginBox").val(JSON.parse(login));
   }
-  var serverUrl = localStorage["serverUrl"];
+  var serverUrl = localStorage.serverUrl;
   if (null !== serverUrl && undefined !== serverUrl) {
     var serverUrlClear = JSON.parse(serverUrl);
-    document.querySelector("#serverUrlBox").value = serverUrlClear;
+    $("#serverUrlBox").val(serverUrlClear);
+    var selectElement = $("#backendSelection");
     if ("https://streaming.one.ubuntu.com" === serverUrlClear) {
-      selectOption($("#backendSelection"), "ubuntuone");
+      selectOption(selectElement, "ubuntuone");
     } else {
-      selectOption($("#backendSelection"), "subsonic");
+      selectOption(selectElement, "subsonic");
     }
     initBackend();
   }
@@ -45,48 +50,53 @@ function fill() {
   }
 
   var lastFmLogin = localStorage["audica.lastfm.login"];
+  var $lastfmUserLink = $("#lastfmUserLink");
+  var $lastfmUserLabel = $("#lastfmUserLabel");
+  var $lastLoginLink = $("#lastfmLoginLink");
+  var $lastfmLogoutLink = $("#lastfmLogoutLink");
   if (null !== lastFmLogin && undefined !== lastFmLogin) {
-    document.querySelector("#lastfmUserLink").innerHTML = lastFmLogin;
-    document.querySelector("#lastfmUserLink").style.display = "block";
-    document.querySelector("#lastfmUserLabel").style.display = "block";
-    document.querySelector("#lastfmLogoutLink").style.display = "block";
-    document.querySelector("#lastfmLoginLink").style.display = "none";
+    $lastfmUserLink.text(lastFmLogin);
+    $lastfmUserLink.show();
+    $lastfmUserLabel.show();
+    $lastfmLogoutLink.show();
+    $lastLoginLink.hide();
   } else {
-    document.querySelector("#lastfmLoginLink").style.display = "block";
-    document.querySelector("#lastfmLogoutLink").style.display = "none";
-    document.querySelector("#lastfmUserLink").style.display = "none";
-    document.querySelector("#lastfmUserLabel").style.display = "none";
+    $lastLoginLink.show();
+    $lastfmLogoutLink.hide();
+    $lastfmUserLink.hide();
+    $lastfmUserLabel.hide();
   }
-  document.querySelector("#backend").onclick = selectTab;
-  document.querySelector("#scrobble").onclick = selectTab;
-  document.querySelector("#gracenote").onclick = selectTab;
-  document.querySelector("#about").onclick = selectTab;
+  $("#backend, #scrobble, #gracenote, #about").on('click', selectTab);
 }
 
-function selectTab() {
-  var currentTab = document.querySelector("li.navbar-item-selected");
+function selectTab(event) {
+  var currentTab = $("li.navbar-item-selected");
   //noinspection JSUnresolvedVariable
-  currentTab.classList.remove("navbar-item-selected");
-  document.querySelector("#" + currentTab.id + "Page").style.display = "none";
+  currentTab.removeClass("navbar-item-selected");
+  $("#" + currentTab.attr('id') + "Page").hide();
   //noinspection JSUnresolvedVariable
-  this.classList.add("navbar-item-selected");
-  document.querySelector("#" + this.id + "Page").style.display = "block";
+  var currentTarget = $(event.currentTarget);
+  currentTarget.addClass("navbar-item-selected");
+  $("#" + currentTarget.attr('id') + "Page").show();
 }
 
 function initBackend() {
   var value = $('#backendSelection').find(':selected').val();
+  var $ubuntuoneAuthenticationHelp = $("#ubuntuoneAuthenticationHelp");
+  var $subsonicAuthParams = $("#subsonicAuthParams");
+  var $fileImporterFields = $("#fileImporterFields");
   if ("ubuntuone" === value) {
-    document.querySelector("#ubuntuoneAuthenticationHelp").style.display = "block";
-    document.querySelector("#subsonicAuthParams").style.display = "none";
-    document.querySelector("#fileImporterFields").style.display = "none";
+    $ubuntuoneAuthenticationHelp.show();
+    $subsonicAuthParams.hide();
+    $fileImporterFields.hide();
   } else if ("subsonic" === value) {
-    document.querySelector("#ubuntuoneAuthenticationHelp").style.display = "none";
-    document.querySelector("#subsonicAuthParams").style.display = "block";
-    document.querySelector("#fileImporterFields").style.display = "none";
+    $ubuntuoneAuthenticationHelp.hide();
+    $subsonicAuthParams.show();
+    $fileImporterFields.hide();
   } else {
-    document.querySelector("#ubuntuoneAuthenticationHelp").style.display = "none";
-    document.querySelector("#subsonicAuthParams").style.display = "none";
-    document.querySelector("#fileImporterFields").style.display = "block";
+    $ubuntuoneAuthenticationHelp.hide();
+    $subsonicAuthParams.show();
+    $fileImporterFields.hide();
   }
 }
 
@@ -100,12 +110,12 @@ function selectOption(selectElement, optionValue) {
 }
 
 function logoutFromLastFm() {
-  delete localStorage["audica.lastfm.sessionKey"];
-  delete localStorage["audica.lastfm.login"];
-  document.querySelector("#lastfmUserLink").style.display = "none";
-  document.querySelector("#lastfmLogoutLink").style.display = "none";
-  document.querySelector("#lastfmLoginLink").style.display = "block";
-  document.querySelector("#lastfmUserLabel").style.display = "none";
+  delete localStorage.audica_lastfm_sessionKey;
+  delete localStorage.audica_lastfm_login;
+  $("#lastfmUserLink").show();
+  $("#lastfmLogoutLink").hide();
+  $("#lastfmLoginLink").show();
+  $("#lastfmUserLabel").hide();
 }
 
 function lastFmLoginClick(e) {
@@ -123,18 +133,18 @@ var saveField = function(){
 $(function() {
   fill();
 
-  document.querySelector('#lastfmLoginLink').addEventListener('click', lastFmLoginClick);
-  document.querySelector('#lastfmLogoutLink').addEventListener('click', logoutFromLastFm);
-  document.querySelector('#lastfmUserLink').addEventListener('click', lastfmUserLink);
-  document.querySelector('#backendSelection').addEventListener('change', initBackend);
-  document.querySelector('#serverUrlBox').addEventListener('change', saveServerUrl);
-  document.querySelector('#loginBox').addEventListener('change', saveLogin);
-  document.querySelector('#passwordBox').addEventListener('change', savePassword);
-  document.querySelector('#gracenoteClient_ID').addEventListener('change', saveField);
-  document.querySelector('#gracenoteWepAPI_ID').addEventListener('change', saveField);
+  $('#lastfmLoginLink').on('click', lastFmLoginClick);
+  $('#lastfmLogoutLink').on('click', logoutFromLastFm);
+  $('#lastfmUserLink').on('click', lastfmUserLink);
+  $('#backendSelection').on('change', initBackend);
+  $('#serverUrlBox').on('change', saveServerUrl);
+  $('#loginBox').on('change', saveLogin);
+  $('#passwordBox').on('change', savePassword);
+  $('#gracenoteClient_ID, #gracenoteWepAPI_ID').on('change', saveField);
 
   var fileImporter = new FileImporter();
   fileImporter.init();
+
   document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
       event.stopPropagation();
       event.preventDefault();
@@ -147,28 +157,30 @@ $(function() {
 
   //noinspection JSUnresolvedVariable,JSUnresolvedFunction
   chrome.extension.onRequest.addListener(function(request, sender) {
-    var pattLastFM = new RegExp("^chrome-extension://.+/options/authenticate_lastfm\.html.token=(.+)$");
-    var patt = new RegExp("^ubuntuone://(.+):(.+)@syncml\.one\.ubuntu\.com$");
+    var pattLastFM = new RegExp("^chrome-extension://.+/options/authenticate_lastfm\\.html.token=(.+)$");
+    var patt = new RegExp("^ubuntuone://(.+):(.+)@syncml\\.one\\.ubuntu\\.com$");
+    var match = null;
     if (patt.test(request.url)) {
-      var match = patt.exec(request.url);
-      document.querySelector("#loginBox").value = match[1];
-      document.querySelector("#passwordBox").value = match[2];
-      document.querySelector("#serverUrlBox").value = "https://one.ubuntu.com/music/api/1.0";
+      match = patt.exec(request.url);
+      $("#loginBox").val(match[1]);
+      $("#passwordBox").val(match[2]);
+      $("#serverUrlBox").val("https://one.ubuntu.com/music/api/1.0");
       saveLogin();
       savePassword();
       saveServerUrl();
     } else if (pattLastFM.test(request.url)) {
-      var match = pattLastFM.exec(request.url);
+      match = pattLastFM.exec(request.url);
       (new Scrobbler(null, null)).getSession(match[1], function(data) {
         if (undefined === data.error) {
           /** @namespace data.session */
-          localStorage["audica.lastfm.sessionKey"] = data.session.key;
-          localStorage["audica.lastfm.login"] = data.session.name;
-          document.querySelector("#lastfmUserLink").innerHTML = data.session.name;
-          document.querySelector("#lastfmUserLink").style.display = "block";
-          document.querySelector("#lastfmLogoutLink").style.display = "block";
-          document.querySelector("#lastfmLoginLink").style.display = "none";
-          document.querySelector("#lastfmUserLabel").style.display = "block";
+          localStorage.audica_lastfm_sessionKey = data.session.key;
+          localStorage.audica_lastfm_login = data.session.name;
+          var $lastfmUserLink = $("#lastfmUserLink");
+          $lastfmUserLink.text(data.session.name);
+          $lastfmUserLink.show();
+          $("#lastfmLogoutLink").show();
+          $("#lastfmLoginLink").hide();
+          $("#lastfmUserLabel").show();
         } else {
           alert("It failed to get a session key." + data.error + " - " + data.message);
         }
@@ -180,3 +192,4 @@ $(function() {
     chrome.tabs.remove(sender.tab.id);
   });
 });
+})();

@@ -30,9 +30,9 @@ var Scrobbler = function() {
   
   this.init = function() {
     // TODO read this all the time to allow reconfiguration
-    if (localStorage["audica.lastfm.sessionKey"]) {
-      _sessionKey = localStorage["audica.lastfm.sessionKey"];
-      _login = localStorage["audica.lastfm.login"];
+    if (localStorage.audica_lastfm_sessionKey) {
+      _sessionKey = localStorage.audica_lastfm_sessionKey;
+      _login = localStorage.audica_lastfm_login;
     } else {
       Audica.trigger('ERROR', {message:'Last.fm Scrobbler is not configured so not initialised!'});
     }

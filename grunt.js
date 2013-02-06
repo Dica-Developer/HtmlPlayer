@@ -17,7 +17,7 @@ module.exports = function (grunt) {
       }
     },
     lint:{
-      all:['Gruntfile.js', 'js/**/*.js', 'options/**/*.js']
+      all:['Gruntfile.js', 'js/*.js', 'options/**/*.js']
     }
   });
 
