@@ -8,7 +8,7 @@
     "node": ">= 0.8.0"
   },
   "dependencies":{
-    "test": "colors"
+    "colors": "0.6.0-1"
   },
   "scripts": {
     "test": "grunt test -v && phantomjs ./test/testRunner.js -v"
