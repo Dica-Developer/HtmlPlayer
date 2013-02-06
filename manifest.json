@@ -10,11 +10,11 @@
   },
   "content_scripts": [{
     "matches": ["https://one.ubuntu.com/phones/creds"],
-    "js": ["js/ubuntuone_authentication.js"],
+    "js": ["js/3rd/ubuntuone_authentication.js"],
     "run_at": "document_end"
   }, {
     "matches": ["http://www.google.com/robots.txt*"],
-    "js": ["js/oauth2/oauth2_inject.js"],
+    "js": ["js/3rd/oauth2/oauth2_inject.js"],
     "run_at": "document_start"
   }],
   "icons": {
