@@ -348,8 +348,9 @@
        * @param {String} viewState
        */
       setViewState:function (viewState) {
-        Audica.trigger('viewStateChanged', {from:_viewState, to:viewState});
+        var oldState = _viewState;
         _viewState = viewState;
+        Audica.trigger('viewStateChanged', {from:oldState, to:viewState});
       }
     };
     /**

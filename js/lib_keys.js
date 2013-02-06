@@ -225,6 +225,9 @@
         view.setViewState('search');
         return false;
       });
+
+      Mousetrap.bind('down', function(){ });
+      Mousetrap.bind('up', function(){ });
     };
 
     bindKeysToView[view.getViewState()].call(Audica);

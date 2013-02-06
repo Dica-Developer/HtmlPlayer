@@ -47,7 +47,7 @@ describe("Songlist", function() {
   describe('Song list key bindings if viewState !== "search"', function(){
     beforeEach(function(){
       Audica.View.fillSongBox(subsonicSongList);
-      Audica.View.setViewState('view');
+      Audica.View.setViewState('playList');
     });
 
     it('Key "down" should not work', function(){
