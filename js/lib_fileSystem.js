@@ -61,7 +61,7 @@ function Filesystem () {
     if (entry.isFile) {
         song = {
           "artist": 'Unknown',
-          "album": 'Unkown',
+          "album": 'Unknown',
           "title": entry.name,
           "id": entry.name,
           "coverArt": '',

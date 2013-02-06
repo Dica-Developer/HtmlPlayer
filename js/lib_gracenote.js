@@ -178,7 +178,7 @@
     };
 
     Audica.on('authReady', function(){
-      var withoutGN = Audica.songDb.query({album:{'!is':'Unkown'}},[{gn_id_album:{isUndefined:true}},{gn_id_album:{isNull:true}}])
+      var withoutGN = Audica.songDb.query({album:{'!is':'Unknown'}},[{gn_id_album:{isUndefined:true}},{gn_id_album:{isNull:true}}])
         .distinct('album','artist');
         self.collectBasicInformations(withoutGN);
     });

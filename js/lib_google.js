@@ -39,7 +39,7 @@ function GoogleDrive() {
       if (item.mimeType === 'audio/mpeg') {
         var song = {
           "artist": 'Unknown',
-          "album": 'Unkown',
+          "album": 'Unknown',
           "title": item.title,
           "id": item.id,
           "coverArt": '',

@@ -1,11 +1,11 @@
-/*global */
+/*global Audica:true, console:true*/
 (function (window) {
   "use strict";
 
   /**
    * @class
    */
-  function Subsonic() {
+  window.Subsonic = function() {
     /**
      * @type {String}
      */
@@ -20,11 +20,6 @@
      * @private
      */
     var _password = JSON.parse(localStorage.authentication_password);
-    /**
-     * @type {String}
-     * @private
-     */
-    var _serviceUrl = 'https://one.ubuntu.com/music/api/1.0';
 
     var _streamingUrl = 'https://streaming.one.ubuntu.com/rest';
 
@@ -56,8 +51,9 @@
       var ssr = req.responseXML.getElementsByTagName("subsonic-response");
       if (null !== ssr && undefined !== ssr && ssr.length > 0 && "ok" === ssr[0].getAttribute("status")) {
         var songs = req.responseXML.getElementsByTagName("match");
-        var songList = [];
-        for (var i = 0, song; song = songs[i]; i++) {
+        var songList = [], i = 0, length = songs.length, song;
+        for (i; i < length; i++) {
+          song = songs[i];
           var songObj = {
             "artist":song.getAttribute("artist"),
             "album":song.getAttribute("album"),
@@ -93,6 +89,6 @@
     Audica.on('updateSongList', function (args) {
       _searchForSongs(args.timestamp, null, null);
     });
-  }
+  };
 })(window);
 

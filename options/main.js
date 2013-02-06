@@ -1,6 +1,6 @@
-/*global $:true, Scrobbler:true, FileImporter:true, alert:true, chrome:true */
+/*global document:true, $:true, Scrobbler:true, FileImporter:true, alert:true, chrome:true , localStorage:true*/
 
-(function(){
+(function(document){
   "use strict";
 function saveLogin() {
   var login = $("#loginBox").val();
@@ -192,4 +192,4 @@ $(function() {
     chrome.tabs.remove(sender.tab.id);
   });
 });
-})();
+})(document);
