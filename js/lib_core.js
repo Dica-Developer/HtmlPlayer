@@ -348,7 +348,6 @@
        * @param {String} viewState
        */
       setViewState:function (viewState) {
-        console.trace();
         Audica.trigger('viewStateChanged', {from:_viewState, to:viewState});
         _viewState = viewState;
       }

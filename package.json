@@ -8,7 +8,7 @@
     "node": ">= 0.8.0"
   },
   "devDependencies": {
-    "grunt": "~0.3.14"
+    "grunt": "~0.3.17"
   },
   "scripts": {
     "test": "grunt test -v"

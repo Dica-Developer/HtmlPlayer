@@ -23,6 +23,6 @@ module.exports = function (grunt) {
 
 
   grunt.loadNpmTasks('grunt-jasmine-node');
-  grunt.registerTask('test', ['lint', 'jasmine_node']);
+  grunt.registerTask('test', 'lint jasmine_node');
 
 };
