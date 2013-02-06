@@ -7,6 +7,9 @@
   "engines": {
     "node": ">= 0.8.0"
   },
+  "dependencies":{
+    "test": "colors"
+  },
   "scripts": {
     "test": "grunt test -v && phantomjs ./test/testRunner.js -v"
   }

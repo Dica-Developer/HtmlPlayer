@@ -1,8 +1,8 @@
 "use strict";
 
 /*global phantom, $, console, require, setInterval, clearInterval*/
-
 var page = require('webpage').create();
+var colors = require('colors');
 
 function waitFor(testFx, onReady, timeOutMillis) {
   var maxtimeOutMillis = timeOutMillis || 3000;
@@ -24,6 +24,37 @@ function waitFor(testFx, onReady, timeOutMillis) {
     }, 250);
 }
 
+var parseResultPage = function () {
+  var msgFailure = '';
+  var msgGenral = '';
+  var passed = $('.spec.passed');
+  var failed = $('.spec.failed');
+  msgGenral = msgGenral + passed.length + ' passed tests of ' + (passed.length + failed.length) + '\n';
+  msgGenral = msgGenral + failed.length + ' failed tests of ' + (passed.length + failed.length) + '\n';
+  msgFailure = msgFailure + 'Failed specs :\n';
+
+  if(failed.length !== 0){
+    failed.each(function(){
+      var spec = $(this).find('.description').text();
+      var message = $(this).find('.resultMessage').text();
+      var stack = $(this).find('.stackTrace').text();
+      msgFailure = msgFailure + ' "'+ spec + '"\n';
+      msgFailure = msgFailure + ' "'+ message + '"\n';
+      msgFailure = msgFailure + ' "'+ stack + '"\n';
+    });
+  }
+
+  msgGenral = msgGenral + $("span.finished-at").text();
+  var error = (failed.length > 0);
+  return {
+    'msg': {
+      'general': msgGenral,
+      'failures': msgFailure
+    },
+    'error': error
+  };
+};
+
 page.open('./test/SpecRunner.html', function (status) {
   page.viewportSize = {
     width: 1280,
@@ -37,21 +68,10 @@ page.open('./test/SpecRunner.html', function (status) {
         return $("span.finished-at").is(":visible");
       });
     }, function () {
-      var result = page.evaluate(function () {
-        var msg = '';
-        var passed = $('.suite .passed');
-        var failed = $('.suite .failed');
-        msg = msg + passed.length + ' passed tests of ' + (passed.length + failed.length) + '\n';
-        msg = msg + failed.length + ' failed tests of ' + (passed.length + failed.length) + '\n';
-        msg = msg + $("span.finished-at").text();
-        var error = failed.length > 0 ? true : false;
-        return {
-          'msg': msg,
-          'error': error
-        };
-      });
-      console.log(result.msg);
+      var result = page.evaluate(parseResultPage);
+      console.log(result.msg.general.green);
       if (result.error) {
+        console.error(result.msg.failures.red);
         phantom.exit(1);
       } else {
         phantom.exit(0);
