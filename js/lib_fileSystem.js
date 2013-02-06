@@ -1,4 +1,7 @@
-function Filesystem () {
+/*global $, FileError, console, Audica, PERSISTENT, window*/
+(function(window){
+"use strict";
+window.Filesystem = function() {
   var backendId = 'filesystem';
   var fileSystem = null;
 
@@ -44,7 +47,7 @@ function Filesystem () {
         var song = readFile(results[i], timestamp);
         songList.push(song);
       }
-      Audica.trigger('readyCollectingSongs', {songList:songList, backendId:'filesystem', timestamp:timestamp});
+      Audica.trigger('readyCollectingSongs', {songList:songList, backendId:backendId, timestamp:timestamp});
     }, function (e) {
       console.error(e);
     });
@@ -73,7 +76,7 @@ function Filesystem () {
           "year": 1900,
           "addedOn" : timestamp,
           "src" : entry.toURL(),
-          "backendId": 'filesystem'
+          "backendId": backendId
         };
     } else {
       console.log('Cannot handle "' + entry.name + '". It is a file.');
@@ -83,10 +86,9 @@ function Filesystem () {
 
   this.setPlaySrc = function(src, player) {
     player.src = src;
-  }
+  };
 
-  this.setCoverArt = function(src, coverArt) {
-  }
+  this.setCoverArt = function() {};
 
   /**
    *
@@ -109,7 +111,8 @@ function Filesystem () {
     _searchForSongs(args.timestamp);
   });
 
-  Audica.on('filesImported', function(args){
+  Audica.on('filesImported', function(){
     _searchForSongs($.now());
   });
-}
+};
+})(window);
