@@ -11,6 +11,6 @@
     "grunt": "~0.3.17"
   },
   "scripts": {
-    "test": "phantomjs ./test/testRunner.js -v && grunt test -v"
+    "test": "grunt test -v && phantomjs ./test/testRunner.js -v"
   }
 }
