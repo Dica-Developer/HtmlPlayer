@@ -24,7 +24,7 @@ function waitFor(testFx, onReady, timeOutMillis) {
     }, 250);
 }
 
-page.open('./test/example/SpecRunner.html', function (status) {
+page.open('./test/SpecRunner.html', function (status) {
   page.viewportSize = {
     width: 1280,
     height: 800
