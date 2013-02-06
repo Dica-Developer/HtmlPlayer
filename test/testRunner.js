@@ -31,8 +31,8 @@ var parseResultPage = function () {
   var failed = $('.spec.failed');
   msgGenral = msgGenral + passed.length + ' passed tests of ' + (passed.length + failed.length) + '\n';
   msgGenral = msgGenral + failed.length + ' failed tests of ' + (passed.length + failed.length) + '\n';
-  msgFailure = msgFailure + 'Failed specs :\n';
 
+  msgFailure = msgFailure + 'Failed specs :\n';
   if(failed.length !== 0){
     failed.each(function(){
       var spec = $(this).find('.description').text();

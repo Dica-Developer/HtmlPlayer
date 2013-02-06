@@ -12,6 +12,7 @@
     "colors": "0.6.0-1"
   },
   "scripts": {
-    "test": "grunt test -v && phantomjs ./test/testRunner.js -v"
+    "test": "grunt test-local -v; phantomjs ./test/testRunner.js -v; grunt clean",
+    "travis": "grunt travis -v; phantomjs ./test/testRunner.js -v"
   }
 }
