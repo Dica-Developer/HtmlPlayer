@@ -1,4 +1,4 @@
-/*global $:true, Mousetrap:true */
+/*global $:true, document:true,  Mousetrap:true */
 (function(window, Mousetrap){
   "use strict";
   window.bindKeyEvents = function(Audica){
@@ -181,9 +181,9 @@
           filterBox.focus();
         }
         if (null !== filterBoxTimeout) {
-          clearTimeout(filterBoxTimeout);
+          window.clearTimeout(filterBoxTimeout);
         }
-        filterBoxTimeout = setTimeout(function () {
+        filterBoxTimeout = window.setTimeout(function () {
           var currentSongList = [];
           var filterQuery = filterBox.val();
           if (null !== filterQuery && undefined !== filterQuery) {
