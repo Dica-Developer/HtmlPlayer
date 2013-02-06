@@ -1,4 +1,8 @@
-function RadioImporter() {
+/*global $:true, Audica:true, Db:true*/
+(function(window){
+  "use strict";
+
+window.RadioImporter = function() {
   var db = new Db();
 
   var backendId = 'radio';
@@ -17,12 +21,10 @@ function RadioImporter() {
     var timestamp = $.now();
     var max = urls.length;
     for (var i = 0; i < max; i++) {
-        urls[i].getAsString(function (urlString) {
-          addUrl(urlString);
+        urls[i].getAsString(addUrl);
           if (i === max) {
             triggerCollectingSongs(db, timestamp, backendId);
           }
-        });
     }
   };
 
@@ -56,8 +58,8 @@ function RadioImporter() {
 
   this.setPlaySrc = function(src, player) {
     player.src = src;
-  }
+  };
   
-  this.setCoverArt = function(src, coverArt) {
-  }
-}
+  this.setCoverArt = function() { };
+};
+})(window);
