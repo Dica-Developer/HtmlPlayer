@@ -43,14 +43,6 @@ describe("PlayerControl", function() {
       expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
     });
 
-    it('Audica.PlayerControl.play should trigger "playSong"', function(){
-      spyOn(Audica,'trigger');
-      Audica.PlayerControl.play(subsonicSongList[0]);
-
-      expect(Audica.trigger).toHaveBeenCalled();
-      expect(Audica.trigger).toHaveBeenCalledWith('playSong');
-    });
-
     it('Audica.PlayerControl.next should trigger "ERROR - empty playlist"', function(){
       spyOn(Audica,'trigger');
       Audica.PlayerControl.next();
