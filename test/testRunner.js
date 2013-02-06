@@ -28,37 +28,43 @@ var parseResultPage = function () {
   var msgFailure = '';
   var msgGenral = '';
   var passed = $('.spec.passed');
-  var failed = $('.spec.failed');
-  msgGenral = msgGenral + passed.length + ' passed tests of ' + (passed.length + failed.length) + '\n';
-  msgGenral = msgGenral + failed.length + ' failed tests of ' + (passed.length + failed.length) + '\n';
+  var failedSpecs = $('.spec.failed');
+  var failedSuites = $('.suite.failed');
+  msgGenral = msgGenral + passed.length + ' passed tests of ' + (passed.length + failedSpecs.length) + '\n';
+  msgGenral = msgGenral + failedSpecs.length + ' failed tests of ' + (passed.length + failedSpecs.length) + '\n';
 
-  msgFailure = msgFailure + 'Failed specs :\n';
-  if(failed.length !== 0){
-    failed.each(function(){
-      var spec = $(this).find('.description').text();
-      var message = $(this).find('.resultMessage').text();
-      var stack = $(this).find('.stackTrace').text();
-      msgFailure = msgFailure + ' "'+ spec + '"\n';
-      msgFailure = msgFailure + ' "'+ message + '"\n';
-      msgFailure = msgFailure + ' "'+ stack + '"\n';
+
+  if (failedSuites.length !== 0) {
+    failedSuites.each(function () {
+      var suite = $(this).find('.description').eq(0).text();
+      msgFailure = msgFailure + 'Suite: "' + suite + '"\n';
+      $(this).find('.spec.failed').each(function () {
+        var spec = $(this).find('.description').eq(0).text();
+        var message = $(this).find('.resultMessage').eq(0).text();
+        var stack = $(this).find('.messages').find('.stackTrace').eq(0).text() || 'No Stack available!';
+        msgFailure = msgFailure + ' Spec: "' + spec + '"\n';
+        msgFailure = msgFailure + '     "' + message + '"\n';
+        msgFailure = msgFailure + '     "' + stack + '"\n';
+      });
+
     });
   }
 
   msgGenral = msgGenral + $("span.finished-at").text();
-  var error = (failed.length > 0);
+  var error = (failedSpecs.length > 0);
   return {
-    'msg': {
-      'general': msgGenral,
-      'failures': msgFailure
+    'msg':{
+      'general':msgGenral,
+      'failures':msgFailure
     },
-    'error': error
+    'error':error
   };
 };
 
 page.open('./test/SpecRunner.html', function (status) {
   page.viewportSize = {
-    width: 1280,
-    height: 800
+    width:1280,
+    height:800
   };
   if (status !== 'success') {
     console.log('Unable to access the network!');
@@ -69,13 +75,11 @@ page.open('./test/SpecRunner.html', function (status) {
       });
     }, function () {
       var result = page.evaluate(parseResultPage);
+
       console.log(result.msg.general.green);
-      if (result.error) {
-        console.error(result.msg.failures.red);
-        phantom.exit(1);
-      } else {
-        phantom.exit(0);
-      }
+      console.error(result.msg.failures.red);
+      phantom.exit(result.error);
+
     }, 30000);
   }
 });
