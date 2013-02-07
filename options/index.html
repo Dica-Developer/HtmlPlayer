@@ -36,12 +36,23 @@
               <select id="backendSelection">
                 <option value="" disabled="disabled">Select a backend</option>
                 <option value="ubuntuone">Ubuntu One</option>
+                <option value="googlemusic">Google Music</option>
                 <option value="subsonic">Subsonic</option>
                 <option value="fileImporter">Import files</option>
               </select>
             </div>
             <div class="section-group" id="ubuntuoneAuthenticationHelp">
               <a href="https://one.ubuntu.com/phones/creds" target="_blank">Click to retrieve streaming credentials!</a>
+            </div>
+            <div id="googlemusicParams">
+              <div id="googlemusicLoginBoxDiv" class="section-group">
+                <h3>login</h3>
+                <input spellcheck="false" id="googlemusicLoginBox" type="text" size="20" />
+              </div>
+              <div id="googlemusicPasswordBoxDiv" class="section-group">
+                <h3>password</h3>
+                <input spellcheck="false" id="googlemusicPasswordBox" type="password" size="30" />
+              </div>
             </div>
             <div id="subsonicAuthParams">
               <div class="section-group">

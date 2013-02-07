@@ -2,7 +2,7 @@ function GoogleMusic() {
 
   "use strict";
 
-  /*global FormData, XMLHttpRequest, Audica, console*/
+  /*global FormData, XMLHttpRequest, Audica, console, localStorage*/
 
   var backendId = 'googleMusic';
 
@@ -128,6 +128,9 @@ function GoogleMusic() {
   };
 
   this.setCoverArt = function (src, coverArt) {
+    if (src) {
+      src = src.replace('=s130', '=s500');
+    }
     coverArt.attr('src', 'http:' + src);
   };
 
@@ -137,6 +140,10 @@ function GoogleMusic() {
 
   Audica.on('updateSongList', function (args) {
     timestamp = args.timestamp;
-    login('', '');
+    var userName = localStorage["googlemusic.authentication.login"];
+    var password = localStorage["googlemusic.authentication.password"];
+    if (userName && password) {
+      login(userName, password);
+    }
   });
 }
