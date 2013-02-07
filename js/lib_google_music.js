@@ -25,7 +25,7 @@ function GoogleMusic() {
       var response = JSON.parse(req.response);
       result = response.url;
     } else {
-      console.log('Could not get strea to song id "' + songid + '"');
+      console.log('Could not get stream to song id "' + songid + '"');
     }
     return result;
   }
@@ -34,25 +34,27 @@ function GoogleMusic() {
     var idx = 0;
     var items = JSON.parse(response);
     var playlist = items.playlist;
-    for (idx = 0; idx < playlist.length; idx++) {
-      var track = playlist[idx];
-      var song = {
-        "artist": track.artist,
-        "album": track.album,
-        "title": track.title,
-        "id": track.id,
-        "coverArt": track.albumArtUrl,
-        "contentType": null,
-        "track": track.track,
-        "cd": track.disc,
-        "duration": parseInt(track.durationMillis / 1000, 10),
-        "genre": track.genre,
-        "year": track.year,
-        "addedOn": timestamp,
-        "src": track.id,
-        "backendId": backendId
-      };
-      songList.push(song);
+    if (playlist) {
+      for (idx = 0; idx < playlist.length; idx++) {
+        var track = playlist[idx];
+        var song = {
+          "artist": track.artist,
+          "album": track.album,
+          "title": track.title,
+          "id": track.id,
+          "coverArt": track.albumArtUrl,
+          "contentType": null,
+          "track": track.track,
+          "cd": track.disc,
+          "duration": parseInt(track.durationMillis / 1000, 10),
+          "genre": track.genre,
+          "year": track.year,
+          "addedOn": timestamp,
+          "src": track.id,
+          "backendId": backendId
+        };
+        songList.push(song);
+      }
     }
     return items.continuationToken;
   }
@@ -140,10 +142,10 @@ function GoogleMusic() {
 
   Audica.on('updateSongList', function (args) {
     timestamp = args.timestamp;
-    var userName = localStorage["googlemusic.authentication.login"];
-    var password = localStorage["googlemusic.authentication.password"];
+    var userName = localStorage.googlemusic_authentication_login;
+    var password = localStorage.googlemusic_authentication_password;
     if (userName && password) {
-      login(userName, password);
+      login(JSON.parse(userName), JSON.parse(password));
     }
   });
 }
