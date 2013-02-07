@@ -3,7 +3,6 @@
   "description": "",
   "version": "0.10.0",
   "homepage": "",
-  "main": "Gruntfile.js",
   "engines": {
     "node": ">= 0.8.0"
   },
@@ -13,7 +12,7 @@
     "colors": "0.6.0-1"
   },
   "scripts": {
-    "test": "grunt test-local -v; phantomjs ./test/testRunner.js -v; grunt clean",
-    "travis": "grunt travis -v; phantomjs ./test/testRunner.js -v"
+    "test": "grunt test-local -v && phantomjs ./test/testRunner.js -v && grunt clean",
+    "travis": "grunt travis -v && phantomjs ./test/testRunner.js -v"
   }
 }
