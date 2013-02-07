@@ -97,6 +97,9 @@
         this.songBox = $("#songBox");
         this.descriptionBox = $("#descriptionBox");
         this.coverArtBox = $("#coverArtBox");
+        this.coverArt.on('error', function () {
+          $('#coverArt').attr('src', 'images/wholeNote.png');
+        });
         this.coverArt = $('#coverArt');
         this.filterBox = $("#filterBox");
         this.searchView = $("#searchView");
@@ -788,4 +791,4 @@
     }
   };
 
-})(window, document);
+}(window, document));
