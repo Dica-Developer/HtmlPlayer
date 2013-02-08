@@ -9,12 +9,12 @@ describe("Dom", function () {
     expect(Audica.Dom.playlistBox.find('li').length).toEqual(1);
   });
 
-  it('Audica.Dom.documentHeight should equal to viewport height', function () {
+  xit('Audica.Dom.documentHeight should equal to viewport height', function () {
     var viewportHeight = $(document).height();
     expect(Audica.Dom.documentHeight).toEqual(viewportHeight);
   });
 
-  it('Audica.Dom.documentWidth should equal to viewport width', function () {
+  xit('Audica.Dom.documentWidth should equal to viewport width', function () {
     var viewportWidth = $(document).width();
     expect(Audica.Dom.documentWidth).toEqual(viewportWidth);
   });

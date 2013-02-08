@@ -30,7 +30,7 @@ describe("View", function() {
     });
 
     it('Img dimensions should set correctly', function(){
-      var correctSize = Math.floor(Audica.Dom.documentHeight * 0.6);
+      var correctSize = Math.floor($(document).height() * 0.6);
       expect(Audica.Dom.coverArt[0].height).toEqual(correctSize);
       expect(Audica.Dom.coverArt[0].width).toEqual(correctSize);
     });

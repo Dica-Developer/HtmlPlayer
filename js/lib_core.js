@@ -41,8 +41,8 @@
     var songBox = dom.songBox;
     var playListBox = dom.playlistBox;
     var searchView = dom.searchView;
-    var boxWidth = (dom.documentWidth / 2) - 22 - 2;
-    var boxHeight = dom.documentHeight - 22;
+    var boxWidth = ($(document).width() / 2) - 22 - 2;
+    var boxHeight = $(document).height() - 22;
     var playerView = dom.playerView;
     var playerControlView = dom.playerControlView;
     var coverArtBox = dom.coverArtBox;
@@ -72,8 +72,8 @@
         playListBox.height(boxHeight);
         searchView.height($(document).height());
         searchView.animate({ left: 0 });
-        playerView.animate({ left: dom.documentWidth });
-        playerControlView.animate({ left: dom.documentWidth });
+        playerView.animate({ left: $(document).width() });
+        playerControlView.animate({ left: $(document).width() });
         Audica.setViewState('search');
       });
 
@@ -175,7 +175,7 @@
           filterBox.hide();
           filterBox.val("");
         } else {
-          searchView.animate({ left: -1 * dom.documentWidth });
+          searchView.animate({ left: -1 * $(document).width() });
           playerView.animate({ left: "0" });
           playerControlView.animate({ left: "0" });
           if (audio.paused) {
@@ -184,8 +184,8 @@
             Audica.setNotScrobbled(true);
           }
           Audica.setViewState('player');
-          coverArtBox.css("padding-top", (dom.documentHeight - coverArtBox.height()) / 2);
-          descriptionBox.css("padding-top", (dom.documentHeight - descriptionBox.height()) / 2);
+          coverArtBox.css("padding-top", ($(document).height() - coverArtBox.height()) / 2);
+          descriptionBox.css("padding-top", ($(document).height() - descriptionBox.height()) / 2);
         }
       });
 
@@ -344,9 +344,7 @@
     album:null,
     artist:null,
     progress:null,
-    timeField:null,
-    documentHeight:null,
-    documentWidth:null
+    timeField:null
   };
 
   Audica.prototype.firstPlayListElement = function () {
@@ -359,14 +357,8 @@
         this.Dom[selector] = $('#' + selector);
       }
     }
-    this.updateDocumentDimensions();
     this.trigger('domElementsSet');
-  };
-
-  Audica.prototype.updateDocumentDimensions = function () {
-    this.Dom.documentHeight = $(document).height();
-    this.Dom.documentWidth = $(document).width();
-    this.trigger('documentDimensionsUpdated');
+    this.applyCoverArtStyle();
   };
 
   Audica.prototype.setFirstPlaylistElement = function (song) {
@@ -510,14 +502,14 @@
 
   Audica.prototype.applyCoverArtStyle = function () {
     // Use original window elem to set height because reflect is need this
-    this.Dom.coverArt[0].height = this.Dom.documentHeight * 0.6;
-    this.Dom.coverArt[0].width = this.Dom.coverArt[0].height;
+    this.Dom.coverArt[0].height = $(document).height() * 0.6;
+    this.Dom.coverArt[0].width = $(document).height() * 0.6;
     this.Dom.coverArt.reflect({
       height:0.165,
       opacity:0.25
     });
-    this.Dom.coverArtBox.css("padding-top", (this.Dom.documentHeight - this.Dom.coverArtBox.height()) / 2);
-    this.Dom.descriptionBox.css("padding-top", (this.Dom.documentHeight - this.Dom.descriptionBox.height()) / 2);
+    this.Dom.coverArtBox.css("padding-top", ($(document).height() - this.Dom.coverArtBox.height()) / 2);
+    this.Dom.descriptionBox.css("padding-top", ($(document).height() - this.Dom.descriptionBox.height()) / 2);
   };
 
   Audica.prototype.updateProgress = function () {
@@ -670,17 +662,17 @@
         var descriptionBox = self.Dom.descriptionBox;
         var audio = self.Dom.player[0];
         if ("mouseenter" === event.type) {
-          searchView.height(self.Dom.documentHeight);
-          searchView.animate({ left:-1 * Math.round(self.Dom.documentWidth * 0.05) });
-          playerView.animate({ left:Math.round(self.Dom.documentWidth * 0.95) });
-          playerControlView.animate({ left:Math.round(self.Dom.documentWidth * 0.95) });
+          searchView.height($(document).height());
+          searchView.animate({ left:-1 * Math.round($(document).width() * 0.05) });
+          playerView.animate({ left:Math.round($(document).width() * 0.95) });
+          playerControlView.animate({ left:Math.round($(document).width() * 0.95) });
         } else if ("mouseleave" === event.type) {
-          searchView.height(self.Dom.documentHeight);
+          searchView.height($(document).height());
           searchView.animate({ left:"0" });
-          playerView.animate({ left:self.Dom.documentWidth });
-          playerControlView.animate({ left:self.Dom.documentWidth });
+          playerView.animate({ left:$(document).width() });
+          playerControlView.animate({ left:$(document).width() });
         } else if ("click" === event.type) {
-          searchView.animate({ left:-1 * self.Dom.documentWidth });
+          searchView.animate({ left:-1 * $(document).width() });
           playerView.animate({ left:0 });
           playerControlView.animate({ left:0 });
           if (audio.paused) {
@@ -689,8 +681,8 @@
             self.setNotScrobbled(true);
           }
           self.setViewState('player');
-          coverArtBox.css("padding-top", (self.Dom.documentHeight - coverArtBox.height()) / 2);
-          descriptionBox.css("padding-top", (self.Dom.documentHeight - descriptionBox.height()) / 2);
+          coverArtBox.css("padding-top", ($(document).height() - coverArtBox.height()) / 2);
+          descriptionBox.css("padding-top", ($(document).height() - descriptionBox.height()) / 2);
         }
       }
     };
@@ -722,17 +714,17 @@
       var playerControlView = self.Dom.playerControlView;
       var songBox = self.Dom.songBox;
       var playlistBox = self.Dom.playlistBox;
-      var boxWidth = (self.Dom.documentWidth / 2) - 22 - 2;
-      var boxHeight = self.Dom.documentHeight - 22;
+      var boxWidth = ($(document).width() / 2) - 22 - 2;
+      var boxHeight = $(document).height() - 22;
       if ('player' === self.getViewState()) {
         if ('mouseenter' === event.type) {
-          searchView.height(self.Dom.documentHeight);
-          searchView.animate({ left:-1 * Math.round(self.Dom.documentWidth * 0.95) });
-          playerView.animate({ left:Math.round(self.Dom.documentWidth * 0.05) });
-          playerControlView.animate({ left:Math.round(self.Dom.documentWidth * 0.05) });
+          searchView.height($(document).height());
+          searchView.animate({ left:-1 * Math.round($(document).width() * 0.95) });
+          playerView.animate({ left:Math.round($(document).width() * 0.05) });
+          playerControlView.animate({ left:Math.round($(document).width() * 0.05) });
         } else if ("mouseleave" === event.type) {
-          searchView.height(self.Dom.documentHeight);
-          searchView.animate({ left:-1 * self.Dom.documentWidth });
+          searchView.height($(document).height());
+          searchView.animate({ left:-1 * $(document).width() });
           playerView.animate({ left:0 });
           playerControlView.animate({ left:0 });
         } else if ("click" === event.type) {
@@ -741,10 +733,10 @@
           songBox.height(boxHeight);
           playlistBox.width(boxWidth);
           playlistBox.height(boxHeight);
-          searchView.height(self.Dom.documentHeight);
+          searchView.height($(document).height());
           searchView.animate({ left:0 });
-          playerView.animate({ left:self.Dom.documentWidth });
-          playerControlView.animate({ left:self.Dom.documentWidth });
+          playerView.animate({ left:$(document).width() });
+          playerControlView.animate({ left:$(document).width() });
           self.setViewState('search');
         }
       }
@@ -817,8 +809,6 @@
         window.clearTimeout(self.resizeEventTimeoutId);
       }
       self.resizeEventTimeoutId = window.setTimeout(function () {
-        console.log(self);
-        self.updateDocumentDimensions();
         self.applyCoverArtStyle();
       }, 250);
     });
