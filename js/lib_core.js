@@ -657,6 +657,10 @@
       }
     });
 
+    this.Dom.coverArt.on('error', function () {
+      self.Dom.coverArt.attr('src', 'images/wholeNote.png');
+    });
+
     var handleRightZone = function (event) {
       if ('search' === self.getViewState()) {
         var searchView = self.Dom.searchView;

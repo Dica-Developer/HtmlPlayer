@@ -2,20 +2,19 @@
 (function (window, Audica) {
   "use strict";
 
+  var backendId = 'googleMusic';
+
+  var authToken = null;
+
+  var sid = null;
+
+  var lsid = null;
+
+  var xt = '';
+
+  var timestamp = null;
+
   function GoogleMusic() {
-
-
-    var backendId = 'googleMusic';
-
-    var authToken = null;
-
-    var sid = null;
-
-    var lsid = null;
-
-    var xt = '';
-
-    var timestamp = null;
 
     function getSongStream(songid) {
       var result = null;
@@ -26,7 +25,7 @@
         var response = JSON.parse(req.response);
         result = response.url;
       } else {
-        console.log('Could not get strea to song id "' + songid + '"');
+        console.log('Could not get stream to song id "' + songid + '"');
       }
       return result;
     }
@@ -35,25 +34,27 @@
       var idx = 0;
       var items = JSON.parse(response);
       var playlist = items.playlist;
-      for (idx; idx < playlist.length; idx++) {
-        var track = playlist[idx];
-        var song = {
-          "artist":track.artist,
-          "album":track.album,
-          "title":track.title,
-          "id":track.id,
-          "coverArt":track.albumArtUrl,
-          "contentType":null,
-          "track":track.track,
-          "cd":track.disc,
-          "duration":parseInt(track.durationMillis / 1000, 10),
-          "genre":track.genre,
-          "year":track.year,
-          "addedOn":timestamp,
-          "src":track.id,
-          "backendId":backendId
-        };
-        songList.push(song);
+      if (playlist) {
+        for (idx = 0; idx < playlist.length; idx++) {
+          var track = playlist[idx];
+          var song = {
+            "artist":track.artist,
+            "album":track.album,
+            "title":track.title,
+            "id":track.id,
+            "coverArt":track.albumArtUrl,
+            "contentType":null,
+            "track":track.track,
+            "cd":track.disc,
+            "duration":parseInt(track.durationMillis / 1000, 10),
+            "genre":track.genre,
+            "year":track.year,
+            "addedOn":timestamp,
+            "src":track.id,
+            "backendId":backendId
+          };
+          songList.push(song);
+        }
       }
       return items.continuationToken;
     }
@@ -129,18 +130,26 @@
     };
 
     this.setCoverArt = function (src, coverArt) {
+      if (src) {
+        src = src.replace('=s130', '=s500');
+      }
       coverArt.attr('src', 'http:' + src);
     };
 
-//  this.init = function () {
-    // nothing todo
-//  };
+//    this.init = function () {
+      // nothing todo
+//    };
 
     Audica.on('updateSongList', function (args) {
       timestamp = args.timestamp;
-      login('', '');
+      var userName = localStorage.googlemusic_authentication_login;
+      var password = localStorage.googlemusic_authentication_password;
+      if (userName && password) {
+        login(JSON.parse(userName), JSON.parse(password));
+      }
     });
   }
 
   Audica.extend('googleMusic', new GoogleMusic());
+
 })(window, Audica);
