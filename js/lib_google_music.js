@@ -1,4 +1,4 @@
-/*global FormData, XMLHttpRequest, Audica, console*/
+/*global FormData, XMLHttpRequest, Audica, console, localStorage*/
 (function (window, Audica) {
   "use strict";
 
