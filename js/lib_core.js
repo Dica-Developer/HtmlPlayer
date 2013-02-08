@@ -802,6 +802,13 @@
     $(window).on('beforeunload', function () {
       self.songDb.save();
       self.historyDb.save();
+      for(var plugin in self.plugins){
+        if(self.plugins.hasOwnProperty(plugin)){
+          if(self.plugins[plugin].db instanceof Function){
+            self.plugins[plugin].db.save.call();
+          }
+        }
+      }
     });
 
     $(window).on('resize', function () {
