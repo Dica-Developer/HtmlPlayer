@@ -1,8 +1,8 @@
 /*global $:true, Audica:true, Db:true, console:true, alert:true, localStorage:true */
-(function (window) {
+(function (window, Audica) {
   "use strict";
 
-  window.Gracenote = function() {
+  function Gracenote() {
     var self = this;
     var db = new Db();
     var url = null;
@@ -96,8 +96,7 @@
       var xml = parse(resp);
       if(null !== xml){
         var albumMood = extractAlbumGenre(xml),
-          tracksMood = extractTracksMood(xml),
-          i = 0, length = tracksMood.length;
+          tracksMood = extractTracksMood(xml);
         addMoodToSongDB(albumMood, tracksMood);
       }
     };
@@ -190,9 +189,11 @@
           var xml = parse(resp);
           user_ID = getSingleVal(xml, 'user');
           Audica.trigger('authReady');
+          Audica.trigger('initReady');
         });
       }else{
         console.log('Gracenote disabled!');
+        Audica.trigger('initReady');
       }
     };
 
@@ -224,8 +225,9 @@
     });
 
     this.tmpDB = db;
-  };
-})(window);
+  }
+//  Audica.extend('gracenote', new Gracenote());
+})(window, Audica);
 
 //Audica.songDb.query({gn_id_album:{isUndefined:false}}).update({gn_id_album: undefined});
 //Audica.songDb.query({gn_id_album:{isUndefined:false}}).get();

@@ -1,8 +1,8 @@
 /*global OAuth2, console, Audica, ID3, XMLHttpRequest, window*/
-(function (window) {
+(function (window, Audica) {
   "use strict";
 
-  window.GoogleDrive = function () {
+   function GoogleDrive() {
     var backendId = 'googleDrive';
 
     var googleAuth = new OAuth2('google', {
@@ -134,9 +134,9 @@
 
     this.setCoverArt = function () {};
 
-    this.init = function () {};
     Audica.on('updateSongList', function (args) {
       _receiveList(args.timestamp);
     });
-  };
-})(window);
+  }
+  Audica.extend('googleDrive', new GoogleDrive());
+})(window, Audica);

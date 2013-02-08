@@ -1,9 +1,24 @@
 describe("Songlist", function() {
+  it("Audica should be initialized", function() {
+    //TODO find an other way to define Audica global and once
+    Audica = new AUDICA();
+    Audica.on('domElementsSet', Audica.View.applyCoverArtStyle);
+    Audica.songDb.init('song');
+    Audica.historyDb.init('history');
+    Audica.on('readyCollectingSongs', function (args) {
+      Audica.collectSongs(args.songList, args.backendId, args.timestamp);
+    });
+    Audica.Dom.initDom();
+    Audica.registerEvents();
+
+    expect(Audica).toBeDefined();
+  });
+
 
   describe('Song list key bindings if viewState === "search"', function(){
     beforeEach(function(){
-      Audica.fillSongBox(subsonicSongList);
-      Audica.setViewState('search');
+      Audica.View.fillSongBox(subsonicSongList);
+      Audica.View.setViewState('search');
     });
 
     it('Key "down" should set active to next elem', function(){
@@ -31,8 +46,8 @@ describe("Songlist", function() {
 
   describe('Song list key bindings if viewState !== "search"', function(){
     beforeEach(function(){
-      Audica.fillSongBox(subsonicSongList);
-      Audica.setViewState('playList');
+      Audica.View.fillSongBox(subsonicSongList);
+      Audica.View.setViewState('playList');
     });
 
     it('Key "down" should not work', function(){

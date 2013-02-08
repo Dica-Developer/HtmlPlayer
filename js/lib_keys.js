@@ -1,12 +1,12 @@
-/*global $:true, document:true,  Mousetrap:true */
-(function(window, Mousetrap){
+/*global $:true, Audica:true, document:true,  Mousetrap:true */
+(function(window, Mousetrap, Audica){
   "use strict";
   window.bindKeyEvents = function(Audica){
     var bindKeysToView = {};
     var dom = Audica.Dom;
-    var audio = dom.player;
+    var audio = dom.player[0];
     var songBox = dom.songBox;
-    var playListBox = dom.playListBox;
+    var playListBox = dom.playlistBox;
     var searchView = dom.searchView;
     var boxWidth = (dom.documentWidth / 2) - 22 - 2;
     var boxHeight = dom.documentHeight - 22;
@@ -15,7 +15,6 @@
     var coverArtBox = dom.coverArtBox;
     var filterBox = dom.filterBox;
     var descriptionBox = dom.descriptionBox;
-    var view = Audica.View;
     var filterBoxTimeout = null;
 
     Audica.on('viewStateChanged', function(args){
@@ -42,19 +41,19 @@
         searchView.animate({ left: 0 });
         playerView.animate({ left: dom.documentWidth });
         playerControlView.animate({ left: dom.documentWidth });
-        view.setViewState('search');
+        Audica.setViewState('search');
       });
 
       Mousetrap.bind(['n'], function(){
-        Audica.PlayerControl.next();
-        Audica.Scrobbling.setNowPlaying();
-        Audica.Scrobbling.setNotScrobbled(true);
+        Audica.nextSong();
+        Audica.scrobbleNowPlaying();
+        Audica.setNotScrobbled(true);
       });
 
       Mousetrap.bind(['p'], function(){
-        Audica.PlayerControl.previous();
-        Audica.Scrobbling.setNowPlaying();
-        Audica.Scrobbling.setNotScrobbled(true);
+        Audica.previousSong();
+        Audica.scrobbleNowPlaying();
+        Audica.setNotScrobbled(true);
       });
 
       Mousetrap.bind(['space'], function(){
@@ -65,44 +64,46 @@
 
     bindKeysToView.search = function(){
       Mousetrap.bind(['right'], function(){
-        if (3 === view.songBoxPositionX) {
-          view.songBoxPositionX = 0;
+        var x = Audica.getSongBoxPositionX();
+        if (3 === x) {
+          Audica.setSongBoxPositionX(0);
         } else {
-          view.songBoxPositionX++;
+          Audica.setSongBoxPositionX(++x);
         }
-        view.songBoxPositionY.find('span').eq(view.songBoxPositionX).trigger('click');
-        view.indicateSongBoxXPosition();
+        Audica.getSongBoxPositionY().find('span').eq(x).trigger('click');
+        Audica.indicateSongBoxXPosition();
       });
 
       Mousetrap.bind(['left'], function(){
-        if (0 === view.songBoxPositionX) {
-          view.songBoxPositionX = 3;
+        var x = Audica.getSongBoxPositionX();
+        if (0 === x) {
+          Audica.setSongBoxPositionX(3);
         } else {
-          view.songBoxPositionX--;
+          Audica.setSongBoxPositionX(--x);
         }
-        view.songBoxPositionY.find('span').eq(view.songBoxPositionX).trigger('click');
-        view.indicateSongBoxXPosition();
+        Audica.getSongBoxPositionY().find('span').eq(x).trigger('click');
+        Audica.indicateSongBoxXPosition();
       });
 
       Mousetrap.bind(['up'], function(){
         var prev = null;
-        if (!view.songBoxPositionY) {
-          view.songBoxPositionY = songBox.find('li').eq(0);
-          prev = view.songBoxPositionY;
+        if (!Audica.getSongBoxPositionY()) {
+          Audica.setSongBoxPositionY(songBox.find('li').eq(0));
+          prev = Audica.getSongBoxPositionY();
         } else {
           prev = findNextByPositionX('prev');
-          view.songBoxPositionY.removeClass('active');
+          Audica.getSongBoxPositionY().removeClass('active');
           if (prev.length === 0) {
-            prev = Audica.Dom.songBox.find('li').last();
+            prev = dom.songBox.find('li').last();
           }
         }
         var halfWindowSize = window.innerHeight / 2;
         var scrollPos = Math.abs(songBox.parent().scrollTop() + prev.position().top) - halfWindowSize;
         songBox.parent().scrollTop(scrollPos);
         prev.addClass('active');
-        view.songBoxPositionY = prev;
-        prev.find('span').eq(view.songBoxPositionX).trigger('click');
-        view.indicateSongBoxXPosition();
+        Audica.setSongBoxPositionY(prev);
+        prev.find('span').eq(Audica.getSongBoxPositionX()).trigger('click');
+        Audica.indicateSongBoxXPosition();
       });
 
       Mousetrap.bind(['down'], function(){
@@ -114,12 +115,12 @@
           filterBox.val("");
         }
         var next = null;
-        if (!view.songBoxPositionY) {
-          view.songBoxPositionY = songBox.find('li').eq(0);
-          next = view.songBoxPositionY;
+        if (!Audica.getSongBoxPositionY()) {
+          Audica.setSongBoxPositionY(songBox.find('li').eq(0));
+          next = Audica.getSongBoxPositionY();
         } else {
           next = findNextByPositionX('next');
-          view.songBoxPositionY.removeClass('active');
+          Audica.getSongBoxPositionY().removeClass('active');
           if (next.length === 0) {
             next = songBox.find('li').eq(0);
           }
@@ -128,9 +129,9 @@
         var scrollPos = Math.abs(next.position().top + songBox.parent().scrollTop()) - halfWindowSize;
         songBox.parent().scrollTop(scrollPos);
         next.addClass('active');
-        view.songBoxPositionY = next;
-        next.find('span').eq(view.songBoxPositionX).trigger('click');
-        view.indicateSongBoxXPosition();
+        Audica.setSongBoxPositionY(next);
+        next.find('span').eq(Audica.getSongBoxPositionX()).trigger('click');
+        Audica.indicateSongBoxXPosition();
       });
 
       Mousetrap.bind(['escape'], function(){
@@ -145,11 +146,11 @@
           playerView.animate({ left: "0" });
           playerControlView.animate({ left: "0" });
           if (audio.paused) {
-            Audica.PlayerControl.next();
-            Audica.Scrobbling.setNowPlaying();
-            Audica.Scrobbling.setNotScrobbled(true);
+            Audica.nextSong();
+            Audica.scrobbleNowPlaying();
+            Audica.setNotScrobbled(true);
           }
-          Audica.View.setViewState('player');
+          Audica.setViewState('player');
           coverArtBox.css("padding-top", (dom.documentHeight - coverArtBox.height()) / 2);
           descriptionBox.css("padding-top", (dom.documentHeight - descriptionBox.height()) / 2);
         }
@@ -164,8 +165,8 @@
           clones.css({opacity: 1});
         });
         elemsToMove.addClass('added');
-        clones.appendTo(dom.playListBox);
-        dom.playListBox.find('span').on('click', function () {
+        clones.appendTo(dom.playlistBox);
+        dom.playlistBox.find('span').on('click', function () {
           var thisUL = $(this).closest('ul');
           var value = $(this).data("value");
           var elems = thisUL.find('[data-value="' + value + '"]');
@@ -188,32 +189,29 @@
           var filterQuery = filterBox.val();
           if (null !== filterQuery && undefined !== filterQuery) {
             // TODO If album medium number is available sort by it first
-            var dbQuery = [{
-              artist: { likenocase: filterQuery }
-            }, {
-              album: { likenocase: filterQuery }
-            }, {
-              genre: { likenocase: filterQuery }
-            }, {
-              title: { likenocase: filterQuery }
-            }];
+            var dbQuery = [
+              { artist: { likenocase: filterQuery } },
+              { album: { likenocase: filterQuery } },
+              { genre: { likenocase: filterQuery } },
+              { title: { likenocase: filterQuery } }
+            ];
             currentSongList = Audica.songDb.query(dbQuery).order('artist asec, album asec, year asec, track asec, title asec').get();
           } else {
             currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
           }
-          view.fillSongBox(currentSongList);
+          Audica.fillSongBox(currentSongList);
         }, 500);
       });
 
       Mousetrap.bind('tab', function(){
-        view.setViewState('playList');
+        Audica.setViewState('playList');
         return false;
       });
     };
 
     bindKeysToView.playList = function(){
       Mousetrap.bind(['del'], function(){
-        var elems = dom.playListBox.find(".selected");
+        var elems = dom.playlistBox.find(".selected");
         elems.each(function () {
           var song = dom.songBox.find('[data-song="' + $(this).data('song') + '"]');
           song.removeClass('added');
@@ -222,7 +220,7 @@
       });
 
       Mousetrap.bind('tab', function(){
-        view.setViewState('search');
+        Audica.setViewState('search');
         return false;
       });
 
@@ -230,12 +228,12 @@
       Mousetrap.bind('up', function(){ });
     };
 
-    bindKeysToView[view.getViewState()].call(Audica);
+    bindKeysToView[Audica.getViewState()].call(Audica);
 
     var findNextByPositionX = function(dir){
-      var currentXClass = view.positionXClassMap[view.songBoxPositionX];
-      var currentXValue = view.songBoxPositionY.find(currentXClass).data('value');
-      var tmpNext = view.songBoxPositionY[dir]();
+      var currentXClass = Audica.positionXClassMap[Audica.getSongBoxPositionX()];
+      var currentXValue = Audica.getSongBoxPositionY().find(currentXClass).data('value');
+      var tmpNext = Audica.getSongBoxPositionY();
       //TODO maybe replace with for loop (secure)
       while(tmpNext.find(currentXClass).data('value') === currentXValue){
         tmpNext = tmpNext[dir]();
@@ -243,4 +241,4 @@
       return tmpNext;
     };
   };
-})(window, Mousetrap);
+})(window, Mousetrap, Audica);

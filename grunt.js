@@ -9,7 +9,7 @@ module.exports = function (grunt) {
     },
     concat:{
       libs:{
-        src: ['js/lib_*.js'],
+        src: ['js/lib_core.js'],
         dest: 'test/tmp/libs.js'
       },
       specs:{

@@ -1,11 +1,11 @@
 /*global Audica:true, localStorage: true, XMLHttpRequest:true, console:true*/
-(function (window) {
+(function (window, Audica) {
   "use strict";
 
   /**
    * @class
    */
-  window.Subsonic = function() {
+  function Subsonic() {
     /**
      * @type {String}
      */
@@ -89,6 +89,8 @@
     Audica.on('updateSongList', function (args) {
       _searchForSongs(args.timestamp, null, null);
     });
-  };
-})(window);
+  }
+
+  Audica.extend('subsonic', new Subsonic());
+})(window, Audica);
 

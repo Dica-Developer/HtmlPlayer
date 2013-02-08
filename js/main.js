@@ -3,51 +3,38 @@
 (function (window, document) {
   "use strict";
   $(function () {
+    Audica.start();
 
-    //TODO should this be window.AUDICA? jslint gives readonly warning
-    window.Audica = new AUDICA();
     window.onerror = function (error, src, row) {
-      //    window.event.preventDefault();
+      window.event.preventDefault();
       console.log('Error: %s in %s row %s', error, src, row);
     };
-    //TODO define an init method which initiates db, dom objects, options, events, etc.
-    Audica.on('domElementsSet', Audica.View.applyCoverArtStyle);
-    Audica.songDb.init('song');
-    Audica.historyDb.init('history');
-    Audica.on('readyCollectingSongs', function (args) {
-      //maybe 'new Audica.collectSongs()' depends on performance and how many times this event is triggered at the same time
-      Audica.collectSongs(args.songList, args.backendId, args.timestamp);
-    });
 
-    Audica.Dom.initDom();
-    Audica.registerEvents();
+//    // TODO init plugins automatically and put them under Audica.Plugins
+//    Audica.plugins.fileSystem = new Filesystem();
+//    Audica.plugins.fileSystem.init();
+//    Audica.plugins.fileImporter = new FileImporter();
+//    Audica.plugins.fileImporter.init();
+//    Audica.plugins.radioImporter = new RadioImporter();
+//    Audica.plugins.radioImporter.init();
+//    Audica.plugins.googleDrive = new GoogleDrive();
+//    Audica.plugins.googleDrive.init();
+//    Audica.plugins.googleMusic = new GoogleMusic();
+//    Audica.plugins.googleMusic.init();
+//    Audica.plugins.scrobbler = new Scrobbler();
+//    Audica.plugins.scrobbler.init();
+//
+//
+//    var gracenoteClient_ID = localStorage.gracenoteClient_ID;
+//    var gracenoteWepAPI_ID = localStorage.gracenoteWepAPI_ID;
+//
+//    if (gracenoteWepAPI_ID && gracenoteClient_ID) {
+//      Audica.plugins.gracenote = new Gracenote();
+//      Audica.plugins.gracenote.init();
+//    }
 
-    // TODO init plugins automatically and put them under Audica.Plugins
-    Audica.plugins.fileSystem = new Filesystem();
-    Audica.plugins.fileSystem.init();
-    Audica.plugins.fileImporter = new FileImporter();
-    Audica.plugins.fileImporter.init();
-    Audica.plugins.radioImporter = new RadioImporter();
-    Audica.plugins.radioImporter.init();
-    Audica.plugins.googleDrive = new GoogleDrive();
-    Audica.plugins.googleDrive.init();
-    Audica.plugins.googleMusic = new GoogleMusic();
-    Audica.plugins.googleMusic.init();
-    Audica.plugins.subsonic = new Subsonic();
-    Audica.plugins.scrobbler = new Scrobbler();
-    Audica.plugins.scrobbler.init();
-
-
-    var gracenoteClient_ID = localStorage.gracenoteClient_ID;
-    var gracenoteWepAPI_ID = localStorage.gracenoteWepAPI_ID;
-
-    if (gracenoteWepAPI_ID && gracenoteClient_ID) {
-      Audica.plugins.gracenote = new Gracenote();
-      Audica.plugins.gracenote.init();
-    }
-    // /TODO
-    // TODO move this to FileImporter.init()
-    // TODO add dropzone div also in FileImporter.init()
+//    // TODO move this to FileImporter.init()
+//    // TODO add dropzone div also in FileImporter.init()
     document.querySelector('#fileImporter_dropZone').addEventListener('drop', function (event) {
       event.stopPropagation();
       event.preventDefault();
@@ -67,8 +54,5 @@
       //noinspection JSUnresolvedVariable,JSUnresolvedFunction
       document.location = chrome.extension.getURL("options/index.html");
     }
-
-    Audica.on('initReady', Audica.updateSongList);
-    window.setInterval(Audica.backgroundTasks, 1000);
   });
 })(window, document);
