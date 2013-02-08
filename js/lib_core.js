@@ -813,7 +813,8 @@
         window.clearTimeout(self.resizeEventTimeoutId);
       }
       self.resizeEventTimeoutId = window.setTimeout(function () {
-        self.Dom.updateDocumentDimensions();
+        console.log(self);
+        self.updateDocumentDimensions();
         self.applyCoverArtStyle();
       }, 250);
     });
