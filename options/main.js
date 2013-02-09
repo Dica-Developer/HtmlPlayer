@@ -69,7 +69,6 @@
   function selectTab(event) {
     var currentTab = $("li.navbar-item-selected");
     //noinspection JSUnresolvedVariable
-    currentTab.classList.remove("navbar-item-selected");
     currentTab.removeClass("navbar-item-selected");
     $("#" + currentTab.attr('id') + "Page").hide();
     //noinspection JSUnresolvedVariable
@@ -118,7 +117,7 @@
       $('#gracenoteClient_ID').val(JSON.parse(gracenoteClient_ID));
     }
 
-    var lastFmLogin = localStorage["audica.lastfm.login"];
+    var lastFmLogin = localStorage.audica_lastfm_login;
     var lastfmUserLink = $("#lastfmUserLink");
     var lastfmUserLabel = $("#lastfmUserLabel");
     var lastLoginLink = $("#lastfmLoginLink");
