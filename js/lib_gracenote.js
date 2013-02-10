@@ -2,6 +2,49 @@
 (function (window, Audica) {
   "use strict";
 
+  function prepareUI(){
+    var gnPreview = $('<div id="gnPreview">Gracenote suggestion</div>');
+    var gnSuggestionsCon = $('<div id="gnSuggestionsCon"></div>');
+    var gnSuggestions = $('<div id="gnSuggestions"></div>');
+
+    gnSuggestionsCon.on('click', function(){
+      gnSuggestionsCon.animate({top: -100}, 'slow', function(){
+        $(this).data('open',false);
+      });
+    });
+    gnPreview.on('click', function(){
+      if(gnSuggestionsCon.data('open')){
+        gnSuggestionsCon.animate({top: -100}, 'slow', function(){
+          $(this).data('open',false);
+        });
+      }else{
+        gnSuggestionsCon.animate({top: 20}, 'slow',function(){
+          $(this).data('open',true);
+        });
+      }
+    });
+    gnSuggestions.appendTo(gnSuggestionsCon);
+    gnSuggestionsCon.appendTo('#playerView');
+    gnPreview.appendTo('#playerView');
+  }
+
+  function addTrackToSuggestions(track){
+    var gnSuggestions = $('#gnSuggestions');
+    var suggestedTrack = $('<div class="suggestedTrack"><div class="info"></div><div class="cover"><img src="" /></div></div>');
+    suggestedTrack.data('id', track.___id);
+    suggestedTrack.find('.info').append('<div class="title">'+ track.title +'</div>');
+    suggestedTrack.find('.info').append('<div class="artist"><span class="by">by</span> '+ track.artist +'</div>');
+    suggestedTrack.find('.cover img').attr('src', track.coverArt);
+    suggestedTrack.on('click', function(){
+      var id = $(this).data('id');
+      var song = Audica.songDb.query({'___id': id}).get()[0];
+      Audica.PlayerControl.play(song);
+    });
+    suggestedTrack.appendTo(gnSuggestions);
+    gnSuggestions.width(($('.suggestedTrack').length + 1) * 250);
+  }
+
+
   function Gracenote() {
     var self = this;
     var db = new Db();
@@ -102,19 +145,21 @@
     };
 
     var collectMoodInformations = function(id){
-//      console.count(id);
       var data = mood_simple_query.replace('{{webAPI_ID}}', webAPI_ID).replace('{{user_ID}}', user_ID)
         .replace('{{GN_ID}}', id);
       req(data).success(extractMoodInformations);
     };
 
-    var createDbEntry = function(isAlbum, id){
-//      console.count(isAlbum);
-      if(isAlbum){
-        collectMoodInformations(id);
-      }
-      if(db.query({'gn_id':id}).count() === 0){
-        db.query.insert({'gn_id':id});
+    var createDbEntry = function(isAlbum, gn_id, backendId, song_id){
+      if(db.query({'gn_id':gn_id}).count() === 0){
+        db.query.insert({
+          'gn_id':gn_id,
+          'backendId': backendId,
+          'song_id': song_id
+        });
+        if(isAlbum){
+          collectMoodInformations(gn_id);
+        }
       }
     };
 
@@ -142,17 +187,16 @@
     };
 
     var addIdToSongDB = function(album, tracks){
-
+      createDbEntry(true, album.id);
       for (var i = 0; i < tracks.length; i++) {
         var track = tracks[i];
         var count = Audica.songDb.query({'album':{likenocase: album.album}},{'artist': {likenocase: album.artist}},{'title': {likenocase: track.title}}).count();
         if(count !== 0){
-          var entry = Audica.songDb.query({'album':{likenocase: album.album}},{'artist': {likenocase: album.artist}},{'title': {likenocase: track.title}});
-          entry.update({'gn_id_album':album.id});
-          entry.update({'gn_id_track':track.id});
-
-          createDbEntry(true, album.id);
-          createDbEntry(false,track.id);
+          var entries = Audica.songDb.query({'album':{likenocase: album.album}},{'artist': {likenocase: album.artist}},{'title': {likenocase: track.title}}).get();
+          for (var j = 0; j < entries.length; j++) {
+            var entry = entries[j];
+            createDbEntry(false,track.id, entry.backendId, entry.id, entry.album, entry.artist);
+          }
         }
       }
     };
@@ -176,14 +220,36 @@
       }
     };
 
+    var findUntrackedSongs = function(){
+      var untrackedSongs = [];
+      var trackedSongs = db.query({'song_id':{isUndefined:false}}).select('song_id');
+      var songs = Audica.songDb.query().select('id');
+      for (var i = 0; i < songs.length; i++) {
+        var songID = songs[i];
+        if($.inArray(songID, trackedSongs) === -1){
+          var match = Audica.songDb.query({'id': songID}).select('album','artist')[0];
+          untrackedSongs[untrackedSongs.length] = {
+            album: match[0],
+            artist: match[1]
+          };
+        }
+      }
+      var tmpDB = new Db();
+      tmpDB.init('tmp');
+      tmpDB.query.insert(untrackedSongs);
+      var ret = tmpDB.query().distinct('album','artist');
+      tmpDB.query().remove();
+      return ret;
+    };
+
     Audica.on('authReady', function(){
-      var withoutGN = Audica.songDb.query({album:{'!is':'Unknown'}},[{gn_id_album:{isUndefined:true}},{gn_id_album:{isNull:true}}])
-        .distinct('album','artist');
-        self.collectBasicInformations(withoutGN);
+      prepareUI();
+      var untrackedSongs = findUntrackedSongs();
+      self.collectBasicInformations(untrackedSongs);
     });
 
     this.init = function () {
-      db.init('plugin.gracenote');
+      db.init('plugin_gracenote');
       if(getCredentials()){
         req(auth_query.replace('{{webAPI_ID}}', webAPI_ID)).success(function(resp){
           var xml = parse(resp);
@@ -195,39 +261,37 @@
         console.log('Gracenote disabled!');
         Audica.trigger('initReady');
       }
+
+      $(window).on('beforeunload', function(){
+        db.save();
+      });
     };
 
   Audica.on('playSong', function(args){
+    var gnPreview = $('#gnPreview');
+    gnPreview.hide();
     var song = args.song;
-    var gn_id_track = song.gn_id_track;
-    var gn_id_album = song.gn_id_album;
-    if(gn_id_track){
-      var currentSongMetadata = db.query({'gn_id': gn_id_track}).get()[0];
-
-      var mood = currentSongMetadata.mood;
+    var gn_id = db.query({'backendId': song.backendId},{'song_id': song.id}).select('gn_id');
+    if(gn_id.length !== 0){
+      $('#gnSuggestions').empty();
+      gnPreview.show('slow');
+      var currentSongMetadata = db.query({'gn_id': gn_id[0]}).select('mood','tempo');
+      var mood = currentSongMetadata[0][0];
+      var tempo = currentSongMetadata[0][1];
       var byMood = db.query({'mood': mood}).get();
-//      console.log('Suggestion from ' + byMood.length + ' mood ' + mood);
       for (var i = 0; i < byMood.length; i++) {
         var obj = byMood[i];
-        var trackList = Audica.songDb.query([{'gn_id_track': obj.gn_id}, {'gn_id_album': obj.gn_id}]).get();
-//        console.log('Suggest ' + trackList.length + ' tracks');
-
+        var trackList = Audica.songDb.query({'backendId': obj.backendId}, {'id': obj.song_id}).get();
         for (var j = 0; j < trackList.length; j++) {
-          var obj1 = trackList[j];
-//          console.log('Suggested Track by mood: '+ obj1.title );
+          var track = trackList[j];
+          addTrackToSuggestions(track);
         }
       }
     }
   });
 
-    Audica.on('updateSongList', function (args) {
+//    Audica.on('updateSongList', function (args) {
 //    _receiveList(args.timestamp);
-    });
-
-    this.tmpDB = db;
   }
-//  Audica.extend('gracenote', new Gracenote());
+  Audica.extend('gracenote', new Gracenote());
 })(window, Audica);
-
-//Audica.songDb.query({gn_id_album:{isUndefined:false}}).update({gn_id_album: undefined});
-//Audica.songDb.query({gn_id_album:{isUndefined:false}}).get();

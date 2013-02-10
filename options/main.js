@@ -40,28 +40,28 @@
 
   function initBackend() {
     var value = $('#backendSelection').find(':selected').val();
-    var $ubuntuoneAuthenticationHelp = $("#ubuntuoneAuthenticationHelp");
-    var $subsonicAuthParams = $("#subsonicAuthParams");
-    var $fileImporterFields = $("#fileImporterFields");
+    var ubuntuoneAuthenticationHelp = $("#ubuntuoneAuthenticationHelp");
+    var subsonicAuthParams = $("#subsonicAuthParams");
+    var fileImporterFields = $("#fileImporterFields");
     if ("ubuntuone" === value) {
-      $ubuntuoneAuthenticationHelp.show();
-      $subsonicAuthParams.hide();
-      $fileImporterFields.hide();
+      ubuntuoneAuthenticationHelp.show();
+      subsonicAuthParams.hide();
+      fileImporterFields.hide();
       document.querySelector("#googlemusicParams").style.display = "none";
     } else if ("subsonic" === value) {
-      $ubuntuoneAuthenticationHelp.hide();
-      $subsonicAuthParams.show();
-      $fileImporterFields.hide();
+      ubuntuoneAuthenticationHelp.hide();
+      subsonicAuthParams.show();
+      fileImporterFields.hide();
       document.querySelector("#googlemusicParams").style.display = "none";
     } else if ("googlemusic" === value) {
-      $ubuntuoneAuthenticationHelp.hide();
-      $subsonicAuthParams.hide();
-      $fileImporterFields.hide();
+      ubuntuoneAuthenticationHelp.hide();
+      subsonicAuthParams.hide();
+      fileImporterFields.hide();
       document.querySelector("#googlemusicParams").style.display = "block";
     } else {
-      $ubuntuoneAuthenticationHelp.hide();
-      $subsonicAuthParams.show();
-      $fileImporterFields.hide();
+      ubuntuoneAuthenticationHelp.hide();
+      subsonicAuthParams.show();
+      fileImporterFields.hide();
       document.querySelector("#googlemusicParams").style.display = "none";
     }
   }
@@ -69,7 +69,6 @@
   function selectTab(event) {
     var currentTab = $("li.navbar-item-selected");
     //noinspection JSUnresolvedVariable
-    currentTab.classList.remove("navbar-item-selected");
     currentTab.removeClass("navbar-item-selected");
     $("#" + currentTab.attr('id') + "Page").hide();
     //noinspection JSUnresolvedVariable
@@ -118,22 +117,22 @@
       $('#gracenoteClient_ID').val(JSON.parse(gracenoteClient_ID));
     }
 
-    var lastFmLogin = localStorage["audica.lastfm.login"];
-    var $lastfmUserLink = $("#lastfmUserLink");
-    var $lastfmUserLabel = $("#lastfmUserLabel");
-    var $lastLoginLink = $("#lastfmLoginLink");
-    var $lastfmLogoutLink = $("#lastfmLogoutLink");
+    var lastFmLogin = localStorage.audica_lastfm_login;
+    var lastfmUserLink = $("#lastfmUserLink");
+    var lastfmUserLabel = $("#lastfmUserLabel");
+    var lastLoginLink = $("#lastfmLoginLink");
+    var lastfmLogoutLink = $("#lastfmLogoutLink");
     if (null !== lastFmLogin && undefined !== lastFmLogin) {
-      $lastfmUserLink.text(lastFmLogin);
-      $lastfmUserLink.show();
-      $lastfmUserLabel.show();
-      $lastfmLogoutLink.show();
-      $lastLoginLink.hide();
+      lastfmUserLink.text(lastFmLogin);
+      lastfmUserLink.show();
+      lastfmUserLabel.show();
+      lastfmLogoutLink.show();
+      lastLoginLink.hide();
     } else {
-      $lastLoginLink.show();
-      $lastfmLogoutLink.hide();
-      $lastfmUserLink.hide();
-      $lastfmUserLabel.hide();
+      lastLoginLink.show();
+      lastfmLogoutLink.hide();
+      lastfmUserLink.hide();
+      lastfmUserLabel.hide();
     }
     $("#backend, #scrobble, #gracenote, #about").on('click', selectTab);
   }
@@ -205,9 +204,9 @@
           if (undefined === data.error) { /** @namespace data.session */
             localStorage.audica_lastfm_sessionKey = data.session.key;
             localStorage.audica_lastfm_login = data.session.name;
-            var $lastfmUserLink = $("#lastfmUserLink");
-            $lastfmUserLink.text(data.session.name);
-            $lastfmUserLink.show();
+            var lastfmUserLink = $("#lastfmUserLink");
+            lastfmUserLink.text(data.session.name);
+            lastfmUserLink.show();
             $("#lastfmLogoutLink").show();
             $("#lastfmLoginLink").hide();
             $("#lastfmUserLabel").show();

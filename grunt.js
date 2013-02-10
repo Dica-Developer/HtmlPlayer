@@ -27,6 +27,25 @@ module.exports = function (grunt) {
         dest: 'test/tmp/libs.min.js'
       }
     },
+    less: {
+      dev: {
+        options: {
+          paths: ["./"]
+        },
+        files: {
+          "style.css": "style.less"
+        }
+      },
+      dist: {
+        options: {
+          paths: ["./"],
+          yuicompress: true
+        },
+        files: {
+          "style.css": "style.less"
+        }
+      }
+    },
     clean:{
       tmp: 'test/tmp'
     }
