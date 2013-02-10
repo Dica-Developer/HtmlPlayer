@@ -791,7 +791,6 @@
       self.collectSongs(args.songList, args.backendId, args.timestamp);
     });
     this.on('initReady', function(){
-      console.log(this.pluginsToInitialize);
       if(this.pluginsToInitialize !== 0){
         this.pluginsToInitialize--;
       }else{

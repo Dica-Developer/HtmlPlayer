@@ -37,8 +37,8 @@
     suggestedTrack.find('.cover img').attr('src', track.coverArt);
     suggestedTrack.on('click', function(){
       var id = $(this).data('id');
-      var song = Audica.songDb.query({'___id': id}).get()[0];
-      Audica.PlayerControl.play(song);
+      var song = Audica.songDb.query({'___id': '"' + id} + '"').get()[0];
+      Audica.playSong(song);
     });
     suggestedTrack.appendTo(gnSuggestions);
     gnSuggestions.width(($('.suggestedTrack').length + 1) * 250);
@@ -46,8 +46,8 @@
 
 
   function Gracenote() {
+    this.db = new Db();
     var self = this;
-    var db = new Db();
     var url = null;
     var webAPI_ID = null;
     var user_ID = null;
@@ -95,14 +95,14 @@
     };
 
     var addMoodToSongDB = function(albumMood, tracksMood){
-      var albumFetch = db.query({'gn_id': albumMood.id}),
+      var albumFetch = self.db.query({'gn_id': albumMood.id}),
         i = 0, length = tracksMood.length;
       albumFetch.update({genre: albumMood.genre});
       albumFetch.update({genre_ID: albumMood.genre_ID});
       albumFetch.update({genre_NUM: albumMood.genre_NUM});
       for(i; i < length; ++i){
         var track = tracksMood[i];
-        var trackFetch = db.query({'gn_id': track.id});
+        var trackFetch = self.db.query({'gn_id': track.id});
         trackFetch.update({mood: track.mood});
         trackFetch.update({mood_ID: track.mood_ID});
         trackFetch.update({tempo: track.tempo});
@@ -151,8 +151,8 @@
     };
 
     var createDbEntry = function(isAlbum, gn_id, backendId, song_id){
-      if(db.query({'gn_id':gn_id}).count() === 0){
-        db.query.insert({
+      if(self.db.query({'gn_id':gn_id}).count() === 0){
+        self.db.query.insert({
           'gn_id':gn_id,
           'backendId': backendId,
           'song_id': song_id
@@ -222,7 +222,7 @@
 
     var findUntrackedSongs = function(){
       var untrackedSongs = [];
-      var trackedSongs = db.query({'song_id':{isUndefined:false}}).select('song_id');
+      var trackedSongs = self.db.query({'song_id':{isUndefined:false}}).select('song_id');
       var songs = Audica.songDb.query().select('id');
       for (var i = 0; i < songs.length; i++) {
         var songID = songs[i];
@@ -249,7 +249,7 @@
     });
 
     this.init = function () {
-      db.init('plugin_gracenote');
+      self.db.init('plugin_gracenote');
       if(getCredentials()){
         req(auth_query.replace('{{webAPI_ID}}', webAPI_ID)).success(function(resp){
           var xml = parse(resp);
@@ -263,7 +263,7 @@
       }
 
       $(window).on('beforeunload', function(){
-        db.save();
+        self.db.save();
       });
     };
 
@@ -271,14 +271,14 @@
     var gnPreview = $('#gnPreview');
     gnPreview.hide();
     var song = args.song;
-    var gn_id = db.query({'backendId': song.backendId},{'song_id': song.id}).select('gn_id');
+    var gn_id = self.db.query({'backendId': song.backendId},{'song_id': song.id}).select('gn_id');
     if(gn_id.length !== 0){
       $('#gnSuggestions').empty();
       gnPreview.show('slow');
-      var currentSongMetadata = db.query({'gn_id': gn_id[0]}).select('mood','tempo');
+      var currentSongMetadata = self.db.query({'gn_id': gn_id[0]}).select('mood','tempo');
       var mood = currentSongMetadata[0][0];
       var tempo = currentSongMetadata[0][1];
-      var byMood = db.query({'mood': mood}).get();
+      var byMood = self.db.query({'mood': mood}).get();
       for (var i = 0; i < byMood.length; i++) {
         var obj = byMood[i];
         var trackList = Audica.songDb.query({'backendId': obj.backendId}, {'id': obj.song_id}).get();
