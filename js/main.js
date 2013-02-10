@@ -71,4 +71,4 @@
     Audica.on('initReady', Audica.updateSongList);
     window.setInterval(Audica.backgroundTasks, 1000);
   });
-})(window, document);
+}(window, document));
