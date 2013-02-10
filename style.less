@@ -1,0 +1,112 @@
+// ERIC MEYER RESET
+// --------------------------------------------------
+
+html, body { margin: 0; padding: 0; }
+h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, cite, code, del, dfn, em, img, q, s, samp, small, strike, strong, sub, sup, tt, var, dd, dl, dt, li, ol, ul, fieldset, form, label, legend, button, table, caption, tbody, tfoot, thead, tr, th, td { margin: 0; padding: 0; border: 0; font-weight: normal; font-style: normal; font-size: 100%; line-height: 1; font-family: inherit; }
+table { border-collapse: collapse; border-spacing: 0; }
+ol, ul { list-style: none; }
+
+body {
+    overflow: hidden;
+}
+
+#playerViewPreview {
+    position: absolute; top: 0; right: 0; height: 100%;
+    min-width: 5%; z-index: 200;
+}
+
+#searchViewPreview {
+    position: absolute; top: 0; left: 0; height: 100%;
+    min-width: 5%; z-index: 200;
+
+}
+
+#playerView {
+    height: 100%; width: 100%; overflow: hidden; background-color: black;
+    position: absolute; top: 0; left: 0; z-index: 1;
+
+    #descriptionBox {
+        color: #bbbbbb; width: 49%; float: left; text-align: right; padding-right: 10px;
+        font-size: 12px; position: absolute;
+
+        #title { color: white; font-size: 40px; }
+        #album { color: white; font-size: 24px; }
+        #artist { color: white; font-size: 24px; }
+    }
+    #coverArtBox {
+        color: #bbbbbb; width: 49%; float: right; padding-left: 10px; margin: auto;
+    }
+
+    #gnSuggestionsCon {
+        position: absolute; top: -120px; left:0; height: 100px; width: 100%; z-index: 1;
+        overflow-x:scroll; overflow-y: hidden; background: black;
+
+        #gnSuggestions{ width: auto; }
+        .suggestedTrack {
+            float: left; height: 100px; padding: 0 0 0 6px; width: 250px; font-size: 12px; cursor: pointer;
+
+            &:hover{ background: #333333;}
+            .info{
+                white-space: nowrap; width: 140px; float: left; padding: 10px 0; color: white;
+                .by{ font-size: 9px; color: #d3d3d3;}
+                .artist, .title{
+                    width: 140px;  overflow: hidden; text-overflow: ellipsis; font-size: 14px;
+                }
+            }
+            .cover{
+                float: right;
+                img{
+                    height: 100px; width: 100px;
+                }
+            }
+        }
+    }
+    #gnPreview{
+        height: 20px; width: 100%; display: block; position: absolute; background: #2f4f4f; top: 0;
+        font-size: 100%; line-height: 20px; color: whitesmoke; z-index: 5; display: none;
+    }
+}
+
+#searchView {
+    height: 100%; width: 100%; overflow: hidden; background-color: white;
+    position: absolute; top: 0; left: 0; z-index: 1;
+
+    #filterBox { position: absolute; z-index: 100; display: none; }
+    #songBoxContainer, #playlistBoxContainer {
+        height: 100%; width: 45%; overflow-x: hidden; overflow-y: scroll;
+
+        .selected{ background: #4169e1; }
+        .added{ background: red; }
+        .active{ border: 1px solid black; }
+        [positionX]{ font-weight: bold; background: red; }
+
+    }
+    #searchBox { font-size: 18px; margin: 10px; }
+    #songBox { font-size: 12px; margin: 10px; }
+
+}
+
+
+#playlistBox {
+    font-size: 12px;
+    margin: 10px;
+}
+#songBoxContainer {
+    float: left;
+}
+#playerControlView {
+    background: rgba(44, 44, 44, 0.5); position: absolute; width: 100%;
+    left: 0; bottom: 0; height: 4px; z-index: 10; overflow: hidden;
+
+    #progressBar { position: absolute; height: 4px; width: 100%; border: 0; }
+    #timeField {
+        position: absolute; height: 20px; width: 100%; border: 0;
+        color: white; font-size: 40px; margin-top: 3px;
+    }
+}
+
+progress::-webkit-progress-bar-value,
+progress::-webkit-progress-value,
+progress::-moz-progress-bar {
+    background-color:#BBB
+}
