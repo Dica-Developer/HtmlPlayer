@@ -1,147 +1,274 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+dd,
+dl,
+dt,
+li,
+ol,
+ul,
+fieldset,
+form,
+label,
+legend,
+button,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: normal;
+  font-style: normal;
+  font-size: 100%;
+  line-height: 1;
+  font-family: inherit;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+ol,
+ul {
+  list-style: none;
+}
 body {
   overflow: hidden;
 }
-#searchViewPreview {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    min-width: 5%;
-    z-index: 200;
-}
 #playerViewPreview {
-    position: absolute;
-    top: 0;
-    right: 0;
-    height: 100%;
-    min-width: 5%;
-    z-index: 200;
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  min-width: 5%;
+  z-index: 200;
 }
-#searchView {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    background-color: white;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
-}
-#search {
-    float: left;
+#searchViewPreview {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  min-width: 5%;
+  z-index: 200;
 }
 #playerView {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    background-color: black;
-    position: absolute;
-    top: 0;
-    left: 0;
-    z-index: 1;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: black;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
 }
-#descriptionBox {
-    color: #bbbbbb;
-    width: 49%;
-    float: left;
-    text-align: right;
-    padding-right: 10px;
-    font-size: 12px;
-    position: absolute;
+#playerView #descriptionBox {
+  color: #bbbbbb;
+  width: 49%;
+  float: left;
+  text-align: right;
+  padding-right: 10px;
+  font-size: 12px;
+  position: absolute;
 }
-#title {
-    color: white;
-    font-size: 40px;
+#playerView #descriptionBox #title {
+  color: white;
+  font-size: 40px;
 }
-#album {
-    color: white;
-    font-size: 24px;
+#playerView #descriptionBox #album {
+  color: white;
+  font-size: 24px;
 }
-#artist {
-    color: white;
-    font-size: 24px;
+#playerView #descriptionBox #artist {
+  color: white;
+  font-size: 24px;
 }
-#coverArtBox {
-    color: #bbbbbb;
-    width: 49%;
-    float: right;
-    padding-left: 10px;
-    margin: auto;
+#playerView #coverArtBox {
+  color: #bbbbbb;
+  width: 49%;
+  float: right;
+  padding-left: 10px;
+  margin: auto;
 }
-#searchBox {
-    font-size: 18px;
-    margin: 10px;
+#playerView #gnSuggestionsCon {
+  position: absolute;
+  top: -120px;
+  left: 0;
+  height: 100px;
+  width: 100%;
+  z-index: 1;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  background: black;
 }
-#songBox {
-    font-size: 12px;
-    margin: 10px;
+#playerView #gnSuggestionsCon #gnSuggestions {
+  width: auto;
 }
-.selected{
-  background: #4169e1;
+#playerView #gnSuggestionsCon .suggestedTrack {
+  float: left;
+  height: 100px;
+  padding: 0 0 0 6px;
+  width: 250px;
+  font-size: 12px;
+  cursor: pointer;
 }
-.added{
-  background: red;
+#playerView #gnSuggestionsCon .suggestedTrack:hover {
+  background: #333333;
 }
-.active{
-  border: 1px solid black;
+#playerView #gnSuggestionsCon .suggestedTrack .info {
+  white-space: nowrap;
+  width: 140px;
+  float: left;
+  padding: 10px 0;
+  color: white;
 }
-#playlistBox {
-    font-size: 12px;
-    margin: 10px;
+#playerView #gnSuggestionsCon .suggestedTrack .info .by {
+  font-size: 9px;
+  color: #d3d3d3;
 }
-#songBoxContainer, #playlistBoxContainer {
+#playerView #gnSuggestionsCon .suggestedTrack .info .artist,
+#playerView #gnSuggestionsCon .suggestedTrack .info .title {
+  width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+}
+#playerView #gnSuggestionsCon .suggestedTrack .cover {
+  float: right;
+}
+#playerView #gnSuggestionsCon .suggestedTrack .cover img {
+  height: 100px;
+  width: 100px;
+}
+#playerView #gnPreview {
+  height: 20px;
+  width: 100%;
+  display: block;
+  position: absolute;
+  background: #2f4f4f;
+  top: 0;
+  font-size: 100%;
+  line-height: 20px;
+  color: whitesmoke;
+  z-index: 5;
+  display: none;
+}
+#searchView {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  background-color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+#searchView #filterBox {
+  position: absolute;
+  z-index: 100;
+  display: none;
+}
+#searchView #songBoxContainer,
+#searchView #playlistBoxContainer {
   height: 100%;
   width: 45%;
   overflow-x: hidden;
   overflow-y: scroll;
 }
+#searchView #songBoxContainer .selected,
+#searchView #playlistBoxContainer .selected {
+  background: #4169e1;
+}
+#searchView #songBoxContainer .added,
+#searchView #playlistBoxContainer .added {
+  background: red;
+}
+#searchView #songBoxContainer .active,
+#searchView #playlistBoxContainer .active {
+  border: 1px solid black;
+}
+#searchView #songBoxContainer [positionX],
+#searchView #playlistBoxContainer [positionX] {
+  font-weight: bold;
+  background: red;
+}
+#searchView #searchBox {
+  font-size: 18px;
+  margin: 10px;
+}
+#searchView #songBox {
+  font-size: 12px;
+  margin: 10px;
+}
+#playlistBox {
+  font-size: 12px;
+  margin: 10px;
+}
 #songBoxContainer {
   float: left;
 }
 #playerControlView {
-    background: rgba(44, 44, 44, 0.5);
-    position: absolute;
-    left: 0;
-    bottom: 0;
-    height: 4px;
-    width: 100%;
-    z-index: 10;
-    overflow: hidden;
+  background: rgba(44, 44, 44, 0.5);
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+  height: 4px;
+  z-index: 10;
+  overflow: hidden;
 }
-#progressBar {
-    position: absolute;
-    height: 4px;
-    width: 100%;
-    border: 0;
+#playerControlView #progressBar {
+  position: absolute;
+  height: 4px;
+  width: 100%;
+  border: 0;
 }
-
+#playerControlView #timeField {
+  position: absolute;
+  height: 20px;
+  width: 100%;
+  border: 0;
+  color: white;
+  font-size: 40px;
+  margin-top: 3px;
+}
 progress::-webkit-progress-bar-value,
 progress::-webkit-progress-value,
 progress::-moz-progress-bar {
-    background-color:#BBB
-}
-
-#timeField {
-    position: absolute;
-    height: 20px;
-    width: 100%;
-    border: 0;
-    color: white;
-    font-size: 40px;
-    margin-top: 3px;
-}
-
-#filterBox {
-  position: absolute;
-  z-index: 100;
-  display: none;
-}
-
-ul {
-  list-style: none;
-}
-
-[positionX]{
-  font-weight: bold;
-  background: red;
+  background-color: #bbbbbb;
 }
