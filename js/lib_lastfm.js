@@ -42,7 +42,6 @@ var Scrobbler = function () {
     };
 
     this.isAuthenticated = function () {
-      this.init();
       return null !== _sessionKey && null !== _login && undefined !== _sessionKey && undefined !== _login;
     };
 
