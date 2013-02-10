@@ -2,24 +2,16 @@ function GoogleMusic() {
 
   "use strict";
 
-  /*global FormData, XMLHttpRequest, Audica, console, localStorage*/
+  /*global FormData, XMLHttpRequest, Audica, console, localStorage, window, chrome*/
 
   var backendId = 'googleMusic';
-
-  var authToken = null;
-
-  var sid = null;
-
-  var lsid = null;
-
-  var xt = '';
 
   var timestamp = null;
 
   function getSongStream(songid) {
     var result = null;
     var req = new XMLHttpRequest();
-    req.open('GET', 'https://play.google.com/music/play?u=0&pt=e&xt=' + xt + '&songid=' + songid, false);
+    req.open('GET', 'https://play.google.com/music/play?u=0&pt=e&xt=' + localStorage.googlemusic_xt_cookie + '&songid=' + songid, false);
     req.send();
     if (req.status === 200) {
       var response = JSON.parse(req.response);
@@ -63,8 +55,8 @@ function GoogleMusic() {
     var formData = new FormData();
     formData.append("json", '{"continuationToken":"' + continuationToken + '"}');
     var req = new XMLHttpRequest();
-    req.open('POST', 'https://play.google.com/music/services/loadalltracks?u=0&xt=' + xt, true);
-    req.setRequestHeader('Authorization', 'GoogleLogin auth=' + authToken);
+    req.open('POST', 'https://play.google.com/music/services/loadalltracks?u=0&xt=' + localStorage.googlemusic_xt_cookie, true);
+    req.withCredentials = true;
     req.onload = function (event) {
       var contToken = parseSongs(event.target.response, songList);
       if (contToken) {
@@ -77,51 +69,6 @@ function GoogleMusic() {
         });
       }
     };
-    req.send(formData);
-  }
-
-  function getXtCookie(request) {
-    console.log(request);
-    console.log(request.getAllResponseHeaders());
-  }
-
-  function authenticate() {
-    //'https://www.google.com/accounts/IssueAuthToken';
-    //getXtCookie();
-    var songList = [];
-    getSongs(songList, '');
-  }
-
-  function getAuthToken(event) {
-    var response = event.target.response;
-    var startIndex = response.indexOf('Auth=') + 5;
-    var endIndex = response.indexOf("\n", startIndex);
-    authToken = response.substring(startIndex, endIndex).trim();
-    startIndex = response.indexOf('SID=') + 4;
-    endIndex = response.indexOf("\n", startIndex);
-    sid = response.substring(startIndex, endIndex).trim();
-    startIndex = response.indexOf('LSID=') + 5;
-    endIndex = response.indexOf("\n", startIndex);
-    lsid = response.substring(startIndex, endIndex).trim();
-    // TODO check also for sid and lsid
-    if (null !== authToken && undefined !== authToken) {
-      authenticate();
-    }
-  }
-
-  function errorLogin(req) {
-    console.log('Error on authentication with goolge music.');
-  }
-
-  function login(userName, password) {
-    var formData = new FormData();
-    formData.append('service', 'sj');
-    formData.append('Email', userName);
-    formData.append('Passwd', password);
-    var req = new XMLHttpRequest();
-    req.open('POST', 'https://www.google.com/accounts/clientlogin', true);
-    req.onload = getAuthToken;
-    req.onerror = errorLogin;
     req.send(formData);
   }
 
@@ -142,10 +89,24 @@ function GoogleMusic() {
 
   Audica.on('updateSongList', function (args) {
     timestamp = args.timestamp;
-    var userName = localStorage.googlemusic_authentication_login;
-    var password = localStorage.googlemusic_authentication_password;
-    if (userName && password) {
-      login(JSON.parse(userName), JSON.parse(password));
+    if (localStorage.googlemusic_xt_cookie) {
+      getSongs([], '');
+    } else {
+      window.open('https://play.google.com/music/listen');
     }
+  });
+
+  chrome.extension.onRequest.addListener(function (request, sender) {
+    if (request && request.cookie) {
+      var startIndex = request.cookie.indexOf('xt=') + 3;
+      var endIndex = request.cookie.indexOf(";", startIndex);
+      localStorage.googlemusic_xt_cookie = request.cookie.substring(startIndex, endIndex).trim();
+      if (localStorage.googlemusic_xt_cookie) {
+        getSongs([], '');
+      } else {
+        localStorage.googlemusic_xt_cookie = null;
+      }
+    }
+    chrome.tabs.remove(sender.tab.id);
   });
 }
