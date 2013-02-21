@@ -644,7 +644,7 @@
               backendId: history.backendId
             }).get()[0];
             if (null !== song) {
-              var timestamp = Number((new Date()).getTime() / 1000.0);
+              var timestamp = Number((new Date()).getTime() / 1000);
               this.plugins.scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function(data) {
                 if (undefined !== data.error) {
                   switch (data.error) {
