@@ -1,4 +1,4 @@
-/*global $:true, Audica:true, AUDICA:true, TAFFY:true, escape:true, unescape:true, alert:true, console:true, localStorage*/
+/*global $:true, Audica:true, AUDICA:true, TAFFY:true, escape:true, unescape:true, alert:true, console:true, localStorage, window, document*/
 (function (window, document) {
   "use strict";
   /**
@@ -221,12 +221,12 @@
        * @return {String|Null}
        */
       getFirstElement: function () {
+        var result = null;
         var elements = Audica.Dom.firstPlayListElement();
         if (elements.length > 0) {
-          return JSON.parse(unescape(elements.data('song')));
-        } else {
-          return null;
+          result = JSON.parse(unescape(elements.data('song')));
         }
+        return result;
       },
       /**
        * @return {Object|Null}
@@ -268,7 +268,8 @@
        */
       fillSongBox: function (songs) {
         var lis = "";
-        for (var i = 0; i < songs.length; i++) {
+        var i = 0;
+        for (i = 0; i < songs.length; i++) {
           var song = songs[i];
           var li = "<li";
           li = li + ' data-song="' + escape(JSON.stringify(song)) + '">';
@@ -386,9 +387,13 @@
      */
     this.updateSongList = function () {
       Audica.trigger('fillSongBox');
-      Audica.trigger('updateSongList', {
-        timestamp: $.now()
-      });
+      var now = $.now();
+      if (!localStorage.last_song_list_update || (localStorage.last_song_list_update < (now - 86400000))) {
+        localStorage.last_song_list_update = now;
+        Audica.trigger('updateSongList', {
+          timestamp: now
+        });
+      }
     };
     /**
      *
