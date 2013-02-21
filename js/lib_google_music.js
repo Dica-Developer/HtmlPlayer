@@ -22,6 +22,15 @@ function GoogleMusic() {
     return result;
   }
 
+  function updateSongList(args) {
+    timestamp = args.timestamp;
+    if (localStorage.googlemusic_xt_cookie) {
+      getSongs([], '');
+    } else {
+      window.open('https://play.google.com/music/listen');
+    }
+  }
+
   function parseSongs(response, songList) {
     var idx = 0;
     var items = JSON.parse(response);
@@ -46,6 +55,19 @@ function GoogleMusic() {
           "backendId": backendId
         };
         songList.push(song);
+      }
+    } else {
+      var success = items.success;
+      if (!success) {
+        var reloadXsrf = items.reloadXsrf;
+        if (reloadXsrf) {
+          localStorage.removeItem('googlemusic_xt_cookie');
+          updateSongList({
+            'timestamp': timestamp
+          });
+        } else {
+          console.log('Error on getting track list from google music "' + items + '".');
+        }
       }
     }
     return items.continuationToken;
@@ -87,14 +109,7 @@ function GoogleMusic() {
     // nothing todo
   };
 
-  Audica.on('updateSongList', function (args) {
-    timestamp = args.timestamp;
-    if (localStorage.googlemusic_xt_cookie) {
-      getSongs([], '');
-    } else {
-      window.open('https://play.google.com/music/listen');
-    }
-  });
+  Audica.on('updateSongList', updateSongList);
 
   chrome.extension.onRequest.addListener(function (request, sender) {
     if (request && request.cookie) {
@@ -104,7 +119,7 @@ function GoogleMusic() {
       if (localStorage.googlemusic_xt_cookie) {
         getSongs([], '');
       } else {
-        localStorage.googlemusic_xt_cookie = null;
+        localStorage.removeItem('googlemusic_xt_cookie');
       }
     }
     chrome.tabs.remove(sender.tab.id);
