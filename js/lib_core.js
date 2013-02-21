@@ -63,35 +63,35 @@
      * @type {Object}
      */
     this.Dom = {
-      searchView:null,
-      searchViewPreview:null,
-      playerView:null,
-      playerViewPreview:null,
-      playerControlView:null,
-      coverArtBox:null,
-      coverArt:null,
-      descriptionBox:null,
-      songBox:null,
-      playListBox:null,
-      filterBox:null,
-      player:null,
-      title:null,
-      album:null,
-      artist:null,
-      progress:null,
-      timeField:null,
-      documentHeight:null,
-      documentWidth:null,
+      searchView: null,
+      searchViewPreview: null,
+      playerView: null,
+      playerViewPreview: null,
+      playerControlView: null,
+      coverArtBox: null,
+      coverArt: null,
+      descriptionBox: null,
+      songBox: null,
+      playListBox: null,
+      filterBox: null,
+      player: null,
+      title: null,
+      album: null,
+      artist: null,
+      progress: null,
+      timeField: null,
+      documentHeight: null,
+      documentWidth: null,
       /**
        * @return {Array}
        */
-      firstPlayListElement:function () {
+      firstPlayListElement: function () {
         return this.playListBox.find("li :first");
       },
       /**
        * set all dom elements once
        */
-      initDom:function () {
+      initDom: function () {
         this.player = document.getElementById('player');
         this.playListBox = $("#playlistBox");
         this.songBox = $("#songBox");
@@ -99,7 +99,7 @@
         this.coverArtBox = $("#coverArtBox");
         this.coverArt = $('#coverArt');
         this.coverArt.on('error', function () {
-          $('#coverArt').attr('src', 'images/wholeNote.png');
+          $('#coverArt').attr('src', 'images/wholeNote.svg');
         });
         this.filterBox = $("#filterBox");
         this.searchView = $("#searchView");
@@ -118,7 +118,7 @@
       /**
        *
        */
-      updateDocumentDimensions:function () {
+      updateDocumentDimensions: function () {
         this.documentHeight = $(document).height();
         this.documentWidth = $(document).width();
         Audica.trigger('documentDimensionsUpdated');
@@ -127,7 +127,7 @@
        * @description Sets the first play list element
        * @param song
        */
-      setFirstPlaylistElement:function (song) {
+      setFirstPlaylistElement: function (song) {
         var li = $('<li data-song="' + escape(JSON.stringify(song)) + '"><span>' + song.artist + '</span>g / <span>' + song.album + '</span> / <span>' + song.track + '.</span> <span>' + song.title + '</span></li>');
         var firstPlayListElement = Audica.Dom.firstPlayListElement();
         if (firstPlayListElement.length > 0) {
@@ -147,10 +147,10 @@
       /**
        * @param {Object} song
        */
-      play:function (song) {
+      play: function (song) {
         _song = song;
         Audica.trigger('onStartPlayingSong', {
-          song:song
+          song: song
         });
         var player = Audica.Dom.player;
         player.type = song.contentType;
@@ -160,17 +160,19 @@
           plugin.setCoverArt(song.coverArt, Audica.Dom.coverArt);
         } else {
           Audica.trigger('ERROR', {
-            message:'Cannot handle songs from backend ' + song.backendId + '.'
+            message: 'Cannot handle songs from backend ' + song.backendId + '.'
           });
         }
 
         Audica.View.updateMain(song.artist, song.album, song.title);
-        Audica.trigger('playSong', {song:_song});
+        Audica.trigger('playSong', {
+          song: _song
+        });
       },
       /**
        * @description Plays next song
        */
-      next:function () {
+      next: function () {
         var song = Audica.Playlist.getFirstElement();
         if (null !== song) {
           this.play(song);
@@ -178,7 +180,7 @@
           Audica.History.add(song);
         } else {
           Audica.trigger('ERROR', {
-            message:'No song found. Possible reason: Empty Playlist'
+            message: 'No song found. Possible reason: Empty Playlist'
           });
         }
         Audica.trigger('nextSong');
@@ -186,24 +188,24 @@
       /**
        * @description Plays previous song
        */
-      previous:function () {
+      previous: function () {
         if (_songHistory.length > 0) {
           var history = _songHistory.pop();
           var song = Audica.songDb.query({
-            id:history.songId,
-            backendId:history.backendId
+            id: history.songId,
+            backendId: history.backendId
           }).get()[0];
           if (null !== song && undefined !== song) {
             this.play(song);
             Audica.Dom.setFirstPlaylistElement(song);
           } else {
             Audica.trigger('ERROR', {
-              message:'No song found. Possible reason: Empty Playlist'
+              message: 'No song found. Possible reason: Empty Playlist'
             });
           }
         } else {
           Audica.trigger('ERROR', {
-            message:'No song found. Possible reason: Empty History'
+            message: 'No song found. Possible reason: Empty History'
           });
         }
         Audica.trigger('previousSong');
@@ -218,7 +220,7 @@
       /**
        * @return {String|Null}
        */
-      getFirstElement:function () {
+      getFirstElement: function () {
         var elements = Audica.Dom.firstPlayListElement();
         if (elements.length > 0) {
           return JSON.parse(unescape(elements.data('song')));
@@ -229,13 +231,13 @@
       /**
        * @return {Object|Null}
        */
-      getLastSong:function () {
+      getLastSong: function () {
         return _songHistory[_songHistory.length - 1] || null;
       },
       /**
        *
        */
-      removeFirstElement:function () {
+      removeFirstElement: function () {
         Audica.Dom.firstPlayListElement().detach();
         Audica.trigger('firstPlayListElementRemoved');
       }
@@ -245,44 +247,39 @@
      * @type {Object}
      */
     this.View = {
-      songBoxPositionY:null,
-      songBoxPositionX:0,
+      songBoxPositionY: null,
+      songBoxPositionX: 0,
       /**
        * @param {String} artist
        * @param {String} album
        * @param {String} title
        */
-      updateMain:function (artist, album, title) {
+      updateMain: function (artist, album, title) {
         Audica.Dom.title.text(title);
         Audica.Dom.album.text(album);
         Audica.Dom.artist.text(artist);
         Audica.trigger('updateMainView');
       },
-      encodeHtml:function (string) {
+      encodeHtml: function (string) {
         return $('<div/>').text(string).html();
       },
       /**
        * @param {Array}songs
        */
-      fillSongBox:function (songs) {
+      fillSongBox: function (songs) {
         var lis = "";
         for (var i = 0; i < songs.length; i++) {
           var song = songs[i];
           var li = "<li";
           li = li + ' data-song="' + escape(JSON.stringify(song)) + '">';
-          li = li + '<span class="artist" data-value="' + escape(JSON.stringify(song.artist)) + '">' + Audica.View.encodeHtml(song.artist) +
-            '</span> / ' + '<span class="album" data-value="' + escape(JSON.stringify(song.album)) + '">' +
-            Audica.View.encodeHtml(song.album) + '</span> / ' + '<span class="track" data-value="' +
-            escape(JSON.stringify(song.track)) + '">' + Audica.View.encodeHtml(song.track) + '.</span> ' +
-            '<span class="title" data-value="' + escape(JSON.stringify(song.title)) + '">' + Audica.View.encodeHtml(song.title) +
-            '</span>';
+          li = li + '<span class="artist" data-value="' + escape(JSON.stringify(song.artist)) + '">' + Audica.View.encodeHtml(song.artist) + '</span> / ' + '<span class="album" data-value="' + escape(JSON.stringify(song.album)) + '">' + Audica.View.encodeHtml(song.album) + '</span> / ' + '<span class="track" data-value="' + escape(JSON.stringify(song.track)) + '">' + Audica.View.encodeHtml(song.track) + '.</span> ' + '<span class="title" data-value="' + escape(JSON.stringify(song.title)) + '">' + Audica.View.encodeHtml(song.title) + '</span>';
           li = li + "</li>";
           lis = lis + li;
         }
         Audica.Dom.songBox.html(lis);
         Audica.View.bindSongBoxEvents();
       },
-      bindSongBoxEvents:function () {
+      bindSongBoxEvents: function () {
         Audica.Dom.songBox.find('span').on('click', function () {
           var value = $(this).data("value");
           var clazz = $(this).attr('class');
@@ -296,43 +293,43 @@
           Audica.View.indicateSongBoxXPosition();
         });
       },
-      closePlayerControlView:function () {
+      closePlayerControlView: function () {
         Audica.Dom.playerControlView.data("open", false);
         _closePlayerControlViewTimerId = null;
         Audica.Dom.playerControlView.animate({
-          height:"4px"
+          height: "4px"
         });
       },
-      applyCoverArtStyle:function () {
+      applyCoverArtStyle: function () {
         // Use original window elem to set height because reflect is need this
         Audica.Dom.coverArt[0].height = Audica.Dom.documentHeight * 0.6;
         Audica.Dom.coverArt[0].width = Audica.Dom.coverArt[0].height;
         Audica.Dom.coverArt.reflect({
-          height:0.165,
-          opacity:0.25
+          height: 0.165,
+          opacity: 0.25
         });
         Audica.Dom.coverArtBox.css("padding-top", (Audica.Dom.documentHeight - Audica.Dom.coverArtBox.height()) / 2);
         Audica.Dom.descriptionBox.css("padding-top", (Audica.Dom.documentHeight - Audica.Dom.descriptionBox.height()) / 2);
       },
-      updateProgress:function () {
+      updateProgress: function () {
         if (!Audica.Dom.player.paused) {
           Audica.Dom.progress.val(Math.round((Audica.Dom.player.currentTime * 100) / Audica.Dom.player.duration));
         }
       },
-      updateTimings:function () {
+      updateTimings: function () {
         if (Audica.Dom.playerControlView.data("open")) {
           if (!Audica.Dom.player.paused) {
             Audica.Dom.timeField.text(Math.round(Audica.Dom.player.currentTime) + " / " + Math.round(Audica.Dom.player.duration));
           }
         }
       },
-      positionXClassMap:{
-        0:'.artist',
-        1:'.album',
-        2:'.track',
-        3:'.title'
+      positionXClassMap: {
+        0: '.artist',
+        1: '.album',
+        2: '.track',
+        3: '.title'
       },
-      indicateSongBoxXPosition:function () {
+      indicateSongBoxXPosition: function () {
         var currentXClass = Audica.View.positionXClassMap[Audica.View.songBoxPositionX];
         var songBox = Audica.Dom.songBox;
         var selectedElems = songBox.find('.selected');
@@ -343,17 +340,20 @@
        *
        * @return {String|Null}
        */
-      getViewState:function () {
+      getViewState: function () {
         return _viewState;
       },
       /**
        *
        * @param {String} viewState
        */
-      setViewState:function (viewState) {
+      setViewState: function (viewState) {
         var oldState = _viewState;
         _viewState = viewState;
-        Audica.trigger('viewStateChanged', {from:oldState, to:viewState});
+        Audica.trigger('viewStateChanged', {
+          from: oldState,
+          to: viewState
+        });
       }
     };
     /**
@@ -363,17 +363,19 @@
      * @param timestamp
      */
     this.collectSongs = function (songList, backendId, timestamp) {
-      var i= 0 , length = songList.length, song;
-      for ( i ; i < length; i++) {
+      var i = 0,
+        length = songList.length,
+        song;
+      for (i; i < length; i++) {
         song = songList[i];
         Audica.songDb.query.insert(song);
       }
       Audica.songDb.query({
-        backendId:{
-          is:backendId
+        backendId: {
+          is: backendId
         },
-        addedOn:{
-          '!is':timestamp
+        addedOn: {
+          '!is': timestamp
         }
       }).remove();
       Audica.trigger('fillSongBox');
@@ -385,7 +387,7 @@
     this.updateSongList = function () {
       Audica.trigger('fillSongBox');
       Audica.trigger('updateSongList', {
-        timestamp:$.now()
+        timestamp: $.now()
       });
     };
     /**
@@ -401,24 +403,24 @@
      * @type {Object}
      */
     this.Scrobbling = {
-      setNowPlaying:function () {
+      setNowPlaying: function () {
         if (Audica.plugins.scrobbler) {
           var history = Audica.Playlist.getLastSong();
           if (null !== history) {
             var song = Audica.songDb.query({
-              id:history.songId,
-              backendId:history.backendId
+              id: history.songId,
+              backendId: history.backendId
             }).get()[0];
             if (song) {
               Audica.plugins.scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function (data) {
                 if (undefined !== data.error) {
                   switch (data.error) {
-                    case 6:
-                    case 13:
-                      console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
-                      break;
-                    default:
-                      console.error("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
+                  case 6:
+                  case 13:
+                    console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
+                    break;
+                  default:
+                    console.error("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
                   }
                 }
               }, null);
@@ -426,7 +428,7 @@
           }
         }
       },
-      scrobble:function () {
+      scrobble: function () {
         if (Audica.plugins.scrobbler) {
           var audio = Audica.Dom.player;
           if (!audio.paused) {
@@ -434,21 +436,21 @@
               var history = Audica.Playlist.getLastSong();
               if (null !== history) {
                 var song = Audica.songDb.query({
-                  id:history.songId,
-                  backendId:history.backendId
+                  id: history.songId,
+                  backendId: history.backendId
                 }).get()[0];
                 if (null !== song) {
                   var timestamp = Number((new Date()).getTime() / 1000.0);
                   Audica.plugins.scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function (data) {
                     if (undefined !== data.error) {
                       switch (data.error) {
-                        case 6:
-                        case 13:
-                          console.warn("Cannot scrobble the song there is a parameter missing/wrong!", data.message);
-                          _notScrobbled = true;
-                          break;
-                        default:
-                          alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
+                      case 6:
+                      case 13:
+                        console.warn("Cannot scrobble the song there is a parameter missing/wrong!", data.message);
+                        _notScrobbled = true;
+                        break;
+                      default:
+                        alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
                       }
                     } else {
                       _notScrobbled = false;
@@ -460,10 +462,10 @@
           }
         }
       },
-      getNotScrobbled:function () {
+      getNotScrobbled: function () {
         return _notScrobbled;
       },
-      setNotScrobbled:function (notScrobbled) {
+      setNotScrobbled: function (notScrobbled) {
         _notScrobbled = notScrobbled;
       }
     };
@@ -475,16 +477,16 @@
       /**
        * @function
        */
-      add:function () {
+      add: function () {
         var historyElem = {
-          timestamp:$.now(),
-          backendId:_song.backendId,
-          songId:_song.id
+          timestamp: $.now(),
+          backendId: _song.backendId,
+          songId: _song.id
         };
         _songHistory.push(historyElem);
         Audica.historyDb.query.insert(historyElem);
       },
-      showByTime:function (dir) {
+      showByTime: function (dir) {
         return Audica.historyDb.query().order('timestamp ' + dir).get();
       }
     };
@@ -529,7 +531,6 @@
      */
     this.registerEvents = function () {
       window.bindKeyEvents(Audica);
-
       $(document).mousemove(function () {
         var playerControlView = Audica.Dom.playerControlView;
         if ('player' === _viewState) {
@@ -539,13 +540,12 @@
           if (!playerControlView.data("open")) {
             playerControlView.data("open", true);
             playerControlView.animate({
-              height:"50px"
+              height: "50px"
             });
           }
           _closePlayerControlViewTimerId = window.setTimeout(function () {
             Audica.View.closePlayerControlView();
           }, 3000);
-
         }
       });
 
@@ -560,34 +560,34 @@
           if ("mouseenter" === event.type) {
             searchView.height(Audica.Dom.documentHeight);
             searchView.animate({
-              left:-1 * Math.round(Audica.Dom.documentWidth * 0.05)
+              left: -1 * Math.round(Audica.Dom.documentWidth * 0.05)
             });
             playerView.animate({
-              left:Math.round(Audica.Dom.documentWidth * 0.95)
+              left: Math.round(Audica.Dom.documentWidth * 0.95)
             });
             playerControlView.animate({
-              left:Math.round(Audica.Dom.documentWidth * 0.95)
+              left: Math.round(Audica.Dom.documentWidth * 0.95)
             });
           } else if ("mouseleave" === event.type) {
             searchView.height(Audica.Dom.documentHeight);
             searchView.animate({
-              left:"0"
+              left: "0"
             });
             playerView.animate({
-              left:Audica.Dom.documentWidth
+              left: Audica.Dom.documentWidth
             });
             playerControlView.animate({
-              left:Audica.Dom.documentWidth
+              left: Audica.Dom.documentWidth
             });
           } else if ("click" === event.type) {
             searchView.animate({
-              left:-1 * Audica.Dom.documentWidth
+              left: -1 * Audica.Dom.documentWidth
             });
             playerView.animate({
-              left:0
+              left: 0
             });
             playerControlView.animate({
-              left:0
+              left: 0
             });
             if (audio.paused) {
               Audica.PlayerControl.next();
@@ -614,15 +614,15 @@
       }
 
       Audica.Dom.playerViewPreview.on({
-        hover:handleRightZone,
-        click:handleRightZone
+        hover: handleRightZone,
+        click: handleRightZone
       });
 
       Audica.Dom.playListBox.on({
-        click:selectPlayList
+        click: selectPlayList
       });
       Audica.Dom.songBox.on({
-        click:selectSongBox
+        click: selectSongBox
       });
 
       function handleLeftZone(event) {
@@ -637,24 +637,24 @@
           if ("mouseenter" === event.type) {
             searchView.height(Audica.Dom.documentHeight);
             searchView.animate({
-              left:-1 * Math.round(Audica.Dom.documentWidth * 0.95)
+              left: -1 * Math.round(Audica.Dom.documentWidth * 0.95)
             });
             playerView.animate({
-              left:Math.round(Audica.Dom.documentWidth * 0.05)
+              left: Math.round(Audica.Dom.documentWidth * 0.05)
             });
             playerControlView.animate({
-              left:Math.round(Audica.Dom.documentWidth * 0.05)
+              left: Math.round(Audica.Dom.documentWidth * 0.05)
             });
           } else if ("mouseleave" === event.type) {
             searchView.height(Audica.Dom.documentHeight);
             searchView.animate({
-              left:-1 * Audica.Dom.documentWidth
+              left: -1 * Audica.Dom.documentWidth
             });
             playerView.animate({
-              left:0
+              left: 0
             });
             playerControlView.animate({
-              left:0
+              left: 0
             });
           } else if ("click" === event.type) {
             songBox.focus();
@@ -664,13 +664,13 @@
             playlistBox.height(boxHeight);
             searchView.height(Audica.Dom.documentHeight);
             searchView.animate({
-              left:0
+              left: 0
             });
             playerView.animate({
-              left:Audica.Dom.documentWidth
+              left: Audica.Dom.documentWidth
             });
             playerControlView.animate({
-              left:Audica.Dom.documentWidth
+              left: Audica.Dom.documentWidth
             });
             Audica.View.setViewState('search');
           }
@@ -678,8 +678,8 @@
       }
 
       Audica.Dom.searchViewPreview.on({
-        hover:handleLeftZone,
-        click:handleLeftZone
+        hover: handleLeftZone,
+        click: handleLeftZone
       });
 
       $(Audica.Dom.player).on("ended", function () {
@@ -692,20 +692,20 @@
         var audio = $(this);
         var errorMsg = "The file '" + audio.src + "' cannot be played. The possible reasons is: ";
         switch (event.currentTarget.error.code) {
-          case 4:
-            errorMsg += "The current media type '" + audio.type + "' isn't supported.";
-            break;
-          case 1:
-            errorMsg += "The user agent stopped fetching the media data.";
-            break;
-          case 2:
-            errorMsg += "A network error stopped the user agent fetching the media data.";
-            break;
-          case 3:
-            errorMsg += "Error on decoding the media data.";
-            break;
-          default:
-            errorMsg += "Unknown error with code '" + event.currentTarget.error.code + "' happened.";
+        case 4:
+          errorMsg += "The current media type '" + audio.type + "' isn't supported.";
+          break;
+        case 1:
+          errorMsg += "The user agent stopped fetching the media data.";
+          break;
+        case 2:
+          errorMsg += "A network error stopped the user agent fetching the media data.";
+          break;
+        case 3:
+          errorMsg += "Error on decoding the media data.";
+          break;
+        default:
+          errorMsg += "Unknown error with code '" + event.currentTarget.error.code + "' happened.";
         }
         alert(errorMsg);
       });
@@ -747,19 +747,19 @@
      * @description Holds all events assigned to Audica
      * @type {Object}
      */
-    eventList:{},
+    eventList: {},
     /**
      * @param {String} eventName
      * @param {Function} fn
      * @return {*}
      */
-    on:function (eventName, fn) {
-      if (!this.eventList[eventName]){
+    on: function (eventName, fn) {
+      if (!this.eventList[eventName]) {
         this.eventList[eventName] = [];
       }
       this.eventList[eventName].push({
-        context:this,
-        callback:fn
+        context: this,
+        callback: fn
       });
       return this;
     },
@@ -767,14 +767,16 @@
      * @param {String} eventName
      * @return {*}
      */
-    trigger:function (eventName) {
-      if (!this.eventList[eventName]){
+    trigger: function (eventName) {
+      if (!this.eventList[eventName]) {
         return false;
       }
       var args = Array.prototype.slice.call(arguments, 1),
         events = this.eventList[eventName],
-        i = 0, length = events.length, subscription;
-      for ( i ; i < length; i++) {
+        i = 0,
+        length = events.length,
+        subscription;
+      for (i; i < length; i++) {
         subscription = events[i];
         //noinspection JSValidateTypes
         subscription.callback.apply(subscription.context, args);
@@ -784,7 +786,7 @@
     /**
      * @param {Object} obj
      */
-    applyEventTo:function (obj) {
+    applyEventTo: function (obj) {
       obj.on = this.on;
       obj.trigger = this.trigger;
       obj.eventList = {};
