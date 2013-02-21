@@ -8,16 +8,6 @@
     localStorage.authentication_login = JSON.stringify(login);
   }
 
-  function saveLoginGoogleMusic() {
-    var login = document.querySelector("#googlemusicLoginBox").value;
-    localStorage.googlemusic_authentication_login = JSON.stringify(login);
-  }
-
-  function savePasswordGoogleMusic() {
-    var password = document.querySelector("#googlemusicPasswordBox").value;
-    localStorage.googlemusic_authentication_password = JSON.stringify(password);
-  }
-
   function savePassword() {
     var password = $("#passwordBox").val();
     localStorage.authentication_password = JSON.stringify(password);
@@ -47,22 +37,14 @@
       ubuntuoneAuthenticationHelp.show();
       subsonicAuthParams.hide();
       fileImporterFields.hide();
-      document.querySelector("#googlemusicParams").style.display = "none";
     } else if ("subsonic" === value) {
       ubuntuoneAuthenticationHelp.hide();
       subsonicAuthParams.show();
       fileImporterFields.hide();
-      document.querySelector("#googlemusicParams").style.display = "none";
-    } else if ("googlemusic" === value) {
-      ubuntuoneAuthenticationHelp.hide();
-      subsonicAuthParams.hide();
-      fileImporterFields.hide();
-      document.querySelector("#googlemusicParams").style.display = "block";
     } else {
       ubuntuoneAuthenticationHelp.hide();
       subsonicAuthParams.show();
       fileImporterFields.hide();
-      document.querySelector("#googlemusicParams").style.display = "none";
     }
   }
 
@@ -78,14 +60,6 @@
   }
 
   function fill() {
-    var googlemusicPassword = localStorage.googlemusic_authentication_password;
-    if (null !== googlemusicPassword && undefined !== googlemusicPassword) {
-      document.querySelector("#googlemusicPasswordBox").value = JSON.parse(googlemusicPassword);
-    }
-    var googlemusicLogin = localStorage.googlemusic_authentication_login;
-    if (null !== googlemusicLogin && undefined !== googlemusicLogin) {
-      document.querySelector("#googlemusicLoginBox").value = JSON.parse(googlemusicLogin);
-    }
     var password = localStorage.authentication_password;
     if (null !== password && undefined !== password) {
       $("#passwordBox").val(JSON.parse(password));
@@ -168,8 +142,6 @@
     $('#serverUrlBox').on('change', saveServerUrl);
     $('#loginBox').on('change', saveLogin);
     $('#passwordBox').on('change', savePassword);
-    $('#googlemusicLoginBox').on('change', saveLoginGoogleMusic);
-    $('#googlemusicPasswordBox').on('change', savePasswordGoogleMusic);
     $('#gracenoteClient_ID, #gracenoteWepAPI_ID').on('change', saveField);
 
     var fileImporter = new FileImporter();

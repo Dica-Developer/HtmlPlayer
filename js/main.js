@@ -55,4 +55,4 @@
       document.location = chrome.extension.getURL("options/index.html");
     }
   });
-})(window, document);
+}(window, document));

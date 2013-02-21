@@ -1,6 +1,6 @@
 {
   "name": "Audica Player",
-  "version": "0.10",
+  "version": "0.11",
   "description": "",
   "app": {
     "launch": {
@@ -16,6 +16,10 @@
     "matches": ["http://www.google.com/robots.txt*"],
     "js": ["js/3rd/oauth2/oauth2_inject.js"],
     "run_at": "document_start"
+  }, {
+    "matches": ["https://play.google.com/music/listen*"],
+    "js": ["js/google_music_xt_cookie.js"],
+    "run_at": "document_end"
   }],
   "icons": {
     "128": "images/icon128.png",
@@ -24,7 +28,7 @@
   },
   "offline_enabled": false,
   "options_page": "options/index.html",
-  "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://one.ubuntu.com/music/api/1.0/*", "https://accounts.google.com/o/oauth2/token", "https://streaming.one.ubuntu.com/rest/*", "https://*.web.cddbp.net/webapi/xml/1.0/", "https://www.google.com/accounts/clientlogin", "https://play.google.com/music/services/*", "https://play.google.com/music/*"],
+  "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://one.ubuntu.com/music/api/1.0/*", "https://streaming.one.ubuntu.com/rest/*", "https://*.web.cddbp.net/webapi/xml/1.0/", "https://*.google.com/*"],
   "manifest_version": 2,
   "content_security_policy": "default-src *; style-src 'self'; script-src 'self'; object-src 'self'; connect-src * ; img-src *"
 }
