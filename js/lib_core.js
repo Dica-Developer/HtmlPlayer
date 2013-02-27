@@ -382,13 +382,29 @@
   };
 
   Audica.prototype.initDom = function() {
+    var self = this;
     for (var selector in this.Dom) {
       if (this.Dom.hasOwnProperty(selector)) {
         this.Dom[selector] = $('#' + selector);
       }
     }
-    this.trigger('domElementsSet');
-    this.applyCoverArtStyle();
+
+    function checkDomElements(){
+      for (var selector in self.Dom) {
+        if (self.Dom.hasOwnProperty(selector)) {
+          if(null === self.Dom[selector]){
+            self.Dom[selector] = $('#' + selector);
+            if(null === self.Dom[selector]){
+              throw new Error(selector + 'not set!');
+            }
+          }
+        }
+      }
+      self.trigger('domElementsSet');
+      self.applyCoverArtStyle();
+    }
+
+    checkDomElements();
   };
 
   Audica.prototype.setFirstPlaylistElement = function(song) {
