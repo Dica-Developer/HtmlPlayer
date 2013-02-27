@@ -248,24 +248,24 @@
       self.collectBasicInformations(untrackedSongs);
     });
 
-    this.init = function () {
-      self.db.init('plugin_gracenote');
-      if(getCredentials()){
-        req(auth_query.replace('{{webAPI_ID}}', webAPI_ID)).success(function(resp){
-          var xml = parse(resp);
-          user_ID = getSingleVal(xml, 'user');
-          Audica.trigger('authReady');
-          Audica.trigger('initReady');
-        });
-      }else{
-        console.log('Gracenote disabled!');
-        Audica.trigger('initReady');
-      }
-
-      $(window).on('beforeunload', function(){
-        self.db.save();
-      });
-    };
+//    this.init = function () {
+//      self.db.init('plugin_gracenote');
+//      if(getCredentials()){
+//        req(auth_query.replace('{{webAPI_ID}}', webAPI_ID)).success(function(resp){
+//          var xml = parse(resp);
+//          user_ID = getSingleVal(xml, 'user');
+//          Audica.trigger('authReady');
+//          Audica.trigger('initReady');
+//        });
+//      }else{
+//        console.log('Gracenote disabled!');
+//        Audica.trigger('initReady');
+//      }
+//
+//      $(window).on('beforeunload', function(){
+//        self.db.save();
+//      });
+//    };
 
   Audica.on('playSong', function(args){
     var gnPreview = $('#gnPreview');
