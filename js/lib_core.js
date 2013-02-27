@@ -373,7 +373,7 @@
     title: null,
     album: null,
     artist: null,
-    progress: null,
+    progressBar: null,
     timeField: null
   };
 
@@ -549,7 +549,7 @@
   Audica.prototype.updateProgress = function() {
     var player = this.Dom.player[0];
     if (!player.paused) {
-      this.Dom.progress.val(Math.round((player.currentTime * 100) / player.duration));
+      this.Dom.progressBar.val(Math.round((player.currentTime * 100) / player.duration));
     }
   };
 
