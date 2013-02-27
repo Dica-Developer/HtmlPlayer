@@ -1,8 +1,23 @@
 describe("View", function() {
+  it("Audica should be initialized", function() {
+    //TODO find an other way to define Audica global and once
+    Audica = new AUDICA();
+    Audica.on('domElementsSet', Audica.View.applyCoverArtStyle);
+    Audica.songDb.init('song');
+    Audica.historyDb.init('history');
+    Audica.on('readyCollectingSongs', function (args) {
+      Audica.collectSongs(args.songList, args.backendId, args.timestamp);
+    });
+    Audica.Dom.initDom();
+    Audica.registerEvents();
+
+    expect(Audica).toBeDefined();
+  });
+
   describe('Audica.View.updateMain', function(){
     beforeEach(function(){
       spyOn(Audica,'trigger');
-      Audica.updateMainView('Artist','Album','Title');
+      Audica.View.updateMain('Artist','Album','Title');
     });
 
     it('Artist should set to "Artist"', function(){
@@ -26,11 +41,11 @@ describe("View", function() {
 
   describe('Audica.View.applyCoverArtStyle', function(){
     beforeEach(function(){
-      Audica.applyCoverArtStyle();
+      Audica.View.applyCoverArtStyle();
     });
 
     it('Img dimensions should set correctly', function(){
-      var correctSize = Math.floor($(document).height() * 0.6);
+      var correctSize = Math.floor(Audica.Dom.documentHeight * 0.6);
       expect(Audica.Dom.coverArt[0].height).toEqual(correctSize);
       expect(Audica.Dom.coverArt[0].width).toEqual(correctSize);
     });
@@ -38,7 +53,7 @@ describe("View", function() {
 
   describe('Audica.View.fillSongBox', function(){
     beforeEach(function(){
-      Audica.fillSongBox(subsonicSongList);
+      Audica.View.fillSongBox(subsonicSongList);
     });
 
     it('Song box should contain 10 elems', function(){
