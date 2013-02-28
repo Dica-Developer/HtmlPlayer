@@ -1,11 +1,14 @@
-/*global $:true, Audica:true, AUDICA:true, Mousetrap, TAFFY:true, escape:true, unescape:true, alert:true, console:true, localStorage, bindKeyEvents*/
-(function(window, document, Mousetrap) {
+/*global $:true, Audica:true, AUDICA:true, Mousetrap, TAFFY:true, escape:true, unescape:true, console:true, localStorage, bindKeyEvents*/
+(function (window, document, Mousetrap) {
   "use strict";
+
+  /*global window, document*/
+
   /**
    *
    * @constructor
    */
-  window.Db = function() {
+  window.Db = function () {
     /**
      * @type {String|Null}
      * @private
@@ -20,7 +23,7 @@
     /**
      * @param {String} dbName
      */
-    this.init = function(dbName) {
+    this.init = function (dbName) {
       _dbName = "db." + dbName;
       var dbContent = localStorage[_dbName];
       if (null !== dbContent && undefined !== dbContent) {
@@ -29,12 +32,12 @@
         this.query = TAFFY();
       }
     };
-    this.save = function() {
+    this.save = function () {
       localStorage[_dbName] = JSON.stringify(this.query().get());
     };
   };
 
-  var bindKeyEvents = function(Audica) {
+  var bindKeyEvents = function (Audica) {
     var bindKeysToView = {};
     var dom = Audica.Dom;
     var audio = dom.player[0];
@@ -50,21 +53,21 @@
     var descriptionBox = dom.descriptionBox;
     var filterBoxTimeout = null;
 
-    Audica.on('viewStateChanged', function(args) {
+    Audica.on('viewStateChanged', function (args) {
       Mousetrap.reset();
       bindKeysToView[args.to].call(this);
     });
 
-    bindKeysToView.player = function() {
-      Mousetrap.bind(['right'], function() {
+    bindKeysToView.player = function () {
+      Mousetrap.bind(['right'], function () {
         audio.currentTime = audio.currentTime + 10;
       });
 
-      Mousetrap.bind(['left'], function() {
+      Mousetrap.bind(['left'], function () {
         audio.currentTime = audio.currentTime - 10;
       });
 
-      Mousetrap.bind(['l'], function() {
+      Mousetrap.bind(['l'], function () {
         songBox.focus();
         songBox.width(boxWidth);
         songBox.height(boxHeight);
@@ -83,26 +86,37 @@
         Audica.setViewState('search');
       });
 
-      Mousetrap.bind(['n'], function() {
+      Mousetrap.bind(['n'], function () {
         Audica.nextSong();
         Audica.scrobbleNowPlaying();
         Audica.setNotScrobbled(true);
       });
 
-      Mousetrap.bind(['p'], function() {
+      Mousetrap.bind(['p'], function () {
         Audica.previousSong();
         Audica.scrobbleNowPlaying();
         Audica.setNotScrobbled(true);
       });
 
-      Mousetrap.bind(['space'], function() {
+      Mousetrap.bind(['space'], function () {
         return audio.paused ? audio.play() : audio.pause();
       });
 
     };
 
-    bindKeysToView.search = function() {
-      Mousetrap.bind(['right'], function() {
+    bindKeysToView.search = function () {
+      function findNextByPositionX(dir) {
+        var currentXClass = Audica.positionXClassMap[Audica.getSongBoxPositionX()];
+        var currentXValue = Audica.getSongBoxPositionY().find(currentXClass).data('value');
+        var tmpNext = Audica.getSongBoxPositionY();
+        //TODO maybe replace with for loop (secure)
+        while (tmpNext.find(currentXClass).data('value') === currentXValue) {
+          tmpNext = tmpNext[dir]();
+        }
+        return tmpNext;
+      }
+
+      Mousetrap.bind(['right'], function () {
         var x = Audica.getSongBoxPositionX();
         if (3 === x) {
           Audica.setSongBoxPositionX(0);
@@ -113,7 +127,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['left'], function() {
+      Mousetrap.bind(['left'], function () {
         var x = Audica.getSongBoxPositionX();
         if (0 === x) {
           Audica.setSongBoxPositionX(3);
@@ -124,7 +138,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['up'], function() {
+      Mousetrap.bind(['up'], function () {
         var prev = null;
         if (!Audica.getSongBoxPositionY()) {
           Audica.setSongBoxPositionY(songBox.find('li').eq(0));
@@ -145,7 +159,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['down'], function() {
+      Mousetrap.bind(['down'], function () {
         if (filterBox.data.open) {
           filterBox.data("open", false);
           filterBox.blur();
@@ -173,7 +187,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['escape'], function() {
+      Mousetrap.bind(['escape'], function () {
         if (filterBox.data("open")) {
           filterBox.data("open", false);
           filterBox.blur();
@@ -201,12 +215,12 @@
         }
       });
 
-      Mousetrap.bind(['enter'], function() {
+      Mousetrap.bind(['enter'], function () {
         var elemsToMove = dom.songBox.find(".selected");
         var clones = elemsToMove.clone();
         clones.animate({
           opacity: 0
-        }, function() {
+        }, function () {
           elemsToMove.removeClass('selected');
           clones.removeClass('selected');
           clones.css({
@@ -215,7 +229,7 @@
         });
         elemsToMove.addClass('added');
         clones.appendTo(dom.playlistBox);
-        dom.playlistBox.find('span').on('click', function() {
+        dom.playlistBox.find('span').on('click', function () {
           var thisUL = $(this).closest('ul');
           var value = $(this).data("value");
           var elems = thisUL.find('[data-value="' + value + '"]');
@@ -224,7 +238,7 @@
         });
       });
 
-      Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü', 'backspace'], function() {
+      Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü', 'backspace'], function () {
         if (!filterBox.data("open")) {
           filterBox.data("open", true);
           filterBox.show();
@@ -233,7 +247,7 @@
         if (null !== filterBoxTimeout) {
           window.clearTimeout(filterBoxTimeout);
         }
-        filterBoxTimeout = window.setTimeout(function() {
+        filterBoxTimeout = window.setTimeout(function () {
           var currentSongList = [];
           var filterQuery = filterBox.val();
           if (null !== filterQuery && undefined !== filterQuery) {
@@ -263,43 +277,32 @@
         }, 500);
       });
 
-      Mousetrap.bind('tab', function() {
+      Mousetrap.bind('tab', function () {
         Audica.setViewState('playList');
         return false;
       });
     };
 
-    bindKeysToView.playList = function() {
-      Mousetrap.bind(['del'], function() {
+    bindKeysToView.playList = function () {
+      Mousetrap.bind(['del'], function () {
         var elems = dom.playlistBox.find(".selected");
-        elems.each(function() {
+        elems.each(function () {
           var song = dom.songBox.find('[data-song="' + $(this).data('song') + '"]');
           song.removeClass('added');
         });
         elems.remove();
       });
 
-      Mousetrap.bind('tab', function() {
+      Mousetrap.bind('tab', function () {
         Audica.setViewState('search');
         return false;
       });
 
-      Mousetrap.bind('down', function() {});
-      Mousetrap.bind('up', function() {});
+      Mousetrap.bind('down', function () {});
+      Mousetrap.bind('up', function () {});
     };
 
     bindKeysToView[Audica.getViewState()].call(Audica);
-
-    var findNextByPositionX = function(dir) {
-      var currentXClass = Audica.positionXClassMap[Audica.getSongBoxPositionX()];
-      var currentXValue = Audica.getSongBoxPositionY().find(currentXClass).data('value');
-      var tmpNext = Audica.getSongBoxPositionY();
-      //TODO maybe replace with for loop (secure)
-      while (tmpNext.find(currentXClass).data('value') === currentXValue) {
-        tmpNext = tmpNext[dir]();
-      }
-      return tmpNext;
-    };
   };
 
   function Audica() {
@@ -326,10 +329,10 @@
     var songBoxPositionX = 0;
 
     //  Getter & Setter
-    this.getViewState = function() {
+    this.getViewState = function () {
       return viewState;
     };
-    this.setViewState = function(newViewState) {
+    this.setViewState = function (newViewState) {
       var oldState = viewState;
       viewState = newViewState;
       this.trigger('viewStateChanged', {
@@ -337,22 +340,22 @@
         to: viewState
       });
     };
-    this.getSongBoxPositionX = function() {
+    this.getSongBoxPositionX = function () {
       return songBoxPositionX;
     };
-    this.setSongBoxPositionX = function(positionX) {
+    this.setSongBoxPositionX = function (positionX) {
       songBoxPositionX = positionX;
     };
-    this.getSongBoxPositionY = function() {
+    this.getSongBoxPositionY = function () {
       return songBoxPositionY;
     };
-    this.setSongBoxPositionY = function(positionY) {
+    this.setSongBoxPositionY = function (positionY) {
       songBoxPositionY = positionY;
     };
-    this.getNotScrobbled = function() {
+    this.getNotScrobbled = function () {
       return notScrobbled;
     };
-    this.setNotScrobbled = function(scrobbled) {
+    this.setNotScrobbled = function (scrobbled) {
       notScrobbled = scrobbled;
     };
   }
@@ -377,12 +380,24 @@
     timeField: null
   };
 
-  Audica.prototype.firstPlayListElement = function() {
+  Audica.prototype.firstPlayListElement = function () {
     return this.Dom.playlistBox.find("li :first");
   };
 
-  Audica.prototype.initDom = function() {
-    for (var selector in this.Dom) {
+  function checkDomElements(dom) {
+    var selector = null;
+    for (selector in dom) {
+      if (dom.hasOwnProperty(selector)) {
+        if (null === dom[selector] || undefined === dom[selector]) {
+          throw new Error('"' + selector + '" does not exist in DOM!');
+        }
+      }
+    }
+  }
+
+  Audica.prototype.initDom = function () {
+    var selector = null;
+    for (selector in this.Dom) {
       if (this.Dom.hasOwnProperty(selector)) {
         this.Dom[selector] = $('#' + selector);
       }
@@ -392,17 +407,7 @@
     this.applyCoverArtStyle();
   };
 
-  function checkDomElements(dom){
-    for (var selector in dom) {
-      if (dom.hasOwnProperty(selector)) {
-        if(null === dom[selector] || undefined === dom[selector]){
-          throw new Error('"' + selector + '" does not exist in DOM!');
-        }
-      }
-    }
-  }
-
-  Audica.prototype.setFirstPlaylistElement = function(song) {
+  Audica.prototype.setFirstPlaylistElement = function (song) {
     var li = $('<li data-song="' + escape(JSON.stringify(song)) + '"><span>' + song.artist + '</span>g / <span>' + song.album + '</span> / <span>' + song.track + '.</span> <span>' + song.title + '</span></li>');
 
     var firstPlayListElement = this.firstPlayListElement();
@@ -413,14 +418,13 @@
     }
   };
 
-  Audica.prototype.clearPlaylist = function() {
+  Audica.prototype.clearPlaylist = function () {
     if (this.Dom.playlistBox) {
       this.Dom.playlistBox.empty();
     }
   };
 
-
-  Audica.prototype.playSong = function(song) {
+  Audica.prototype.playSong = function (song) {
     this.song = song;
     this.trigger('onStartPlayingSong', {
       song: song
@@ -444,7 +448,7 @@
     });
   };
 
-  Audica.prototype.nextSong = function() {
+  Audica.prototype.nextSong = function () {
     var song = this.getFirstPlaylistElement();
     if (null !== song) {
       this.playSong(song);
@@ -458,7 +462,7 @@
     this.trigger('nextSong');
   };
 
-  Audica.prototype.previousSong = function() {
+  Audica.prototype.previousSong = function () {
     if (this.songHistory.length > 0) {
       var history = this.songHistory.pop();
       var song = this.songDb.query({
@@ -482,32 +486,32 @@
     this.trigger('previousSong');
   };
 
-  Audica.prototype.getFirstPlaylistElement = function() {
+  Audica.prototype.getFirstPlaylistElement = function () {
+    var result = null;
     var elements = this.firstPlayListElement();
     if (elements.length > 0) {
-      return JSON.parse(unescape(elements.data('song')));
-    } else {
-      return null;
+      result = JSON.parse(unescape(elements.data('song')));
     }
+    return result;
   };
 
-  Audica.prototype.getLastSong = function() {
+  Audica.prototype.getLastSong = function () {
     return this.songHistory[this.songHistory.length - 1] || null;
   };
 
-  Audica.prototype.removeFirstPlaylistElement = function() {
+  Audica.prototype.removeFirstPlaylistElement = function () {
     this.firstPlayListElement().detach();
     this.trigger('firstPlayListElementRemoved');
   };
 
-  Audica.prototype.updateMainView = function(artist, album, title) {
+  Audica.prototype.updateMainView = function (artist, album, title) {
     this.Dom.title.text(title);
     this.Dom.album.text(album);
     this.Dom.artist.text(artist);
     this.trigger('updateMainView');
   };
 
-  Audica.prototype.fillSongBox = function(songs) {
+  Audica.prototype.fillSongBox = function (songs) {
     var lis = "",
       i = 0,
       length = songs.length,
@@ -521,9 +525,9 @@
     this.bindSongBoxEvents();
   };
 
-  Audica.prototype.bindSongBoxEvents = function() {
+  Audica.prototype.bindSongBoxEvents = function () {
     var self = this;
-    this.Dom.songBox.find('span').on('click', function() {
+    this.Dom.songBox.find('span').on('click', function () {
       var value = $(this).data("value");
       var clazz = $(this).attr('class');
       var yIndex = $(this).closest('li');
@@ -537,7 +541,7 @@
     });
   };
 
-  Audica.prototype.closePlayerControlView = function() {
+  Audica.prototype.closePlayerControlView = function () {
     this.Dom.playerControlView.data("open", false);
     this.closePlayerControlViewTimerId = null;
     this.Dom.playerControlView.animate({
@@ -545,7 +549,7 @@
     });
   };
 
-  Audica.prototype.applyCoverArtStyle = function() {
+  Audica.prototype.applyCoverArtStyle = function () {
     // Use original window elem to set height because reflect is need this
     this.Dom.coverArt[0].height = $(document).height() * 0.6;
     this.Dom.coverArt[0].width = $(document).height() * 0.6;
@@ -557,14 +561,14 @@
     this.Dom.descriptionBox.css("padding-top", ($(document).height() - this.Dom.descriptionBox.height()) / 2);
   };
 
-  Audica.prototype.updateProgress = function() {
+  Audica.prototype.updateProgress = function () {
     var player = this.Dom.player[0];
     if (!player.paused) {
       this.Dom.progressBar.val(Math.round((player.currentTime * 100) / player.duration));
     }
   };
 
-  Audica.prototype.updateTimings = function() {
+  Audica.prototype.updateTimings = function () {
     if (this.Dom.playerControlView.data("open")) {
       var player = this.Dom.player[0];
       if (!player.paused) {
@@ -573,7 +577,7 @@
     }
   };
 
-  Audica.prototype.indicateSongBoxXPosition = function() {
+  Audica.prototype.indicateSongBoxXPosition = function () {
     var currentXClass = this.positionXClassMap[this.getSongBoxPositionX()];
     var songBox = this.Dom.songBox;
     var selectedElems = songBox.find('.selected');
@@ -581,7 +585,7 @@
     selectedElems.find(currentXClass).attr('positionX', true);
   };
 
-  Audica.prototype.collectSongs = function(songList, backendId, timestamp) {
+  Audica.prototype.collectSongs = function (songList, backendId, timestamp) {
     var i = 0,
       length = songList.length,
       song;
@@ -602,7 +606,7 @@
     this.trigger('collectSongs');
   };
 
-  Audica.prototype.updateSongList = function() {
+  Audica.prototype.updateSongList = function () {
     this.trigger('fillSongBox');
     this.trigger('updateSongList', {
       timestamp: $.now()
@@ -610,13 +614,13 @@
     this.trigger('finished');
   };
 
-  Audica.prototype.backgroundTasks = function() {
+  Audica.prototype.backgroundTasks = function () {
     this.updateProgress();
     this.updateTimings();
     this.scrobbleSong();
   };
 
-  Audica.prototype.scrobbleNowPlaying = function() {
+  Audica.prototype.scrobbleNowPlaying = function () {
     if (this.plugins.scrobbler) {
       var history = this.getLastSong();
       if (null !== history) {
@@ -625,7 +629,7 @@
           backendId: history.backendId
         }).get()[0];
         if (song) {
-          this.plugins.scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function(data) {
+          this.plugins.scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function (data) {
             if (undefined !== data.error) {
               switch (data.error) {
                 case 6:
@@ -642,7 +646,7 @@
     }
   };
 
-  Audica.prototype.scrobbleSong = function() {
+  Audica.prototype.scrobbleSong = function () {
     if (this.plugins.scrobbler) {
       var audio = this.Dom.player[0];
       var notScrobbled = this.getNotScrobbled();
@@ -656,16 +660,20 @@
             }).get()[0];
             if (null !== song) {
               var timestamp = Number((new Date()).getTime() / 1000);
-              this.plugins.scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function(data) {
+              this.plugins.scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function (data) {
                 if (undefined !== data.error) {
                   switch (data.error) {
                     case 6:
                     case 13:
-                      console.warn("Cannot scrobble the song there is a parameter missing/wrong!", data.message);
+                      Audica.trigger('WARN', {
+                        message: 'Cannot scrobble the song there is a parameter missing/wrong! - ' + data.message
+                      });
                       this.setNotScrobbled(true);
                       break;
                     default:
-                      alert("Cannot scrobble track to last.fm. " + data.error + " - " + data.message);
+                      Audica.trigger('ERROR', {
+                        message: 'Cannot scrobble track to last.fm. ' + data.error + ' - ' + data.message
+                      });
                   }
                 } else {
                   this.setNotScrobbled(false);
@@ -678,7 +686,7 @@
     }
   };
 
-  Audica.prototype.historyAdd = function() {
+  Audica.prototype.historyAdd = function () {
     var historyElem = {
       timestamp: $.now(),
       backendId: this.song.backendId,
@@ -688,14 +696,14 @@
     this.historyDb.query.insert(historyElem);
   };
 
-  Audica.prototype.historyShowByTime = function(direction) {
+  Audica.prototype.historyShowByTime = function (direction) {
     return this.historyDb.query().order('timestamp ' + direction).get();
   };
 
-  Audica.prototype.registerEvents = function() {
+  Audica.prototype.registerEvents = function () {
     var self = this;
     bindKeyEvents(this);
-    $(document).mousemove(function() {
+    $(document).mousemove(function () {
       var playerControlView = self.Dom.playerControlView;
       if ('player' === self.getViewState()) {
         if (null !== self.closePlayerControlViewTimerId) {
@@ -707,18 +715,18 @@
             height: "50px"
           });
         }
-        self.closePlayerControlViewTimerId = window.setTimeout(function() {
+        self.closePlayerControlViewTimerId = window.setTimeout(function () {
           self.closePlayerControlView();
         }, 3000);
 
       }
     });
 
-    this.Dom.coverArt.on('error', function() {
+    this.Dom.coverArt.on('error', function () {
       self.Dom.coverArt.attr('src', 'images/wholeNote.svg');
     });
 
-    var handleRightZone = function(event) {
+    var handleRightZone = function (event) {
       if ('search' === self.getViewState()) {
         var searchView = self.Dom.searchView;
         var playerView = self.Dom.playerView;
@@ -770,13 +778,13 @@
       }
     };
 
-    var selectPlayList = function() {
+    var selectPlayList = function () {
       if ('playList' !== self.getViewState()) {
         self.setViewState('playList');
       }
     };
 
-    var selectSongBox = function() {
+    var selectSongBox = function () {
       if ('search' !== self.getViewState()) {
         self.setViewState('search');
       }
@@ -795,7 +803,7 @@
       click: selectSongBox
     });
 
-    var handleLeftZone = function(event) {
+    var handleLeftZone = function (event) {
       var searchView = self.Dom.searchView;
       var playerView = self.Dom.playerView;
       var playerControlView = self.Dom.playerControlView;
@@ -852,13 +860,13 @@
       click: handleLeftZone
     });
 
-    this.Dom.player.on("ended", function() {
+    this.Dom.player.on("ended", function () {
       self.nextSong();
       self.scrobbleNowPlaying();
       self.setNotScrobbled(true);
     });
 
-    this.Dom.player.on("error", function(event) {
+    this.Dom.player.on("error", function (event) {
       var audio = $(this);
       var errorMsg = "The file '" + audio.src + "' cannot be played. The possible reasons is: ";
       switch (event.currentTarget.error.code) {
@@ -877,14 +885,25 @@
         default:
           errorMsg += "Unknown error with code '" + event.currentTarget.error.code + "' happened.";
       }
-      alert(errorMsg);
+      Audica.trigger('ERROR', {
+        message: errorMsg
+      });
+      // TODO trigger here player ended to play next song
     });
 
-    this.on('ERROR', function(args) {
+    this.on('INFO', function (args) {
       console.log(args.message);
     });
 
-    this.on('fillSongBox', function() {
+    this.on('ERROR', function (args) {
+      console.error(args.message);
+    });
+
+    this.on('WARN', function (args) {
+      console.warn(args.message);
+    });
+
+    this.on('fillSongBox', function () {
       var currentSongList = this.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
       this.fillSongBox(currentSongList);
     });
@@ -894,10 +913,10 @@
     this.on('previousSong', this.applyCoverArtStyle);
     this.songDb.init('song');
     this.historyDb.init('history');
-    this.on('readyCollectingSongs', function(args) {
+    this.on('readyCollectingSongs', function (args) {
       self.collectSongs(args.songList, args.backendId, args.timestamp);
     });
-    this.on('initReady', function() {
+    this.on('initReady', function () {
       if (this.pluginsToInitialize !== 0) {
         this.pluginsToInitialize--;
       } else {
@@ -905,10 +924,11 @@
       }
     });
 
-    $(window).on('beforeunload', function() {
+    $(window).on('beforeunload', function () {
+      var plugin = null;
       self.songDb.save();
       self.historyDb.save();
-      for (var plugin in self.plugins) {
+      for (plugin in self.plugins) {
         if (self.plugins.hasOwnProperty(plugin)) {
           if (self.plugins[plugin].db instanceof Function) {
             self.plugins[plugin].db.save.call();
@@ -917,11 +937,11 @@
       }
     });
 
-    $(window).on('resize', function() {
+    $(window).on('resize', function () {
       if (null !== self.resizeEventTimeoutId) {
         window.clearTimeout(self.resizeEventTimeoutId);
       }
-      self.resizeEventTimeoutId = window.setTimeout(function() {
+      self.resizeEventTimeoutId = window.setTimeout(function () {
         self.applyCoverArtStyle();
       }, 250);
     });
@@ -929,11 +949,11 @@
     this.trigger('registerEvents');
   };
 
-  Audica.prototype.encodeHtml = function(string) {
+  Audica.prototype.encodeHtml = function (string) {
     return $('<div />').text(string).html();
   };
 
-  Audica.prototype.on = function(eventName, fn) {
+  Audica.prototype.on = function (eventName, fn) {
     if (!this.eventList[eventName]) {
       this.eventList[eventName] = [];
     }
@@ -944,7 +964,7 @@
     return this;
   };
 
-  Audica.prototype.trigger = function(eventName) {
+  Audica.prototype.trigger = function (eventName) {
     if (!this.eventList[eventName]) {
       return false;
     }
@@ -961,13 +981,14 @@
     return this;
   };
 
-  Audica.prototype.extend = function(name, fn) {
+  Audica.prototype.extend = function (name, fn) {
     this.plugins[name] = fn;
   };
 
-  Audica.prototype.initPlugins = function() {
+  Audica.prototype.initPlugins = function () {
     var plugins = [];
-    for (var name in this.plugins) {
+    var name = null;
+    for (name in this.plugins) {
       if (this.plugins.hasOwnProperty(name)) {
         if (this.plugins[name].init instanceof Function) {
           plugins[plugins.length] = name;
@@ -976,9 +997,10 @@
     }
     var length = plugins.length,
       plugin;
+    var i = null;
     this.pluginsToInitialize = length - 1;
     if (length !== 0) {
-      for (var i = 0; i < length; ++i) {
+      for (i = 0; i < length; ++i) {
         plugin = plugins[i];
         this.plugins[plugin].init.call(this);
       }
@@ -987,16 +1009,16 @@
     }
   };
 
-  Audica.prototype.start = function() {
+  Audica.prototype.start = function () {
     var self = this;
     this.initDom();
     this.registerEvents();
     this.initPlugins();
-    window.setInterval(function() {
+    window.setInterval(function () {
       self.backgroundTasks();
     }, 1000);
   };
 
   window.Audica = new Audica();
 
-})(window, document, Mousetrap);
+}(window, document, Mousetrap));
