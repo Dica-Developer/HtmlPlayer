@@ -1,14 +1,4 @@
 describe("PlayerControl", function () {
-  it("Audica should be initialized", function () {
-    function MockPlugin() {
-      this.setPlaySrc = function (src, player) { };
-      this.setCoverArt = function (src, coverArt) { };
-    }
-
-    Audica.plugins.mockPlugin = new MockPlugin();
-    Audica.collectSongs(mockSongList, 'mockPlugin', $.now());
-    expect(Audica).toBeDefined();
-  });
 
   describe('Audica.PlayerControl without plugin', function () {
 
@@ -31,6 +21,8 @@ describe("PlayerControl", function () {
     });
 
     it('Audica.PlayerControl.next should trigger "ERROR - empty playlist"', function () {
+      Audica.clearPlaylist();
+
       spyOn(Audica, 'trigger');
       Audica.nextSong();
 
@@ -66,6 +58,20 @@ describe("PlayerControl", function () {
   });
 
   describe('Audica.PlayerControl with plugin mock', function () {
+
+    beforeEach(function() {
+      function MockPlugin() {
+        this.setPlaySrc = function (src, player) { };
+        this.setCoverArt = function (src, coverArt) { };
+      }
+      Audica.plugins.mockPlugin = new MockPlugin();
+      Audica.collectSongs(mockSongList, 'mockPlugin', $.now());
+    });
+
+    afterEach(function() {
+      Audica.plugins.mockPlugin = null;
+    });
+
     it('Audica.PlayerControl.play should trigger "onStartPlaying"', function () {
       spyOn(Audica, 'trigger');
       Audica.playSong(mockSongList[0]);

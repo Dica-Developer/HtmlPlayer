@@ -1,9 +1,4 @@
 describe("Player core", function () {
-  it("Audica should be initialized", function () {
-    //TODO find an other way to define Audica global and once
-    Audica.start();
-    expect(Audica).toBeDefined();
-  });
 
   it('Plugins should be empty', function () {
     expect(Audica.plugins).toEqual({});

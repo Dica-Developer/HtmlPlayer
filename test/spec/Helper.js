@@ -5,7 +5,7 @@ beforeEach(function() {
 
   subsonicSongList = getJSONFixture('songList.json');
   mockSongList = getJSONFixture('mockSonglist.json');
-  if(Audica){
-    Audica.clearPlaylist();
+  if (!Audica.eventList.domElementsSet){
+    Audica.start();
   }
 });

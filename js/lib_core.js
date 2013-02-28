@@ -387,9 +387,20 @@
         this.Dom[selector] = $('#' + selector);
       }
     }
+    checkDomElements(this.Dom);
     this.trigger('domElementsSet');
     this.applyCoverArtStyle();
   };
+
+  function checkDomElements(dom){
+    for (var selector in dom) {
+      if (dom.hasOwnProperty(selector)) {
+        if(null === dom[selector] || undefined === dom[selector]){
+          throw new Error('"' + selector + '" does not exist in DOM!');
+        }
+      }
+    }
+  }
 
   Audica.prototype.setFirstPlaylistElement = function(song) {
     var li = $('<li data-song="' + escape(JSON.stringify(song)) + '"><span>' + song.artist + '</span>g / <span>' + song.album + '</span> / <span>' + song.track + '.</span> <span>' + song.title + '</span></li>');
@@ -975,7 +986,6 @@
   };
 
   Audica.prototype.start = function() {
-    console.count('start');
     var self = this;
     this.initDom();
     this.registerEvents();
@@ -984,7 +994,6 @@
       self.backgroundTasks();
     }, 1000);
   };
-
 
   window.Audica = new Audica();
 

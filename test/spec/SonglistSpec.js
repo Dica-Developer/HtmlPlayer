@@ -8,24 +8,24 @@ describe("Songlist", function() {
 
     it('Key "down" should set active to next elem', function(){
       Mousetrap.trigger('down');
-      expect(Audica.Dom.songBox.find('li.active').index()).toEqual(0);
+      expect(0).toEqual(Audica.Dom.songBox.find('li.active').index());
       Mousetrap.trigger('down');
-      expect(Audica.Dom.songBox.find('li.active').index()).toEqual(1);
+      expect(1).toEqual(Audica.Dom.songBox.find('li.active').index());
       Mousetrap.trigger('down');
-      expect(Audica.Dom.songBox.find('li.active').index()).toEqual(2);
+      expect(2).toEqual(Audica.Dom.songBox.find('li.active').index());
       Mousetrap.trigger('down');
-      expect(Audica.Dom.songBox.find('li.active').index()).toEqual(3);
+      expect(3).toEqual(Audica.Dom.songBox.find('li.active').index());
     });
 
     it('Key "up" should set active to prev elem', function(){
       Mousetrap.trigger('up');
-      expect(Audica.Dom.songBox.find('li.active').index()).toEqual(9);
+      expect(9).toEqual(Audica.Dom.songBox.find('li.active').index());
       Mousetrap.trigger('up');
-      expect(Audica.Dom.songBox.find('li.active').index()).toEqual(8);
+      expect(8).toEqual(Audica.Dom.songBox.find('li.active').index());
       Mousetrap.trigger('up');
-      expect(Audica.Dom.songBox.find('li.active').index()).toEqual(7);
+      expect(7).toEqual(Audica.Dom.songBox.find('li.active').index());
       Mousetrap.trigger('up');
-      expect(Audica.Dom.songBox.find('li.active').index()).toEqual(6);
+      expect(6).toEqual(Audica.Dom.songBox.find('li.active').index());
     });
   });
 
