@@ -106,6 +106,14 @@ describe("PlayerControl", function () {
       expect(Audica.playSong).toHaveBeenCalledWith(mockSongList[0]);
     });
 
+    it('Audica.PlayerControl.previous should trigger "previousSong"', function () {
+      spyOn(Audica, 'trigger');
+      Audica.previousSong();
+
+      expect(Audica.trigger).toHaveBeenCalled();
+      expect(Audica.trigger).toHaveBeenCalledWith('previousSong');
+    });
+
     it('Key "p" should play previous song', function () {
       Audica.songHistory = [];
       spyOn(Audica, 'trigger');
@@ -125,15 +133,6 @@ describe("PlayerControl", function () {
       expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
     });
 
-    //TODO find a way to add mock play list to songDb and remove after test
-    xit('Audica.PlayerControl.previous should play song', function () {
-      spyOn(Audica, 'playSong');
-      Audica.previousSong();
-
-      var eventObject = {message:'No song found. Possible reason: Empty Playlist'};
-      expect(Audica.playSong).toHaveBeenCalled();
-      expect(Audica.playSong).toHaveBeenCalledWith(mockSongList[0]);
-    });
 
   });
 
