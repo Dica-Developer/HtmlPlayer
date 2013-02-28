@@ -8,11 +8,10 @@
   },
   "dependencies":{
     "grunt": "0.3.17",
-    "grunt-contrib": "0.3.0",
-    "colors": "0.6.0-1"
+    "grunt-contrib": "0.3.0"
   },
   "scripts": {
-    "test": "grunt test-local -v && phantomjs ./test/testRunner.js -v && grunt clean",
+    "test": "grunt travis -v && phantomjs ./test/testRunner.js -v && grunt clean",
     "travis": "grunt travis -v && phantomjs ./test/testRunner.js -v"
   }
 }
