@@ -890,6 +890,8 @@
     });
 
     this.on('domElementsSet', this.applyCoverArtStyle);
+    this.on('nextSong', this.applyCoverArtStyle);
+    this.on('previousSong', this.applyCoverArtStyle);
     this.songDb.init('song');
     this.historyDb.init('history');
     this.on('readyCollectingSongs', function(args) {
