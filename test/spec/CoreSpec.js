@@ -54,7 +54,7 @@ describe("Player core", function () {
       expect(Audica.Dom.playerView).toBe('div');
       expect(Audica.Dom.playerViewPreview).toBe('div');
       expect(Audica.Dom.playerControlView).toBe('div');
-//      expect(Audica.Dom.progress).toBe('progress');
+      expect(Audica.Dom.progressBar).toBe('progress');
       expect(Audica.Dom.searchView).toBe('div');
       expect(Audica.Dom.searchViewPreview).toBe('div');
       expect(Audica.Dom.songBox).toBe('ul');
@@ -103,25 +103,6 @@ describe("Player core", function () {
       expect(mousemoveEvent).toHaveBeenTriggered();
       expect(Audica.Dom.playerControlView.data('open')).toBeTruthy();
     });
-
-    it('Key "p" should play previous song', function () {
-      spyOn(Audica, 'trigger');
-      Mousetrap.trigger('p');
-
-      var eventObject = {message:'No song found. Possible reason: Empty History'};
-      expect(Audica.trigger).toHaveBeenCalled();
-      expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
-    });
-
-    it('Key "n" should play next song', function () {
-      spyOn(Audica, 'trigger');
-      Mousetrap.trigger('n');
-
-      var eventObject = {message:'No song found. Possible reason: Empty Playlist'};
-      expect(Audica.trigger).toHaveBeenCalled();
-      expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
-    });
-
 
     //skipped test
     xit('Key "Space" should play/pause song', function () {
