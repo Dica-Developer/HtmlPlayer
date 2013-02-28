@@ -715,7 +715,7 @@
     });
 
     this.Dom.coverArt.on('error', function() {
-      self.Dom.coverArt.attr('src', 'images/wholeNote.png');
+      self.Dom.coverArt.attr('src', 'images/wholeNote.svg');
     });
 
     var handleRightZone = function(event) {

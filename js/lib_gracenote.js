@@ -265,30 +265,30 @@
 //      $(window).on('beforeunload', function(){
 //        self.db.save();
 //      });
+//      Audica.on('playSong', function(args){
+//        var gnPreview = $('#gnPreview');
+//        gnPreview.hide();
+//        var song = args.song;
+//        var gn_id = self.db.query({'backendId': song.backendId},{'song_id': song.id}).select('gn_id');
+//        if(gn_id.length !== 0){
+//          $('#gnSuggestions').empty();
+//          gnPreview.show('slow');
+//          var currentSongMetadata = self.db.query({'gn_id': gn_id[0]}).select('mood','tempo');
+//          var mood = currentSongMetadata[0][0];
+//          var tempo = currentSongMetadata[0][1];
+//          var byMood = self.db.query({'mood': mood}).get();
+//          for (var i = 0; i < byMood.length; i++) {
+//            var obj = byMood[i];
+//            var trackList = Audica.songDb.query({'backendId': obj.backendId}, {'id': obj.song_id}).get();
+//            for (var j = 0; j < trackList.length; j++) {
+//              var track = trackList[j];
+//              addTrackToSuggestions(track);
+//            }
+//          }
+//        }
+//      });
 //    };
 
-  Audica.on('playSong', function(args){
-    var gnPreview = $('#gnPreview');
-    gnPreview.hide();
-    var song = args.song;
-    var gn_id = self.db.query({'backendId': song.backendId},{'song_id': song.id}).select('gn_id');
-    if(gn_id.length !== 0){
-      $('#gnSuggestions').empty();
-      gnPreview.show('slow');
-      var currentSongMetadata = self.db.query({'gn_id': gn_id[0]}).select('mood','tempo');
-      var mood = currentSongMetadata[0][0];
-      var tempo = currentSongMetadata[0][1];
-      var byMood = self.db.query({'mood': mood}).get();
-      for (var i = 0; i < byMood.length; i++) {
-        var obj = byMood[i];
-        var trackList = Audica.songDb.query({'backendId': obj.backendId}, {'id': obj.song_id}).get();
-        for (var j = 0; j < trackList.length; j++) {
-          var track = trackList[j];
-          addTrackToSuggestions(track);
-        }
-      }
-    }
-  });
 
 //    Audica.on('updateSongList', function (args) {
 //    _receiveList(args.timestamp);
