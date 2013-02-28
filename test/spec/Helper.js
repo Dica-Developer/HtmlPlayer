@@ -9,3 +9,9 @@ beforeEach(function() {
     Audica.start();
   }
 });
+
+afterEach(function(){
+  Audica.clearPlaylist();
+  Audica.songHistory = [];
+  Audica.Dom.songBox.empty();
+});
