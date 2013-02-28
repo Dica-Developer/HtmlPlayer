@@ -104,14 +104,13 @@ describe("Player core", function () {
       expect(Audica.Dom.playerControlView.data('open')).toBeTruthy();
     });
 
-    //skipped test
     xit('Key "Space" should play/pause song', function () {
 
       Mousetrap.trigger('space');
-      expect(Audica.Dom.player.paused).toBeFalsy();
+      expect(Audica.Dom.player[0].paused).toBeFalsy();
 
       Mousetrap.trigger('space');
-      expect(Audica.Dom.player.paused).toBeTruthy();
+      expect(Audica.Dom.player[0].paused).toBeTruthy();
     });
   });
 });
