@@ -659,24 +659,24 @@
               backendId: history.backendId
             }).get()[0];
             if (null !== song) {
-              var timestamp = Number((new Date()).getTime() / 1000);
+              var timestamp = Math.round((new Date()).getTime() / 1000);
               this.plugins.scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function (data) {
                 if (undefined !== data.error) {
                   switch (data.error) {
                     case 6:
                     case 13:
-                      Audica.trigger('WARN', {
+                      window.Audica.trigger('WARN', {
                         message: 'Cannot scrobble the song there is a parameter missing/wrong! - ' + data.message
                       });
-                      this.setNotScrobbled(true);
+                      window.Audica.setNotScrobbled(true);
                       break;
                     default:
-                      Audica.trigger('ERROR', {
+                      window.Audica.trigger('ERROR', {
                         message: 'Cannot scrobble track to last.fm. ' + data.error + ' - ' + data.message
                       });
                   }
                 } else {
-                  this.setNotScrobbled(false);
+                  window.Audica.setNotScrobbled(false);
                 }
               }, null);
             }
@@ -885,7 +885,7 @@
         default:
           errorMsg += "Unknown error with code '" + event.currentTarget.error.code + "' happened.";
       }
-      Audica.trigger('ERROR', {
+      window.Audica.trigger('ERROR', {
         message: errorMsg
       });
       // TODO trigger here player ended to play next song
