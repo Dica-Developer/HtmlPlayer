@@ -110,3 +110,27 @@ progress::-webkit-progress-value,
 progress::-moz-progress-bar {
     background-color:#BBB
 }
+#navigationWheel{
+    overflow: hidden; float: left;
+    #ring{
+        height: 110px;
+        width: 95%;
+        position: absolute;
+        top: 0;
+        -webkit-transform-style: preserve-3d;
+        -webkit-transition: all ease 300ms;
+        div{
+            position: absolute;
+            left: 10px; text-align: right;
+            padding: 15px;
+            background: rgba(0,0,0,0.8);
+            width: 50%;
+            font-size: 20px;
+            color: #bbbbbb;
+            &.activeTrack{
+                background: #8A9BA6;
+                color: #F2F2F2;
+            }
+        }
+    }
+}

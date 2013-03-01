@@ -60,11 +60,24 @@
 
     bindKeysToView.player = function () {
       Mousetrap.bind(['right'], function () {
+        console.log(audio);
         audio.currentTime = audio.currentTime + 10;
       });
 
       Mousetrap.bind(['left'], function () {
         audio.currentTime = audio.currentTime - 10;
+      });
+
+      Mousetrap.bind(['up'], function () {
+        Audica.trigger('scroll', {dir: 'up'});
+      });
+
+      Mousetrap.bind(['down'], function () {
+        Audica.trigger('scroll', {dir: 'down'});
+      });
+
+      Mousetrap.bind(['enter'], function () {
+        Audica.trigger('playCurrentSong');
       });
 
       Mousetrap.bind(['l'], function () {
@@ -236,6 +249,7 @@
           thisUL.find('.selected').removeClass('selected');
           elems.parent().addClass('selected');
         });
+        Audica.trigger('tracklistChanged');
       });
 
       Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü', 'backspace'], function () {
@@ -291,6 +305,7 @@
           song.removeClass('added');
         });
         elems.remove();
+        Audica.trigger('tracklistChanged');
       });
 
       Mousetrap.bind('tab', function () {
