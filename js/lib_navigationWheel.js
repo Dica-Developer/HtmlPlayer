@@ -23,7 +23,7 @@
       var length = list.length;
       var angle = 360 / length;
       //110 = single track div height
-      var radius = ((110 * length) / 2) / Math.PI;
+      var radius = ((160 * length) / 2) / Math.PI;
       playlistLength = length;
       scrollStep = angle;
       for (var i = 0; i < length; i++) {
@@ -32,12 +32,16 @@
         if(i === 0){
           clazz = 'activeTrack';
         }
-        var trackDiv = $('<div class="'+ clazz +'"><p>' + track.title+ '</p><p>by: '+ track.artist +'</p><p>from: '+ track.album +'</p></div>');
+        var trackDiv = $('<div class="'+ clazz +'">' +
+          '<p>' + track.title+ '</p>' +
+          '<p><span class="small">by:</span> '+ track.artist +'</p>' +
+          '<p><span class="small">from:</span> '+ track.album +'</p>' +
+          '</div>');
         trackDiv.css({'-webkit-transform':'rotateX(' + (angle * i) + 'deg) translateZ(' + radius + 'px)'});
         trackDiv.data('song', escape(JSON.stringify(track)));
 
         //80 plus 15 padding top/bottom = 110
-        trackDiv.height(80);
+        trackDiv.height(130);
         trackDiv.appendTo(Audica.Dom.ring);
       }
       scrollPosition = -(trackInFront * scrollStep);
@@ -64,7 +68,7 @@
 
     function getTracks(){
       var list = [];
-      var li = Audica.Dom.songBox.find('li');
+      var li = Audica.Dom.playlistBox.find('li');
       li.each(function(){
         list.push(JSON.parse(unescape($(this).data('song'))));
       });

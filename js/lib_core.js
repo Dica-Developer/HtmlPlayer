@@ -60,7 +60,6 @@
 
     bindKeysToView.player = function () {
       Mousetrap.bind(['right'], function () {
-        console.log(audio);
         audio.currentTime = audio.currentTime + 10;
       });
 
@@ -82,18 +81,18 @@
 
       Mousetrap.bind(['shift+up'], function () {
         var currentVolume = Audica.getVolume();
-        var volume = currentVolume + 0.01;
+        var volume = currentVolume + 0.02;
         if(volume > 1){
-          return;
+          return false;
         }
         Audica.setVolume(volume);
       });
 
       Mousetrap.bind(['shift+down'], function () {
         var currentVolume = Audica.getVolume();
-        var volume = currentVolume - 0.01;
+        var volume = currentVolume - 0.02;
         if(volume < 0){
-          return;
+          return false;
         }
         Audica.setVolume(volume);
       });

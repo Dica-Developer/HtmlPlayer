@@ -116,15 +116,19 @@ progress::-moz-progress-bar {
     #ring{
         height: 110px; width: 95%; position: absolute; top: 0;
         -webkit-transform-style: preserve-3d;
-        -webkit-transition: -webkit-transform ease 1s;
+        -webkit-transition: -webkit-transform 1s ease-in-out;
 
         div{
             position: absolute; left: 10px; text-align: right; padding: 15px;
-            background: rgba(0,0,0,0.8); width: 50%; font-size: 26px; color: #bbbbbb;
+            background: rgba(0,0,0,0.9); width: 50%; font-size: 30px; color: white;
 
-            p { text-shadow: 1px 1px 6px black; }
+            p {
+                text-shadow: 1px 1px 6px black;
 
-            &.activeTrack{ background: #8A9BA6; color: #F2F2F2; }
+                .small{ font-size: 16px; color: #c1c1c1;}
+            }
+
+            &.activeTrack{ background: #8A9BA6; color: white; }
         }
     }
 }
