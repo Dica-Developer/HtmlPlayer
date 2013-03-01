@@ -75,6 +75,14 @@
       var song = Audica.Dom.descriptionBox.find('.activeTrack').data('song');
       var songObj = JSON.parse(unescape(song));
       Audica.playSong(songObj);
+      Audica.applyCoverArtStyle();
+    }
+
+    function shuffle(){
+      trackInFront = Math.round(Math.random() * playlistLength);
+      scrollPosition = -(trackInFront * scrollStep);
+      scrollToCurrentTrack();
+      playCurrentSong();
     }
 
     var bindEvents = function(){
@@ -83,6 +91,7 @@
       Audica.on('tracklistChanged', getTracks);
       Audica.on('scroll', scrollTracklist);
       Audica.on('playCurrentSong', playCurrentSong);
+      Audica.on('shuffle', shuffle);
     };
 
     function initUI(){

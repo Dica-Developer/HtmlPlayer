@@ -112,25 +112,19 @@ progress::-moz-progress-bar {
 }
 #navigationWheel{
     overflow: hidden; float: left;
+
     #ring{
-        height: 110px;
-        width: 95%;
-        position: absolute;
-        top: 0;
+        height: 110px; width: 95%; position: absolute; top: 0;
         -webkit-transform-style: preserve-3d;
-        -webkit-transition: all ease 300ms;
+        -webkit-transition: -webkit-transform ease 1s;
+
         div{
-            position: absolute;
-            left: 10px; text-align: right;
-            padding: 15px;
-            background: rgba(0,0,0,0.8);
-            width: 50%;
-            font-size: 20px;
-            color: #bbbbbb;
-            &.activeTrack{
-                background: #8A9BA6;
-                color: #F2F2F2;
-            }
+            position: absolute; left: 10px; text-align: right; padding: 15px;
+            background: rgba(0,0,0,0.8); width: 50%; font-size: 26px; color: #bbbbbb;
+
+            p { text-shadow: 1px 1px 6px black; }
+
+            &.activeTrack{ background: #8A9BA6; color: #F2F2F2; }
         }
     }
 }

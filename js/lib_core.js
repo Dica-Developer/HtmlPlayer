@@ -80,6 +80,28 @@
         Audica.trigger('playCurrentSong');
       });
 
+      Mousetrap.bind(['shift+up'], function () {
+        var currentVolume = Audica.getVolume();
+        var volume = currentVolume + 0.01;
+        if(volume > 1){
+          return;
+        }
+        Audica.setVolume(volume);
+      });
+
+      Mousetrap.bind(['shift+down'], function () {
+        var currentVolume = Audica.getVolume();
+        var volume = currentVolume - 0.01;
+        if(volume < 0){
+          return;
+        }
+        Audica.setVolume(volume);
+      });
+
+      Mousetrap.bind(['s'], function(){
+        Audica.trigger('shuffle');
+      });
+
       Mousetrap.bind(['l'], function () {
         songBox.focus();
         songBox.width(boxWidth);
@@ -373,6 +395,10 @@
     this.setNotScrobbled = function (scrobbled) {
       notScrobbled = scrobbled;
     };
+    this.getVolume = function(){
+      return this.Dom.player[0].volume;
+    };
+
   }
 
   Audica.prototype.Dom = {
@@ -499,6 +525,10 @@
       });
     }
     this.trigger('previousSong');
+  };
+
+  Audica.prototype.setVolume = function(volume){
+    this.Dom.player[0].volume = volume;
   };
 
   Audica.prototype.getFirstPlaylistElement = function () {
