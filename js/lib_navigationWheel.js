@@ -1,104 +1,90 @@
-/*global $:true, Audica:true, AUDICA:true, Mousetrap, TAFFY:true, console:true, unescape, escape*/
-(function(window, $, Audica){
+/*global $:true, Audica:true, AUDICA:true, Mousetrap, TAFFY:true, console:true, unescape, escape, window, jQuery, Audica*/
+(function (window, $, Audica) {
   "use strict";
 
-  function NavigationWheel(){
-    var scrollPosition = 0,
-      scrollStep = 0,
+  function NavigationWheel() {
+    var scrollStep = 0,
       playlistLength = 0,
       trackInFront = 0,
       halfWindow = $(window).height() / 2,
       currentState = 'stopping',
       currentTrackID = null;
 
-
     var scrollToCurrentTrack = function () {
+      var scrollPosition = trackInFront * scrollStep;
       Audica.Dom.ring.find('.activeTrack').removeClass('activeTrack');
       Audica.Dom.ring.find('div').eq(trackInFront).addClass('activeTrack');
-      Audica.Dom.ring.css('-webkit-transform','rotateX(' + scrollPosition + 'deg)');
+      Audica.Dom.ring.css('-webkit-transform', 'rotateX(' + scrollPosition + 'deg)');
     };
 
-    var updateView = function(list){
+    var updateView = function (list) {
       Audica.Dom.ring.empty();
-      var length = list.length;
-      var angle = 360 / length;
+      playlistLength = list.length;
+      var angle = 360 / playlistLength;
       //110 = single track div height
-      var radius = ((160 * length) / 2) / Math.PI;
-      playlistLength = length;
+      var radius = ((160 * playlistLength) / 2) / Math.PI;
+      var i = 0;
       scrollStep = angle;
-      for (var i = 0; i < length; i++) {
+      for (i = 0; i < playlistLength; i++) {
         var track = list[i];
         var clazz = '';
-        if(i === 0){
+        if (i === 0) {
           clazz = 'activeTrack';
         }
-        var trackDiv = $('<div class="'+ clazz +'">' +
-          '<p>' + track.title+ '</p>' +
-          '<p><span class="small">by:</span> '+ track.artist +'</p>' +
-          '<p><span class="small">from:</span> '+ track.album +'</p>' +
+        var trackDiv = $('<div class="' + clazz + '">' +
+          '<p>' + track.title + '</p>' +
+          '<p><span class="small">by:</span> ' + track.artist + '</p>' +
+          '<p><span class="small">from:</span> ' + track.album + '</p>' +
           '</div>');
-        trackDiv.css({'-webkit-transform':'rotateX(' + (angle * i) + 'deg) translateZ(' + radius + 'px)'});
+        trackDiv.css({
+          '-webkit-transform': 'rotateX(' + -(angle * i) + 'deg) translateZ(' + radius + 'px)'
+        });
         trackDiv.data('song', escape(JSON.stringify(track)));
 
         //80 plus 15 padding top/bottom = 110
         trackDiv.height(130);
         trackDiv.appendTo(Audica.Dom.ring);
       }
-      scrollPosition = -(trackInFront * scrollStep);
-      scrollToCurrentTrack();
+      trackInFront = -1;
     };
 
-    var scrollTracklist = function(args){
-      if(args.dir === 'up'){
-        scrollPosition = scrollPosition - scrollStep;
-        trackInFront++;
-      } else{
-        scrollPosition = scrollPosition + scrollStep;
-        trackInFront--;
-      }
-
-      if(trackInFront < 0){
-        trackInFront = playlistLength - 1;
-      }else if(trackInFront >= playlistLength){
+    function scrollTracklist() {
+      if (trackInFront < 0) {
         trackInFront = 0;
+      } else if (trackInFront >= playlistLength) {
+        trackInFront = (playlistLength - 1);
+      } else {
+        scrollToCurrentTrack();
       }
-      scrollToCurrentTrack();
-    };
+    }
 
+    function scrollUp() {
+      trackInFront--;
+      scrollTracklist();
+    }
 
-    function getTracks(){
+    function scrollDown() {
+      trackInFront++;
+      scrollTracklist();
+    }
+
+    function getTracks() {
+      // TODO include history too
       var list = [];
       var li = Audica.Dom.playlistBox.find('li');
-      li.each(function(){
+      li.each(function () {
         list.push(JSON.parse(unescape($(this).data('song'))));
       });
       updateView(list);
     }
 
-    function playCurrentSong(){
-      var song = Audica.Dom.descriptionBox.find('.activeTrack').data('song');
-      var songObj = JSON.parse(unescape(song));
-      Audica.playSong(songObj);
-      Audica.applyCoverArtStyle();
-    }
-
-    function shuffle(){
-      trackInFront = Math.round(Math.random() * playlistLength);
-      scrollPosition = -(trackInFront * scrollStep);
-      scrollToCurrentTrack();
-      playCurrentSong();
-    }
-
-    var bindEvents = function(){
-
-//      Audica.on('scroll', scrollTracklist);
+    var bindEvents = function () {
       Audica.on('tracklistChanged', getTracks);
-      Audica.on('scroll', scrollTracklist);
-      Audica.on('playCurrentSong', playCurrentSong);
-      Audica.on('shuffle', shuffle);
+      Audica.on('nextSong', scrollDown);
+      Audica.on('previousSong', scrollUp);
     };
 
-    function initUI(){
+    function initUI() {
       var dom = Audica.Dom;
       dom.descriptionBox.remove();
       dom.descriptionBox = $('<div id="navigationWheel"></div>');
@@ -107,10 +93,13 @@
       var ring = $('<div id="ring"></div>');
       ring.appendTo(dom.descriptionBox);
       Audica.Dom.ring = ring;
-      Audica.Dom.ring.css({'-webkit-transform':'rotateX(' + scrollPosition + 'deg)', 'top': (halfWindow - 50)});
+      Audica.Dom.ring.css({
+        '-webkit-transform': 'rotateX(0deg)',
+        'top': (halfWindow - 50)
+      });
     }
 
-    this.init = function(){
+    this.init = function () {
       initUI();
       bindEvents();
       Audica.trigger('initReady');
@@ -118,4 +107,4 @@
   }
 
   window.Audica.extend('navigationWheel', new NavigationWheel());
-})(window, jQuery, Audica);
+}(window, jQuery, Audica));

@@ -67,22 +67,10 @@
         audio.currentTime = audio.currentTime - 10;
       });
 
-      Mousetrap.bind(['up'], function () {
-        Audica.trigger('scroll', {dir: 'up'});
-      });
-
-      Mousetrap.bind(['down'], function () {
-        Audica.trigger('scroll', {dir: 'down'});
-      });
-
-      Mousetrap.bind(['enter'], function () {
-        Audica.trigger('playCurrentSong');
-      });
-
       Mousetrap.bind(['shift+up'], function () {
         var currentVolume = Audica.getVolume();
         var volume = currentVolume + 0.02;
-        if(volume > 1){
+        if (volume > 1) {
           return false;
         }
         Audica.setVolume(volume);
@@ -91,14 +79,14 @@
       Mousetrap.bind(['shift+down'], function () {
         var currentVolume = Audica.getVolume();
         var volume = currentVolume - 0.02;
-        if(volume < 0){
+        if (volume < 0) {
           return false;
         }
         Audica.setVolume(volume);
       });
 
-      Mousetrap.bind(['s'], function(){
-        Audica.trigger('shuffle');
+      Mousetrap.bind(['s'], function () {
+        Audica.shuffle();
       });
 
       Mousetrap.bind(['l'], function () {
@@ -127,6 +115,9 @@
       });
 
       Mousetrap.bind(['p'], function () {
+        Audica.trigger('scroll', {
+          dir: 'up'
+        });
         Audica.previousSong();
         Audica.scrobbleNowPlaying();
         Audica.setNotScrobbled(true);
@@ -394,7 +385,7 @@
     this.setNotScrobbled = function (scrobbled) {
       notScrobbled = scrobbled;
     };
-    this.getVolume = function(){
+    this.getVolume = function () {
       return this.Dom.player[0].volume;
     };
 
@@ -424,6 +415,10 @@
     return this.Dom.playlistBox.find("li :first");
   };
 
+  Audica.prototype.getNthPlayListElement = function (pos) {
+    return this.Dom.playlistBox.find('li :nth(' + pos + ')');
+  };
+
   function checkDomElements(dom) {
     var selector = null;
     for (selector in dom) {
@@ -447,15 +442,18 @@
     this.applyCoverArtStyle();
   };
 
-  Audica.prototype.setFirstPlaylistElement = function (song) {
-    var li = $('<li data-song="' + escape(JSON.stringify(song)) + '"><span>' + song.artist + '</span>g / <span>' + song.album + '</span> / <span>' + song.track + '.</span> <span>' + song.title + '</span></li>');
-
+  Audica.prototype.setFirstPlaylistElement = function (li) {
     var firstPlayListElement = this.firstPlayListElement();
     if (firstPlayListElement.length > 0) {
       li.insertBefore(firstPlayListElement);
     } else {
       li.appendTo(this.Dom.playlistBox);
     }
+  };
+
+  Audica.prototype.setSongAsFirstPlaylistElement = function (song) {
+    var li = $('<li data-song="' + escape(JSON.stringify(song)) + '"><span>' + song.artist + '</span>g / <span>' + song.album + '</span> / <span>' + song.track + '.</span> <span>' + song.title + '</span></li>');
+    this.setFirstPlaylistElement(li);
   };
 
   Audica.prototype.clearPlaylist = function () {
@@ -494,12 +492,12 @@
       this.playSong(song);
       this.removeFirstPlaylistElement();
       this.historyAdd(song);
+      this.trigger('nextSong');
     } else {
       this.trigger('ERROR', {
         message: 'No song found. Possible reason: Empty Playlist'
       });
     }
-    this.trigger('nextSong');
   };
 
   Audica.prototype.previousSong = function () {
@@ -512,7 +510,8 @@
 
       if (null !== song && undefined !== song) {
         this.playSong(song);
-        this.setFirstPlaylistElement(song);
+        this.setSongAsFirstPlaylistElement(song);
+        this.trigger('previousSong');
       } else {
         this.trigger('ERROR', {
           message: 'No song found. Possible reason: Empty Playlist'
@@ -523,10 +522,9 @@
         message: 'No song found. Possible reason: Empty History'
       });
     }
-    this.trigger('previousSong');
   };
 
-  Audica.prototype.setVolume = function(volume){
+  Audica.prototype.setVolume = function (volume) {
     this.Dom.player[0].volume = volume;
   };
 
@@ -537,6 +535,15 @@
       result = JSON.parse(unescape(elements.data('song')));
     }
     return result;
+  };
+
+  Audica.prototype.shuffle = function () {
+    var max = this.Dom.playlistBox.find("li").length;
+    var pickedSong = Math.floor((Math.random() * max) + 1);
+    var elem = this.getNthPlayListElement(pickedSong);
+    elem.detach();
+    this.setFirstPlaylistElement(elem);
+    this.trigger("tracklistChanged");
   };
 
   Audica.prototype.getLastSong = function () {
