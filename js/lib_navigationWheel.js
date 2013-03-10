@@ -5,7 +5,7 @@
   function NavigationWheel() {
     var scrollStep = 0,
       playlistLength = 0,
-      trackInFront = 0,
+      trackInFront = -1,
       halfWindow = $(window).height() / 2,
       currentState = 'stopping',
       currentTrackID = null;
@@ -45,7 +45,6 @@
         trackDiv.height(130);
         trackDiv.appendTo(Audica.Dom.ring);
       }
-      trackInFront = -1;
     };
 
     function scrollTracklist() {
@@ -71,6 +70,17 @@
     function getTracks() {
       // TODO include history too
       var list = [];
+      var i = 0;
+      var history = Audica.songHistory;
+      for (i = 0; i < history.length; i++) {
+        var song = Audica.songDb.query({
+          id: history[i].songId,
+          backendId: history[i].backendId
+        }).get()[0];
+        if (song) {
+          list.push(song);
+        }
+      }
       var li = Audica.Dom.playlistBox.find('li');
       li.each(function () {
         list.push(JSON.parse(unescape($(this).data('song'))));
