@@ -1,15 +1,15 @@
 /*global $:true, Audica:true, document:true,  Mousetrap:true */
 (function(window, Mousetrap, Audica){
   "use strict";
-  window.bindKeyEvents = function(Audica){
+  window.bindKeyEvents = function (Audica) {
     var bindKeysToView = {};
     var dom = Audica.Dom;
     var audio = dom.player[0];
     var songBox = dom.songBox;
     var playListBox = dom.playlistBox;
     var searchView = dom.searchView;
-    var boxWidth = (dom.documentWidth / 2) - 22 - 2;
-    var boxHeight = dom.documentHeight - 22;
+    var boxWidth = ($(document).width() / 2) - 22 - 2;
+    var boxHeight = $(document).height() - 22;
     var playerView = dom.playerView;
     var playerControlView = dom.playerControlView;
     var coverArtBox = dom.coverArtBox;
@@ -17,53 +17,99 @@
     var descriptionBox = dom.descriptionBox;
     var filterBoxTimeout = null;
 
-    Audica.on('viewStateChanged', function(args){
+    Audica.on('viewStateChanged', function (args) {
       Mousetrap.reset();
       bindKeysToView[args.to].call(this);
+      if (args.to === 'search' && dom.songBox.find('li').length === 0) {
+        var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
+        Audica.fillSongBox(currentSongList);
+      }
     });
 
-    bindKeysToView.player = function(){
-      Mousetrap.bind(['right'], function(){
+    bindKeysToView.player = function () {
+      Mousetrap.bind(['right'], function () {
         audio.currentTime = audio.currentTime + 10;
       });
 
-      Mousetrap.bind(['left'], function(){
+      Mousetrap.bind(['left'], function () {
         audio.currentTime = audio.currentTime - 10;
       });
 
-      Mousetrap.bind(['l'], function(){
+      Mousetrap.bind(['shift+up'], function () {
+        var currentVolume = Audica.getVolume();
+        var volume = currentVolume + 0.02;
+        if (volume > 1) {
+          return false;
+        }
+        Audica.setVolume(volume);
+      });
+
+      Mousetrap.bind(['shift+down'], function () {
+        var currentVolume = Audica.getVolume();
+        var volume = currentVolume - 0.02;
+        if (volume < 0) {
+          return false;
+        }
+        Audica.setVolume(volume);
+      });
+
+      Mousetrap.bind(['s'], function () {
+        Audica.shuffle();
+      });
+
+      Mousetrap.bind(['l'], function () {
         songBox.focus();
         songBox.width(boxWidth);
         songBox.height(boxHeight);
         playListBox.width(boxWidth);
         playListBox.height(boxHeight);
         searchView.height($(document).height());
-        searchView.animate({ left: 0 });
-        playerView.animate({ left: dom.documentWidth });
-        playerControlView.animate({ left: dom.documentWidth });
+        searchView.animate({
+          left: 0
+        });
+        playerView.animate({
+          left: $(document).width()
+        });
+        playerControlView.animate({
+          left: $(document).width()
+        });
         Audica.setViewState('search');
       });
 
-      Mousetrap.bind(['n'], function(){
+      Mousetrap.bind(['n'], function () {
         Audica.nextSong();
         Audica.scrobbleNowPlaying();
         Audica.setNotScrobbled(true);
       });
 
-      Mousetrap.bind(['p'], function(){
+      Mousetrap.bind(['p'], function () {
+        Audica.trigger('scroll', {
+          dir: 'up'
+        });
         Audica.previousSong();
         Audica.scrobbleNowPlaying();
         Audica.setNotScrobbled(true);
       });
 
-      Mousetrap.bind(['space'], function(){
+      Mousetrap.bind(['space'], function () {
         return audio.paused ? audio.play() : audio.pause();
       });
 
     };
 
-    bindKeysToView.search = function(){
-      Mousetrap.bind(['right'], function(){
+    bindKeysToView.search = function () {
+      function findNextByPositionX(dir) {
+        var currentXClass = Audica.positionXClassMap[Audica.getSongBoxPositionX()];
+        var currentXValue = Audica.getSongBoxPositionY().find(currentXClass).data('value');
+        var tmpNext = Audica.getSongBoxPositionY();
+        //TODO maybe replace with for loop (secure)
+        while (tmpNext.find(currentXClass).data('value') === currentXValue) {
+          tmpNext = tmpNext[dir]();
+        }
+        return tmpNext;
+      }
+
+      Mousetrap.bind(['right'], function () {
         var x = Audica.getSongBoxPositionX();
         if (3 === x) {
           Audica.setSongBoxPositionX(0);
@@ -74,7 +120,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['left'], function(){
+      Mousetrap.bind(['left'], function () {
         var x = Audica.getSongBoxPositionX();
         if (0 === x) {
           Audica.setSongBoxPositionX(3);
@@ -85,7 +131,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['up'], function(){
+      Mousetrap.bind(['up'], function () {
         var prev = null;
         if (!Audica.getSongBoxPositionY()) {
           Audica.setSongBoxPositionY(songBox.find('li').eq(0));
@@ -106,8 +152,8 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['down'], function(){
-        if(filterBox.data.open){
+      Mousetrap.bind(['down'], function () {
+        if (filterBox.data.open) {
           filterBox.data("open", false);
           filterBox.blur();
           songBox.focus();
@@ -134,7 +180,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['escape'], function(){
+      Mousetrap.bind(['escape'], function () {
         if (filterBox.data("open")) {
           filterBox.data("open", false);
           filterBox.blur();
@@ -142,27 +188,37 @@
           filterBox.hide();
           filterBox.val("");
         } else {
-          searchView.animate({ left: -1 * dom.documentWidth });
-          playerView.animate({ left: "0" });
-          playerControlView.animate({ left: "0" });
+          searchView.animate({
+            left: -1 * $(document).width()
+          });
+          playerView.animate({
+            left: "0"
+          });
+          playerControlView.animate({
+            left: "0"
+          });
           if (audio.paused) {
             Audica.nextSong();
             Audica.scrobbleNowPlaying();
             Audica.setNotScrobbled(true);
           }
           Audica.setViewState('player');
-          coverArtBox.css("padding-top", (dom.documentHeight - coverArtBox.height()) / 2);
-          descriptionBox.css("padding-top", (dom.documentHeight - descriptionBox.height()) / 2);
+          coverArtBox.css("padding-top", ($(document).height() - coverArtBox.height()) / 2);
+          descriptionBox.css("padding-top", ($(document).height() - descriptionBox.height()) / 2);
         }
       });
 
-      Mousetrap.bind(['enter'], function(){
+      Mousetrap.bind(['enter'], function () {
         var elemsToMove = dom.songBox.find(".selected");
         var clones = elemsToMove.clone();
-        clones.animate({opacity: 0}, function(){
+        clones.animate({
+          opacity: 0
+        }, function () {
           elemsToMove.removeClass('selected');
           clones.removeClass('selected');
-          clones.css({opacity: 1});
+          clones.css({
+            opacity: 1
+          });
         });
         elemsToMove.addClass('added');
         clones.appendTo(dom.playlistBox);
@@ -173,9 +229,10 @@
           thisUL.find('.selected').removeClass('selected');
           elems.parent().addClass('selected');
         });
+        Audica.trigger('tracklistChanged');
       });
 
-      Mousetrap.bind(['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','ä','ö','ü','backspace'], function(){
+      Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü', 'backspace'], function () {
         if (!filterBox.data("open")) {
           filterBox.data("open", true);
           filterBox.show();
@@ -189,12 +246,23 @@
           var filterQuery = filterBox.val();
           if (null !== filterQuery && undefined !== filterQuery) {
             // TODO If album medium number is available sort by it first
-            var dbQuery = [
-              { artist: { likenocase: filterQuery } },
-              { album: { likenocase: filterQuery } },
-              { genre: { likenocase: filterQuery } },
-              { title: { likenocase: filterQuery } }
-            ];
+            var dbQuery = [{
+              artist: {
+                likenocase: filterQuery
+              }
+            }, {
+              album: {
+                likenocase: filterQuery
+              }
+            }, {
+              genre: {
+                likenocase: filterQuery
+              }
+            }, {
+              title: {
+                likenocase: filterQuery
+              }
+            }];
             currentSongList = Audica.songDb.query(dbQuery).order('artist asec, album asec, year asec, track asec, title asec').get();
           } else {
             currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
@@ -203,42 +271,32 @@
         }, 500);
       });
 
-      Mousetrap.bind('tab', function(){
+      Mousetrap.bind('tab', function () {
         Audica.setViewState('playList');
         return false;
       });
     };
 
-    bindKeysToView.playList = function(){
-      Mousetrap.bind(['del'], function(){
+    bindKeysToView.playList = function () {
+      Mousetrap.bind(['del'], function () {
         var elems = dom.playlistBox.find(".selected");
         elems.each(function () {
           var song = dom.songBox.find('[data-song="' + $(this).data('song') + '"]');
           song.removeClass('added');
         });
         elems.remove();
+        Audica.trigger('tracklistChanged');
       });
 
-      Mousetrap.bind('tab', function(){
+      Mousetrap.bind('tab', function () {
         Audica.setViewState('search');
         return false;
       });
 
-      Mousetrap.bind('down', function(){ });
-      Mousetrap.bind('up', function(){ });
+      Mousetrap.bind('down', function () {});
+      Mousetrap.bind('up', function () {});
     };
 
     bindKeysToView[Audica.getViewState()].call(Audica);
-
-    var findNextByPositionX = function(dir){
-      var currentXClass = Audica.positionXClassMap[Audica.getSongBoxPositionX()];
-      var currentXValue = Audica.getSongBoxPositionY().find(currentXClass).data('value');
-      var tmpNext = Audica.getSongBoxPositionY();
-      //TODO maybe replace with for loop (secure)
-      while(tmpNext.find(currentXClass).data('value') === currentXValue){
-        tmpNext = tmpNext[dir]();
-      }
-      return tmpNext;
-    };
   };
 })(window, Mousetrap, Audica);
