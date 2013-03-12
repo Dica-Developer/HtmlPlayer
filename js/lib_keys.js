@@ -68,6 +68,7 @@
           left: 0
         });
         Audica.setViewState('search');
+        dom.searchViewPreview.hide();
       });
 
       Mousetrap.bind(['n'], function () {
@@ -193,6 +194,7 @@
           Audica.setViewState('player');
           coverArtBox.css("padding-top", ($(document).height() - coverArtBox.height()) / 2);
           descriptionBox.css("padding-top", ($(document).height() - descriptionBox.height()) / 2);
+          dom.searchViewPreview.show();
         }
       });
 

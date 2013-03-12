@@ -513,6 +513,7 @@
           self.setViewState('player');
           coverArtBox.css("padding-top", ($(document).height() - coverArtBox.height()) / 2);
           descriptionBox.css("padding-top", ($(document).height() - descriptionBox.height()) / 2);
+          self.Dom.searchViewPreview.show();
         }
       }
     };
@@ -562,6 +563,7 @@
             left: -1 * $(document).width()
           });
         } else if ("click" === event.type) {
+          self.Dom.searchViewPreview.hide();
           songBox.focus();
           songBox.width(boxWidth);
           songBox.height(boxHeight);
