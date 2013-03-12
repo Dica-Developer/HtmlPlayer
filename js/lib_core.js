@@ -145,6 +145,7 @@
     checkDomElements(this.Dom);
     this.trigger('domElementsSet');
     this.applyCoverArtStyle();
+    this.Dom.searchView.css('left', -1 * $(document).width());
   };
 
   Audica.prototype.setFirstPlaylistElement = function (li) {
