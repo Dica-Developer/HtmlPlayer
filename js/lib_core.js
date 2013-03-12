@@ -495,32 +495,14 @@
           searchView.animate({
             left: -1 * Math.round($(document).width() * 0.05)
           });
-          playerView.animate({
-            left: Math.round($(document).width() * 0.95)
-          });
-          playerControlView.animate({
-            left: Math.round($(document).width() * 0.95)
-          });
         } else if ("mouseleave" === event.type) {
           searchView.height($(document).height());
           searchView.animate({
             left: "0"
           });
-          playerView.animate({
-            left: $(document).width()
-          });
-          playerControlView.animate({
-            left: $(document).width()
-          });
         } else if ("click" === event.type) {
           searchView.animate({
             left: -1 * $(document).width()
-          });
-          playerView.animate({
-            left: 0
-          });
-          playerControlView.animate({
-            left: 0
           });
           if (audio.paused) {
             self.nextSong();
@@ -573,22 +555,10 @@
           searchView.animate({
             left: -1 * Math.round($(document).width() * 0.95)
           });
-          playerView.animate({
-            left: Math.round($(document).width() * 0.05)
-          });
-          playerControlView.animate({
-            left: Math.round($(document).width() * 0.05)
-          });
         } else if ("mouseleave" === event.type) {
           searchView.height($(document).height());
           searchView.animate({
             left: -1 * $(document).width()
-          });
-          playerView.animate({
-            left: 0
-          });
-          playerControlView.animate({
-            left: 0
           });
         } else if ("click" === event.type) {
           songBox.focus();
@@ -599,12 +569,6 @@
           searchView.height($(document).height());
           searchView.animate({
             left: 0
-          });
-          playerView.animate({
-            left: $(document).width()
-          });
-          playerControlView.animate({
-            left: $(document).width()
           });
           self.setViewState('search');
         }

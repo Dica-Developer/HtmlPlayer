@@ -67,12 +67,6 @@
         searchView.animate({
           left: 0
         });
-        playerView.animate({
-          left: $(document).width()
-        });
-        playerControlView.animate({
-          left: $(document).width()
-        });
         Audica.setViewState('search');
       });
 
@@ -190,12 +184,6 @@
         } else {
           searchView.animate({
             left: -1 * $(document).width()
-          });
-          playerView.animate({
-            left: "0"
-          });
-          playerControlView.animate({
-            left: "0"
           });
           if (audio.paused) {
             Audica.nextSong();
