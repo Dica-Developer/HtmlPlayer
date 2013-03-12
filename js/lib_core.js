@@ -459,7 +459,7 @@
 
   Audica.prototype.registerEvents = function () {
     var self = this;
-    bindKeyEvents(this);
+    window.bindKeyEvents(this);
     $(document).mousemove(function () {
       var playerControlView = self.Dom.playerControlView;
       if ('player' === self.getViewState()) {

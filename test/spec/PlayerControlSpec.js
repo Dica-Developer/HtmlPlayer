@@ -18,6 +18,7 @@ describe("PlayerControl", function () {
       var eventObject = {message:'Cannot handle songs from backend subsonic.'};
       expect(Audica.trigger).toHaveBeenCalled();
       expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
+      expect(Audica.trigger).not.toHaveBeenCalledWith('nextSong');
     });
 
     it('Audica.PlayerControl.next should trigger "ERROR - empty playlist"', function () {
@@ -31,14 +32,6 @@ describe("PlayerControl", function () {
       expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
     });
 
-    it('Audica.PlayerControl.next should trigger "nextSong"', function () {
-      spyOn(Audica, 'trigger');
-      Audica.nextSong();
-
-      expect(Audica.trigger).toHaveBeenCalled();
-      expect(Audica.trigger).toHaveBeenCalledWith('nextSong');
-    });
-
     it('Audica.PlayerControl.previous should trigger "ERROR - empty history"', function () {
       spyOn(Audica, 'trigger');
       Audica.previousSong();
@@ -46,14 +39,7 @@ describe("PlayerControl", function () {
       var eventObject = {message:'No song found. Possible reason: Empty History'};
       expect(Audica.trigger).toHaveBeenCalled();
       expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
-    });
-
-    it('Audica.PlayerControl.previous should trigger "previousSong"', function () {
-      spyOn(Audica, 'trigger');
-      Audica.previousSong();
-
-      expect(Audica.trigger).toHaveBeenCalled();
-      expect(Audica.trigger).toHaveBeenCalledWith('previousSong');
+      expect(Audica.trigger).not.toHaveBeenCalledWith('previousSong');
     });
   });
 
@@ -98,20 +84,12 @@ describe("PlayerControl", function () {
     });
 
     it('Audica.PlayerControl.next should play song', function () {
-      Audica.setFirstPlaylistElement(mockSongList[0]);
+      Audica.setSongAsFirstPlaylistElement(mockSongList[0]);
       spyOn(Audica, 'playSong');
       Audica.nextSong();
 
       expect(Audica.playSong).toHaveBeenCalled();
       expect(Audica.playSong).toHaveBeenCalledWith(mockSongList[0]);
-    });
-
-    it('Audica.PlayerControl.previous should trigger "previousSong"', function () {
-      spyOn(Audica, 'trigger');
-      Audica.previousSong();
-
-      expect(Audica.trigger).toHaveBeenCalled();
-      expect(Audica.trigger).toHaveBeenCalledWith('previousSong');
     });
 
     it('Key "p" should play previous song', function () {
@@ -122,6 +100,7 @@ describe("PlayerControl", function () {
       var eventObject = {message:'No song found. Possible reason: Empty History'};
       expect(Audica.trigger).toHaveBeenCalled();
       expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
+      expect(Audica.trigger).not.toHaveBeenCalledWith('previousSong');
     });
 
     it('Key "n" should play next song', function () {
@@ -131,6 +110,7 @@ describe("PlayerControl", function () {
       var eventObject = {message:'No song found. Possible reason: Empty Playlist'};
       expect(Audica.trigger).toHaveBeenCalled();
       expect(Audica.trigger).toHaveBeenCalledWith('ERROR', eventObject);
+      expect(Audica.trigger).not.toHaveBeenCalledWith('nextSong');
     });
 
 

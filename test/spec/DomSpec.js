@@ -5,7 +5,7 @@ describe("Dom", function () {
   });
 
   it('PLaylist should contain 1 elem', function () {
-    Audica.setFirstPlaylistElement(subsonicSongList[0]);
+    Audica.setSongAsFirstPlaylistElement(subsonicSongList[0]);
     expect(Audica.Dom.playlistBox.find('li').length).toEqual(1);
   });
 });
