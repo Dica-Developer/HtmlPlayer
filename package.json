@@ -15,6 +15,7 @@
     "travis": "grunt travis -v && phantomjs ./test/testRunner.js -v"
   },
   "devDependencies": {
-    "grunt": "~0.3.17"
+    "grunt": "~0.3.17",
+    "grunt-contrib": "~0.3.0"
   }
 }
