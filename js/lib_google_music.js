@@ -1,8 +1,6 @@
-/*global FormData, XMLHttpRequest, Audica, console, localStorage, chrome*/
+/*global FormData, XMLHttpRequest, Audica, console, localStorage, chrome, window*/
 (function (window, Audica) {
   "use strict";
-
-
 
   function GoogleMusic() {
     var backendId = 'googleMusic';
@@ -39,20 +37,20 @@
         for (idx = 0; idx < playlist.length; idx++) {
           var track = playlist[idx];
           var song = {
-            "artist":track.artist,
-            "album":track.album,
-            "title":track.title,
-            "id":track.id,
-            "coverArt":track.albumArtUrl,
-            "contentType":null,
-            "track":track.track,
-            "cd":track.disc,
-            "duration":parseInt(track.durationMillis / 1000, 10),
-            "genre":track.genre,
-            "year":track.year,
-            "addedOn":timestamp,
-            "src":track.id,
-            "backendId":backendId
+            "artist": track.artist,
+            "album": track.album,
+            "title": track.title,
+            "id": track.id,
+            "coverArt": track.albumArtUrl,
+            "contentType": null,
+            "track": track.track,
+            "cd": track.disc,
+            "duration": parseInt(track.durationMillis / 1000, 10),
+            "genre": track.genre,
+            "year": track.year,
+            "addedOn": timestamp,
+            "src": track.id,
+            "backendId": backendId
           };
           songList.push(song);
         }
@@ -63,7 +61,7 @@
           if (reloadXsrf) {
             localStorage.removeItem('googlemusic_xt_cookie');
             updateSongList({
-              'timestamp':timestamp
+              'timestamp': timestamp
             });
           } else {
             console.log('Error on getting track list from google music "' + items + '".');
@@ -85,9 +83,9 @@
           getSongs(songList, contToken);
         } else {
           Audica.trigger('readyCollectingSongs', {
-            songList:songList,
-            backendId:backendId,
-            timestamp:timestamp
+            songList: songList,
+            backendId: backendId,
+            timestamp: timestamp
           });
         }
       };
@@ -103,10 +101,6 @@
         src = src.replace('=s130', '=s500');
       }
       coverArt.attr('src', 'http:' + src);
-    };
-
-    this.init = function () {
-      // nothing todo
     };
 
     Audica.on('updateSongList', updateSongList);
@@ -128,4 +122,4 @@
 
   Audica.extend('googleMusic', new GoogleMusic());
 
-})(window, Audica);
+}(window, Audica));
