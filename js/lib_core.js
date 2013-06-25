@@ -389,12 +389,12 @@
           this.plugins.scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function (data) {
             if (undefined !== data.error) {
               switch (data.error) {
-                case 6:
-                case 13:
-                  console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
-                  break;
-                default:
-                  console.error("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
+              case 6:
+              case 13:
+                console.warn("Cannot set now playing there is a parameter missing/wrong!", data.message);
+                break;
+              default:
+                console.error("Cannot set last.fm now playing track. " + data.error + " - " + data.message);
               }
             }
           }, null);
@@ -420,17 +420,17 @@
               this.plugins.scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function (data) {
                 if (undefined !== data.error) {
                   switch (data.error) {
-                    case 6:
-                    case 13:
-                      window.Audica.trigger('WARN', {
-                        message: 'Cannot scrobble the song there is a parameter missing/wrong! - ' + data.message
-                      });
-                      window.Audica.setNotScrobbled(true);
-                      break;
-                    default:
-                      window.Audica.trigger('ERROR', {
-                        message: 'Cannot scrobble track to last.fm. ' + data.error + ' - ' + data.message
-                      });
+                  case 6:
+                  case 13:
+                    window.Audica.trigger('WARN', {
+                      message: 'Cannot scrobble the song there is a parameter missing/wrong! - ' + data.message
+                    });
+                    window.Audica.setNotScrobbled(true);
+                    break;
+                  default:
+                    window.Audica.trigger('ERROR', {
+                      message: 'Cannot scrobble track to last.fm. ' + data.error + ' - ' + data.message
+                    });
                   }
                 } else {
                   window.Audica.setNotScrobbled(false);
@@ -593,20 +593,20 @@
       var audio = $(this);
       var errorMsg = "The file '" + audio.src + "' cannot be played. The possible reasons is: ";
       switch (event.currentTarget.error.code) {
-        case 4:
-          errorMsg += "The current media type '" + audio.type + "' isn't supported.";
-          break;
-        case 1:
-          errorMsg += "The user agent stopped fetching the media data.";
-          break;
-        case 2:
-          errorMsg += "A network error stopped the user agent fetching the media data.";
-          break;
-        case 3:
-          errorMsg += "Error on decoding the media data.";
-          break;
-        default:
-          errorMsg += "Unknown error with code '" + event.currentTarget.error.code + "' happened.";
+      case 4:
+        errorMsg += "The current media type '" + audio.type + "' isn't supported.";
+        break;
+      case 1:
+        errorMsg += "The user agent stopped fetching the media data.";
+        break;
+      case 2:
+        errorMsg += "A network error stopped the user agent fetching the media data.";
+        break;
+      case 3:
+        errorMsg += "Error on decoding the media data.";
+        break;
+      default:
+        errorMsg += "Unknown error with code '" + event.currentTarget.error.code + "' happened.";
       }
       window.Audica.trigger('ERROR', {
         message: errorMsg
@@ -640,9 +640,8 @@
       self.collectSongs(args.songList, args.backendId, args.timestamp);
     });
     this.on('initReady', function () {
-      if (this.pluginsToInitialize > 1) {
-        this.pluginsToInitialize--;
-      } else {
+      this.pluginsToInitialize--;
+      if (0 === this.pluginsToInitialize) {
         this.updateSongList();
       }
     });
