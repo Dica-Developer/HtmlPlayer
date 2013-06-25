@@ -8,10 +8,9 @@
   <link rel="stylesheet" href="css/checkbox.css" />
   <link rel="stylesheet" href="css/button.css" />
   <link rel="stylesheet" href="css/select.css" />
+
   <script type="text/javascript" src="../js/3rd/md5.js"></script>
   <script type="text/javascript" src="../js/3rd/jquery.min.js"></script>
-  <script type="text/javascript" src="../js/lib_lastfm.js"></script>
-  <script type="text/javascript" src="../js/lib_fileImporter.js"></script>
   <script type="text/javascript" src="main.js"></script>
 </head>
 <body>
@@ -37,7 +36,6 @@
                 <option value="" disabled="disabled">Select a backend</option>
                 <option value="ubuntuone">Ubuntu One</option>
                 <option value="subsonic">Subsonic</option>
-                <option value="fileImporter">Import files</option>
               </select>
             </div>
             <div class="section-group" id="ubuntuoneAuthenticationHelp">
@@ -56,10 +54,6 @@
                 <h3>password</h3>
                 <input spellcheck="false" id="passwordBox" type="password" size="30" />
               </div>
-            </div>
-            <div class="section-group" id="fileImporterFields">
-              <input id="fileImporter_upload" type="file" multiple="multiple" />
-              <div id="fileImporter_dropZone">Drop files here for import</div>
             </div>
           </section>
         </div>

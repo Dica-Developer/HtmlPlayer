@@ -1,4 +1,4 @@
-/*global document:true, $:true, Scrobbler:true, FileImporter:true, alert:true, chrome:true , localStorage:true*/
+/*global document:true, $:true, Scrobbler:true, FileImporter:true, alert:true, chrome:true , localStorage:true, hex_md5*/
 
 (function (document) {
   "use strict";
@@ -121,7 +121,8 @@
   }
 
   function lastFmLoginClick(e) {
-    e.target.href = (new Scrobbler(null, null)).getTokenUrl();
+    // TODO if the plugin registers a option page it should add this event too
+    e.target.href = "http://www.last.fm/api/auth/?api_key=ac2f676e5b95231ac4706b3dcb5d379d&cb=" + chrome.extension.getURL("options/authenticate_lastfm.html");
   }
 
   function lastfmUserLink(e) {
@@ -129,8 +130,17 @@
   }
 
   var saveField = function () {
-      localStorage[$(this).attr('id')] = JSON.stringify($(this).val());
-    };
+    localStorage[$(this).attr('id')] = JSON.stringify($(this).val());
+  };
+
+  function getSession(token, successCB, errorCB) {
+    var signature = hex_md5("api_keyac2f676e5b95231ac4706b3dcb5d379dmethodauth.getSessiontoken" + token + "29d73236629ddab3d9688d5378756134");
+    $.ajax("http://ws.audioscrobbler.com/2.0/?format=json&method=auth.getSession&api_key=ac2f676e5b95231ac4706b3dcb5d379d&api_sig=" + signature + "&token=" + token, {
+      type: "GET",
+      success: successCB,
+      error: errorCB
+    });
+  }
 
   $(function () {
     fill();
@@ -143,19 +153,6 @@
     $('#loginBox').on('change', saveLogin);
     $('#passwordBox').on('change', savePassword);
     $('#gracenoteClient_ID, #gracenoteWepAPI_ID').on('change', saveField);
-
-    var fileImporter = new FileImporter();
-    fileImporter.init();
-
-    document.querySelector('#fileImporter_dropZone').addEventListener('drop', function (event) {
-      event.stopPropagation();
-      event.preventDefault();
-      event.dataTransfer.dropEffect = 'copy';
-      fileImporter.writeFiles(event.dataTransfer.files);
-    }, false);
-    document.querySelector('#fileImporter_upload').addEventListener('change', function (event) {
-      fileImporter.writeFiles(event.target.files);
-    }, false);
 
     //noinspection JSUnresolvedVariable,JSUnresolvedFunction
     chrome.extension.onRequest.addListener(function (request, sender) {
@@ -172,7 +169,7 @@
         saveServerUrl();
       } else if (pattLastFM.test(request.url)) {
         match = pattLastFM.exec(request.url);
-        (new Scrobbler(null, null)).getSession(match[1], function (data) {
+        getSession(match[1], function (data) {
           if (undefined === data.error) { /** @namespace data.session */
             localStorage.audica_lastfm_sessionKey = data.session.key;
             localStorage.audica_lastfm_login = data.session.name;
