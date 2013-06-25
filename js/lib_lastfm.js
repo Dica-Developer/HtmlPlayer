@@ -1,8 +1,8 @@
-/*global $, Audica, chrome, hex_md5, localStorage*/
+/*global $, Audica, chrome, hex_md5, localStorage, window*/
 (function (window, Audica) {
   "use strict";
 
-var Scrobbler = function () {
+  var Scrobbler = function () {
     var _serviceUrl = "http://ws.audioscrobbler.com/2.0/";
     var _apiKey = "ac2f676e5b95231ac4706b3dcb5d379d";
     var _secret = "29d73236629ddab3d9688d5378756134";
@@ -50,10 +50,13 @@ var Scrobbler = function () {
         _sessionKey = localStorage.audica_lastfm_sessionKey;
         _login = localStorage.audica_lastfm_login;
       } else {
-        Audica.trigger('ERROR', {message:'Last.fm Scrobbler is not configured so not initialised!'});
+        Audica.trigger('ERROR', {
+          message: 'Last.fm Scrobbler is not configured so not initialised!'
+        });
       }
       Audica.trigger('initReady');
     };
   };
+
   Audica.extend('scrobbler', new Scrobbler());
-})(window, Audica);
+}(window, Audica));
