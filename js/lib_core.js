@@ -273,7 +273,7 @@
       i = 0,
       length = songs.length,
       song;
-    for (i; i < length; ++i) {
+    for (i; i < length; i++) {
       song = songs[i];
       var li = '<li ' + 'data-song="' + escape(JSON.stringify(song)) + '">' + '<span class="artist" data-value="' + escape(JSON.stringify(song.artist)) + '">' + this.encodeHtml(song.artist) + '</span> / ' + '<span class="album" data-value="' + escape(JSON.stringify(song.album)) + '">' + this.encodeHtml(song.album) + '</span> / ' + '<span class="track" data-value="' + escape(JSON.stringify(song.track)) + '">' + this.encodeHtml(song.track) + '.</span> ' + '<span class="title" data-value="' + escape(JSON.stringify(song.title)) + '">' + this.encodeHtml(song.title) + '</span>' + '</li>';
       lis = lis + li;
@@ -640,7 +640,7 @@
       self.collectSongs(args.songList, args.backendId, args.timestamp);
     });
     this.on('initReady', function () {
-      if (this.pluginsToInitialize !== 0) {
+      if (this.pluginsToInitialize > 1) {
         this.pluginsToInitialize--;
       } else {
         this.updateSongList();
@@ -714,20 +714,12 @@
     for (name in this.plugins) {
       if (this.plugins.hasOwnProperty(name)) {
         if (this.plugins[name].init instanceof Function) {
-          plugins[plugins.length] = name;
+          this.plugins[name].init.call(this);
+          this.pluginsToInitialize++;
         }
       }
     }
-    var length = plugins.length,
-      plugin;
-    var i = null;
-    this.pluginsToInitialize = length - 1;
-    if (length !== 0) {
-      for (i = 0; i < length; ++i) {
-        plugin = plugins[i];
-        this.plugins[plugin].init.call(this);
-      }
-    } else {
+    if (this.pluginsToInitialize < 1) {
       this.updateSongList();
     }
   };
