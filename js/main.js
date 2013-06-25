@@ -10,31 +10,8 @@
       console.log('Error: %s in %s row %s', error, src, row);
     };
 
-//    // TODO init plugins automatically and put them under Audica.Plugins
-//    Audica.plugins.fileSystem = new Filesystem();
-//    Audica.plugins.fileSystem.init();
-//    Audica.plugins.fileImporter = new FileImporter();
-//    Audica.plugins.fileImporter.init();
-//    Audica.plugins.radioImporter = new RadioImporter();
-//    Audica.plugins.radioImporter.init();
-//    Audica.plugins.googleDrive = new GoogleDrive();
-//    Audica.plugins.googleDrive.init();
-//    Audica.plugins.googleMusic = new GoogleMusic();
-//    Audica.plugins.googleMusic.init();
-//    Audica.plugins.scrobbler = new Scrobbler();
-//    Audica.plugins.scrobbler.init();
-//
-//
-//    var gracenoteClient_ID = localStorage.gracenoteClient_ID;
-//    var gracenoteWepAPI_ID = localStorage.gracenoteWepAPI_ID;
-//
-//    if (gracenoteWepAPI_ID && gracenoteClient_ID) {
-//      Audica.plugins.gracenote = new Gracenote();
-//      Audica.plugins.gracenote.init();
-//    }
-
-//    // TODO move this to FileImporter.init()
-//    // TODO add dropzone div also in FileImporter.init()
+    // TODO move this to FileImporter.init()
+    // TODO add dropzone div also in FileImporter.init()
     document.querySelector('#fileImporter_dropZone').addEventListener('drop', function (event) {
       event.stopPropagation();
       event.preventDefault();
@@ -48,11 +25,5 @@
         console.error('Not handled drop item!');
       }
     }, false);
-    // /TODO
-    //TODO should checked by plugin itself
-    if (null === localStorage.serverUrl || undefined === localStorage.serverUrl) {
-      //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-      document.location = chrome.extension.getURL("options/index.html");
-    }
   });
 }(window, document));
