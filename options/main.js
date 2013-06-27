@@ -1,3 +1,4 @@
+/*global document:true, $:true, Scrobbler:true, alert:true, chrome:true , localStorage:true, hex_md5*/
 
 (function (document) {
   "use strict";
@@ -31,16 +32,12 @@
     var value = $('#backendSelection').find(':selected').val();
     var ubuntuoneAuthenticationHelp = $("#ubuntuoneAuthenticationHelp");
     var subsonicAuthParams = $("#subsonicAuthParams");
-    if ("ubuntuone" === value) {
+    if ("subsonic" === value) {
+      ubuntuoneAuthenticationHelp.hide();
+      subsonicAuthParams.show();
+    } else {
       ubuntuoneAuthenticationHelp.show();
       subsonicAuthParams.hide();
-    } else if ("subsonic" === value) {
-      ubuntuoneAuthenticationHelp.hide();
-      subsonicAuthParams.show();
-      fileImporterFields.hide();
-    } else {
-      ubuntuoneAuthenticationHelp.hide();
-      subsonicAuthParams.show();
     }
   }
 
@@ -74,8 +71,8 @@
       } else {
         selectOption(selectElement, "subsonic");
       }
-      initBackend();
     }
+    initBackend();
 
     var gracenoteClient_ID = localStorage.gracenoteClient_ID;
     var gracenoteWepAPI_ID = localStorage.gracenoteWepAPI_ID;
