@@ -1,4 +1,3 @@
-/*global document:true, $:true, Scrobbler:true, FileImporter:true, alert:true, chrome:true , localStorage:true, hex_md5*/
 
 (function (document) {
   "use strict";
@@ -32,11 +31,9 @@
     var value = $('#backendSelection').find(':selected').val();
     var ubuntuoneAuthenticationHelp = $("#ubuntuoneAuthenticationHelp");
     var subsonicAuthParams = $("#subsonicAuthParams");
-    var fileImporterFields = $("#fileImporterFields");
     if ("ubuntuone" === value) {
       ubuntuoneAuthenticationHelp.show();
       subsonicAuthParams.hide();
-      fileImporterFields.hide();
     } else if ("subsonic" === value) {
       ubuntuoneAuthenticationHelp.hide();
       subsonicAuthParams.show();
@@ -44,7 +41,6 @@
     } else {
       ubuntuoneAuthenticationHelp.hide();
       subsonicAuthParams.show();
-      fileImporterFields.hide();
     }
   }
 
