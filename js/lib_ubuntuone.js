@@ -38,7 +38,7 @@
       var req = event.target;
       var ssr = req.responseXML.getElementsByTagName("subsonic-response");
       if (null !== ssr && undefined !== ssr && ssr.length > 0 && "ok" === ssr[0].getAttribute("status")) {
-        var songs = req.responseXML.getElementsByTagName("match");
+        var songs = req.responseXML.getElementsByTagName("song");
         var songList = [],
           i = 0,
           length = songs.length,
@@ -58,7 +58,7 @@
             "genre": song.getAttribute("genre"),
             "year": song.getAttribute("year") ? parseInt(song.getAttribute("year"), 0) : null,
             "addedOn": timestamp,
-            "src": _streamingUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.2.0&c=chrome&id=' + song.getAttribute("id"),
+            "src": _serverUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.10.5&c=chrome&id=' + song.getAttribute("id"),
             "backendId": backendId
           };
           songList.push(songObj);
@@ -82,7 +82,7 @@
 
     function _searchForSongs(timestamp, collectErrors, collectProgress) { //TODO collectErrors, collectProgress
       if (_serverUrl && _login && _password) {
-        var url = _serverUrl + "/search.view?u=" + _login + "&p=" + _password + "&v=1.2.0&c=chrome&count=100000&any=";
+        var url = _serverUrl + "/search3.view?u=" + _login + "&p=" + _password + "&v=1.10.5&c=chrome&query=*";
         var req = new XMLHttpRequest();
         req.open("GET", url, true);
         req.onload = function (event) {
