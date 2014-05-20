@@ -30,5 +30,8 @@
   "options_page": "options/index.html",
   "permissions": ["fileBrowserHandler", "unlimitedStorage", "https://one.ubuntu.com/music/api/1.0/*", "https://streaming.one.ubuntu.com/rest/*", "https://*.web.cddbp.net/webapi/xml/1.0/", "https://*.google.com/*"],
   "manifest_version": 2,
-  "content_security_policy": "default-src *; style-src 'self'; script-src 'self'; object-src 'self'; connect-src * ; img-src *"
+  "content_security_policy": "default-src *; style-src 'self'; script-src 'self'; object-src 'self'; connect-src * ; img-src *",
+  "web_accessible_resources": [
+    "/options/authenticate_lastfm.html"
+  ]
 }
