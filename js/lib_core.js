@@ -590,7 +590,7 @@
     });
 
     this.Dom.player.on("error", function (event) {
-      var audio = $(this);
+      var audio = event.currentTarget;
       var errorMsg = "The file '" + audio.src + "' cannot be played. The possible reasons is: ";
       switch (event.currentTarget.error.code) {
       case 4:
