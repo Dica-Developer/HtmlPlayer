@@ -24,8 +24,6 @@
      */
     var _password = null;
 
-    var _streamingUrl = 'https://streaming.one.ubuntu.com/rest';
-
     var _serverUrl = null;
 
     /**
