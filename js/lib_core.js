@@ -672,7 +672,19 @@
   };
 
   Audica.prototype.encodeHtml = function (string) {
-    return $('<div />').text(string).html();
+    if (string !== undefined && string !== null) {
+      return $('<div />').text(string).html();
+    } else {
+      return string;
+    }
+  };
+
+  Audica.prototype.decodeHtml = function (string) {
+    if (string !== undefined && string !== null) {
+      return $('<div />').html(string).text();
+    } else {
+      return string;
+    }
   };
 
   Audica.prototype.on = function (eventName, fn) {
