@@ -26,49 +26,69 @@
 
     var _serverUrl = null;
 
+    var _maxResultsPerRequest = 500;
+
     /**
      * @param {Event} event
      * @param {Number} timestamp
      * @private
      */
 
-    function _collect(event, timestamp) {
-      var req = event.target;
-      var ssr = req.responseXML.getElementsByTagName("subsonic-response");
-      if (null !== ssr && undefined !== ssr && ssr.length > 0 && "ok" === ssr[0].getAttribute("status")) {
-        var songs = req.responseXML.getElementsByTagName("song");
-        var songList = [],
-          i = 0,
-          length = songs.length,
-          song;
-        for (i; i < length; i++) {
-          song = songs[i];
-          var songObj = {
-            "artist": song.getAttribute("artist"),
-            "album": song.getAttribute("album"),
-            "title": song.getAttribute("title"),
-            "id": song.getAttribute("id"),
-            "coverArt": song.getAttribute('coverArt') ? _serverUrl + '/getCoverArt.view?u=' + _login + '&p=' + _password + "&v=1.10.2&c=chrome&size=1024&id=" + song.getAttribute('coverArt') : null,
-            "contentType": song.getAttribute("contentType"),
-            "track": song.getAttribute("track") ? parseInt(song.getAttribute("track"), 0) : null,
-            "cd": 0,
-            "duration": song.getAttribute("duration"),
-            "genre": song.getAttribute("genre"),
-            "year": song.getAttribute("year") ? parseInt(song.getAttribute("year"), 0) : null,
-            "addedOn": timestamp,
-            "src": _serverUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.10.5&c=chrome&id=' + song.getAttribute("id"),
-            "backendId": backendId
-          };
-          songList.push(songObj);
+    function _collect(response, timestamp) {
+      var songList = [];
+      var ssr = response["subsonic-response"];
+      if ("ok" === ssr.status) {
+        if (ssr.songsByGenre !== "") {
+          var songs = ssr.songsByGenre.song;
+          var i = 0,
+            length = songs.length,
+            song;
+          for (i; i < length; i++) {
+            song = songs[i];
+            var songObj = {
+              "artist": Audica.decodeHtml(song.artist),
+              "album": Audica.decodeHtml(song.album),
+              "title": Audica.decodeHtml(song.title),
+              "id": song.id,
+              "coverArt": song.coverArt ? _serverUrl + '/getCoverArt.view?u=' + _login + '&p=' + _password + "&v=1.10.2&c=chrome&size=1024&id=" + song.coverArt : null,
+              "contentType": song.contentType,
+              "track": song.track ? song.track : null,
+              "cd": 0,
+              "duration": song.duration,
+              "genre": Audica.decodeHtml(song.genre),
+              "year": song.year ? song.year : null,
+              "addedOn": timestamp,
+              "src": _serverUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.10.5&c=chrome&id=' + song.id,
+              "backendId": backendId
+            };
+            songList.push(songObj);
+          }
         }
-        Audica.trigger('readyCollectingSongs', {
-          songList: songList,
-          backendId: backendId,
-          timestamp: timestamp
-        });
       } else {
-        console.error("fetching songs failed with status '" + ssr.getAttribute("status") + "'");
+        console.error("fetching songs failed with status '" + ssr.status + "'");
       }
+      return songList;
+    }
+
+    function getSongsByGenre(timestamp, genre, offset, maxResultsPerRequest) {
+      var songList = [];
+      var url = _serverUrl + '/getSongsByGenre.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=chrome&f=json&count=' + maxResultsPerRequest + '&offset=' + offset + '&genre=' + encodeURIComponent(genre);
+      var req = new XMLHttpRequest();
+      req.open("GET", url, false);
+      req.send();
+      if (200 === req.status) {
+        var response = JSON.parse(req.response);
+        var collectedSongs = _collect(response, timestamp);
+        if (collectedSongs.length > 0) {
+          songList = songList.concat(collectedSongs);
+          if (collectedSongs.length === maxResultsPerRequest) {
+            songList = songList.concat(getSongsByGenre(timestamp, genre, (offset + maxResultsPerRequest), maxResultsPerRequest));
+          }
+        }
+      } else {
+        // todo error
+      }
+      return songList;
     }
 
     /**
@@ -77,14 +97,40 @@
      * @param {Function} collectProgress
      * @private
      */
-
-    function _searchForSongs(timestamp, collectErrors, collectProgress) { //TODO collectErrors, collectProgress
+    function _searchForSongs(timestamp, collectErrors, collectProgress) {
       if (_serverUrl && _login && _password) {
-        var url = _serverUrl + "/search3.view?u=" + _login + "&p=" + _password + "&v=1.10.5&c=chrome&query=*";
+        var url = _serverUrl + "/getGenres.view?u=" + _login + "&p=" + _password + "&v=1.10.2&c=chrome&f=json";
         var req = new XMLHttpRequest();
         req.open("GET", url, true);
         req.onload = function (event) {
-          _collect(event, timestamp);
+            var response = JSON.parse(event.currentTarget.response);
+            if (response.hasOwnProperty('subsonic-response')) {
+              var subSonicResponse = response['subsonic-response'];
+              if (subSonicResponse.status === 'ok') {
+                var songList = [];
+                var genres = subSonicResponse.genres.genre;
+                for (var i = 0; i < genres.length; i++) {
+                  try {
+                    songList = songList.concat(getSongsByGenre(timestamp, Audica.decodeHtml(genres[i].content), 0, _maxResultsPerRequest));
+                  } catch (e) {
+                    try {
+                      songList = songList.concat(getSongsByGenre(timestamp, Audica.decodeHtml(genres[i].content), 0, 30));
+                    } catch (e1) {
+                      console.log(e1);
+                    }
+                  }
+                }
+                Audica.trigger('readyCollectingSongs', {
+                  songList: songList,
+                  backendId: backendId,
+                  timestamp: timestamp
+                });
+              } else {
+                // TODO error
+              }
+            } else {
+              // todo error
+            }
         };
         req.onerror = collectErrors;
         req.onprogress = collectProgress;
