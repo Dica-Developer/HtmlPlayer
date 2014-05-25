@@ -1,21 +1,21 @@
-/*global document:true, $:true, Scrobbler:true, alert:true, chrome:true , localStorage:true, hex_md5*/
+/*global document:true, $:true, Scrobbler:true, alert:true, chrome:true , hex_md5*/
 
 (function (document) {
   "use strict";
 
   function saveLogin() {
     var login = $("#loginBox").val();
-    localStorage.authentication_login = JSON.stringify(login);
+    chrome.storage.local.set({ 'authentication_login': JSON.stringify(login)});
   }
 
   function savePassword() {
     var password = $("#passwordBox").val();
-    localStorage.authentication_password = JSON.stringify(password);
+    chrome.storage.local.set({ 'authentication_password': JSON.stringify(password)});
   }
 
   function saveServerUrl() {
     var serverUrl = $("#serverUrlBox").val();
-    localStorage.serverUrl = JSON.stringify(serverUrl);
+    chrome.storage.local.set({ 'serverUrl': JSON.stringify(serverUrl)});
   }
 
   function selectOption(selectElement, optionValue) {
@@ -30,13 +30,10 @@
 
   function initBackend() {
     var value = $('#backendSelection').find(':selected').val();
-    var ubuntuoneAuthenticationHelp = $("#ubuntuoneAuthenticationHelp");
     var subsonicAuthParams = $("#subsonicAuthParams");
     if ("subsonic" === value) {
-      ubuntuoneAuthenticationHelp.hide();
       subsonicAuthParams.show();
     } else {
-      ubuntuoneAuthenticationHelp.show();
       subsonicAuthParams.hide();
     }
   }
@@ -53,60 +50,58 @@
   }
 
   function fill() {
-    var password = localStorage.authentication_password;
-    if (null !== password && undefined !== password) {
-      $("#passwordBox").val(JSON.parse(password));
-    }
-    var login = localStorage.authentication_login;
-    if (null !== login && undefined !== login) {
-      $("#loginBox").val(JSON.parse(login));
-    }
-    var serverUrl = localStorage.serverUrl;
-    if (null !== serverUrl && undefined !== serverUrl) {
-      var serverUrlClear = JSON.parse(serverUrl);
-      $("#serverUrlBox").val(serverUrlClear);
-      var selectElement = $("#backendSelection");
-      if ("https://streaming.one.ubuntu.com" === serverUrlClear) {
-        selectOption(selectElement, "ubuntuone");
-      } else {
+    chrome.storage.local.get(['authentication_password', 'authentication_login', 'serverUrl', 'audica_lastfm_login', 'gracenoteClient_ID', 'gracenoteWepAPI_ID'], function () {
+      var password = items.authentication_password;
+      if (null !== password && undefined !== password) {
+        $("#passwordBox").val(JSON.parse(password));
+      }
+      var login = items.authentication_login;
+      if (null !== login && undefined !== login) {
+        $("#loginBox").val(JSON.parse(login));
+      }
+      var serverUrl = items.serverUrl;
+      if (null !== serverUrl && undefined !== serverUrl) {
+        var serverUrlClear = JSON.parse(serverUrl);
+        $("#serverUrlBox").val(serverUrlClear);
+        var selectElement = $("#backendSelection");
         selectOption(selectElement, "subsonic");
       }
-    }
-    initBackend();
+      initBackend();
 
-    var gracenoteClient_ID = localStorage.gracenoteClient_ID;
-    var gracenoteWepAPI_ID = localStorage.gracenoteWepAPI_ID;
+      var gracenoteClient_ID = items.gracenoteClient_ID;
+      var gracenoteWepAPI_ID = items.gracenoteWepAPI_ID;
 
-    if (gracenoteWepAPI_ID) {
-      $('#gracenoteWepAPI_ID').val(JSON.parse(gracenoteWepAPI_ID));
-    }
-    if (gracenoteClient_ID) {
-      $('#gracenoteClient_ID').val(JSON.parse(gracenoteClient_ID));
-    }
+      if (gracenoteWepAPI_ID) {
+        $('#gracenoteWepAPI_ID').val(JSON.parse(gracenoteWepAPI_ID));
+      }
+      if (gracenoteClient_ID) {
+        $('#gracenoteClient_ID').val(JSON.parse(gracenoteClient_ID));
+      }
 
-    var lastFmLogin = localStorage.audica_lastfm_login;
-    var lastfmUserLink = $("#lastfmUserLink");
-    var lastfmUserLabel = $("#lastfmUserLabel");
-    var lastLoginLink = $("#lastfmLoginLink");
-    var lastfmLogoutLink = $("#lastfmLogoutLink");
-    if (null !== lastFmLogin && undefined !== lastFmLogin) {
-      lastfmUserLink.text(lastFmLogin);
-      lastfmUserLink.show();
-      lastfmUserLabel.show();
-      lastfmLogoutLink.show();
-      lastLoginLink.hide();
-    } else {
-      lastLoginLink.show();
-      lastfmLogoutLink.hide();
-      lastfmUserLink.hide();
-      lastfmUserLabel.hide();
-    }
-    $("#backend, #scrobble, #gracenote, #about").on('click', selectTab);
+      var lastFmLogin = items.audica_lastfm_login;
+      var lastfmUserLink = $("#lastfmUserLink");
+      var lastfmUserLabel = $("#lastfmUserLabel");
+      var lastLoginLink = $("#lastfmLoginLink");
+      var lastfmLogoutLink = $("#lastfmLogoutLink");
+      if (null !== lastFmLogin && undefined !== lastFmLogin) {
+        lastfmUserLink.text(lastFmLogin);
+        lastfmUserLink.show();
+        lastfmUserLabel.show();
+        lastfmLogoutLink.show();
+        lastLoginLink.hide();
+      } else {
+        lastLoginLink.show();
+        lastfmLogoutLink.hide();
+        lastfmUserLink.hide();
+        lastfmUserLabel.hide();
+      }
+      $("#backend, #scrobble, #gracenote, #about").on('click', selectTab);
+    });
   }
 
   function logoutFromLastFm() {
-    delete localStorage.audica_lastfm_sessionKey;
-    delete localStorage.audica_lastfm_login;
+    chrome.storage.local.remove('audica_lastfm_sessionKey');
+    chrome.storage.local.remove('audica_lastfm_login');
     $("#lastfmUserLink").show();
     $("#lastfmLogoutLink").hide();
     $("#lastfmLoginLink").show();
@@ -123,7 +118,9 @@
   }
 
   var saveField = function () {
-    localStorage[$(this).attr('id')] = JSON.stringify($(this).val());
+    var objectToSave = {};
+    objectToSave[$(this).attr('id')] = JSON.stringify($(this).val());
+    chrome.storage.local.set(objectToSave);
   };
 
   function getSession(token, successCB, errorCB) {
@@ -150,22 +147,12 @@
     //noinspection JSUnresolvedVariable,JSUnresolvedFunction
     chrome.extension.onRequest.addListener(function (request, sender) {
       var pattLastFM = new RegExp("^chrome-extension://.+/options/authenticate_lastfm\\.html.token=(.+)$");
-      var patt = new RegExp("^ubuntuone://(.+):(.+)@syncml\\.one\\.ubuntu\\.com$");
       var match = null;
-      if (patt.test(request.url)) {
-        match = patt.exec(request.url);
-        $("#loginBox").val(match[1]);
-        $("#passwordBox").val(match[2]);
-        $("#serverUrlBox").val("https://one.ubuntu.com/music/api/1.0");
-        saveLogin();
-        savePassword();
-        saveServerUrl();
-      } else if (pattLastFM.test(request.url)) {
+      if (pattLastFM.test(request.url)) {
         match = pattLastFM.exec(request.url);
         getSession(match[1], function (data) {
           if (undefined === data.error) { /** @namespace data.session */
-            localStorage.audica_lastfm_sessionKey = data.session.key;
-            localStorage.audica_lastfm_login = data.session.name;
+            chrome.storage.local.set({'audica_lastfm_sessionKey': data.session.key, 'audica_lastfm_login = ': data.session.name});
             var lastfmUserLink = $("#lastfmUserLink");
             lastfmUserLink.text(data.session.name);
             lastfmUserLink.show();
@@ -179,7 +166,6 @@
       } else {
         alert("It failed to retreive the authentication credentials. The returned url is invalid '" + request.url + "'.");
       }
-      //noinspection JSUnresolvedVariable
       chrome.tabs.remove(sender.tab.id);
     });
   });

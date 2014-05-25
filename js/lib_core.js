@@ -24,16 +24,19 @@
      * @param {String} dbName
      */
     this.init = function (dbName) {
+      var db = this;
       _dbName = "db." + dbName;
-      var dbContent = localStorage[_dbName];
-      if (null !== dbContent && undefined !== dbContent) {
-        this.query = TAFFY(JSON.parse(dbContent));
-      } else {
-        this.query = TAFFY();
-      }
+      chrome.storage.local.get([_dbName], function (items) {
+        var dbContent = items[_dbName];
+        if (null !== dbContent && undefined !== dbContent) {
+          db.query = TAFFY(JSON.parse(dbContent));
+        } else {
+          db.query = TAFFY();
+        }
+      });
     };
     this.save = function () {
-      localStorage[_dbName] = JSON.stringify(this.query().get());
+      chrome.storage.local.set({_dbName : JSON.stringify(this.query().get())});
     };
   };
 
@@ -646,7 +649,7 @@
       }
     });
 
-    $(window).on('beforeunload', function () {
+    chrome.runtime.onSuspend.addListener(function () {
       var plugin = null;
       self.songDb.save();
       self.historyDb.save();
@@ -709,7 +712,6 @@
       subscription;
     for (i; i < length; i++) {
       subscription = events[i];
-      //noinspection JSValidateTypes
       subscription.callback.apply(subscription.context, args);
     }
     return this;

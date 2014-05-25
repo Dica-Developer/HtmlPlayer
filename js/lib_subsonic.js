@@ -1,4 +1,4 @@
-/*global Audica:true, localStorage: true, XMLHttpRequest:true, console:true, window*/
+/*global Audica:true, XMLHttpRequest:true, console:true, window*/
 (function (window, Audica) {
   "use strict";
 
@@ -38,13 +38,12 @@
       var songList = [];
       var ssr = response["subsonic-response"];
       if ("ok" === ssr.status) {
-        if (ssr.songsByGenre !== "") {
+        if (ssr.songsByGenre.hasOwnProperty('song')) {
           var songs = ssr.songsByGenre.song;
           var i = 0,
-            length = songs.length,
-            song;
+            length = songs.length;
           for (i; i < length; i++) {
-            song = songs[i];
+            var song = songs[i];
             var songObj = {
               "artist": Audica.decodeHtml(song.artist),
               "album": Audica.decodeHtml(song.album),
@@ -58,7 +57,7 @@
               "genre": Audica.decodeHtml(song.genre),
               "year": song.year ? song.year : null,
               "addedOn": timestamp,
-              "src": _serverUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.10.5&c=chrome&id=' + song.id,
+              "src": _serverUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=chrome&id=' + song.id,
               "backendId": backendId
             };
             songList.push(songObj);
@@ -71,24 +70,24 @@
     }
 
     function getSongsByGenre(timestamp, genre, offset, maxResultsPerRequest) {
-      var songList = [];
       var url = _serverUrl + '/getSongsByGenre.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=chrome&f=json&count=' + maxResultsPerRequest + '&offset=' + offset + '&genre=' + encodeURIComponent(genre);
       var req = new XMLHttpRequest();
-      req.open("GET", url, false);
-      req.send();
-      if (200 === req.status) {
+      req.open("GET", url, true);
+      req.onload = function () {
         var response = JSON.parse(req.response);
         var collectedSongs = _collect(response, timestamp);
         if (collectedSongs.length > 0) {
-          songList = songList.concat(collectedSongs);
+          Audica.trigger('readyCollectingSongs', {
+            songList: collectedSongs,
+            backendId: backendId,
+            timestamp: timestamp
+          });
           if (collectedSongs.length === maxResultsPerRequest) {
-            songList = songList.concat(getSongsByGenre(timestamp, genre, (offset + maxResultsPerRequest), maxResultsPerRequest));
+            getSongsByGenre(timestamp, genre, (offset + maxResultsPerRequest), maxResultsPerRequest);
           }
         }
-      } else {
-        // todo error
-      }
-      return songList;
+      };
+      req.send();
     }
 
     /**
@@ -107,24 +106,10 @@
             if (response.hasOwnProperty('subsonic-response')) {
               var subSonicResponse = response['subsonic-response'];
               if (subSonicResponse.status === 'ok') {
-                var songList = [];
                 var genres = subSonicResponse.genres.genre;
                 for (var i = 0; i < genres.length; i++) {
-                  try {
-                    songList = songList.concat(getSongsByGenre(timestamp, Audica.decodeHtml(genres[i].content), 0, _maxResultsPerRequest));
-                  } catch (e) {
-                    try {
-                      songList = songList.concat(getSongsByGenre(timestamp, Audica.decodeHtml(genres[i].content), 0, 30));
-                    } catch (e1) {
-                      console.log(e1);
-                    }
-                  }
+                  getSongsByGenre(timestamp, Audica.decodeHtml(genres[i].value), 0, _maxResultsPerRequest);
                 }
-                Audica.trigger('readyCollectingSongs', {
-                  songList: songList,
-                  backendId: backendId,
-                  timestamp: timestamp
-                });
               } else {
                 // TODO error
               }
@@ -153,19 +138,21 @@
     });
 
     this.init = function () {
-      var login = localStorage.authentication_login;
-      var password = localStorage.authentication_password;
-      var serverUrl = localStorage.serverUrl;
-      if (login) {
-        _login = JSON.parse(login);
-      }
-      if (password) {
-        _password = JSON.parse(password);
-      }
-      if (serverUrl) {
-        _serverUrl = JSON.parse(serverUrl);
-      }
-      Audica.trigger('initReady');
+      chrome.storage.local.get(['authentication_login', 'authentication_password', 'serverUrl'], function (items) {
+        var password = items.authentication_password;
+        var serverUrl = items.serverUrl;
+        var login = items.authentication_login;
+        if (login) {
+          _login = JSON.parse(login);
+        }
+        if (password) {
+          _password = JSON.parse(password);
+        }
+        if (serverUrl) {
+          _serverUrl = JSON.parse(serverUrl);
+        }
+        Audica.trigger('initReady');
+      });
     };
   }
 

@@ -50,12 +50,12 @@ OAuth2.FINISH = 'finish';
  * OAuth 2.0 endpoint adapters known to the library
  */
 OAuth2.adapters = {};
-OAuth2.adapterReverse = localStorage.oauth2_adapterReverse &&
-    JSON.parse(localStorage.oauth2_adapterReverse) || {};
+OAuth2.adapterReverse = chrome.storage.local.oauth2_adapterReverse &&
+    JSON.parse(chrome.storage.local.oauth2_adapterReverse) || {};
 // Update the persisted adapterReverse in localStorage.
-if (localStorage.adapterReverse) {
-  OAuth2.adapterReverse = JSON.parse(localStorage.adapterReverse);
-  delete localStorage.adapterReverse;
+if (chrome.storage.local.adapterReverse) {
+  OAuth2.adapterReverse = JSON.parse(chrome.storage.local.adapterReverse);
+  delete chrome.storage.local.adapterReverse;
 }
 
 /**
@@ -78,9 +78,9 @@ OAuth2.prototype.updateLocalStorage = function() {
   var key;
   for (var i = 0; i < variables.length; i++) {
     key = this.adapterName + '_' + variables[i];
-    if (localStorage.hasOwnProperty(key)) {
-      data[variables[i]] = localStorage[key];
-      delete localStorage[key];
+    if (chrome.storage.local.hasOwnProperty(key)) {
+      data[variables[i]] = chrome.storage.local[key];
+      delete chrome.storage.local[key];
     }
   }
   // Persist the new JSON object in localStorage.
@@ -285,7 +285,7 @@ OAuth2.prototype.clear = function(name) {
     delete obj[name];
     this.setSource(obj);
   } else {
-    delete localStorage['oauth2_' + this.adapterName];
+    delete chrome.storage.local['oauth2_' + this.adapterName];
   }
 };
 
@@ -295,7 +295,7 @@ OAuth2.prototype.clear = function(name) {
  * @return {String} The source JSON string.
  */
 OAuth2.prototype.getSource = function() {
-  return localStorage['oauth2_' + this.adapterName];
+  return chrome.storage.local['oauth2_' + this.adapterName];
 };
 
 /**
@@ -310,7 +310,7 @@ OAuth2.prototype.setSource = function(source) {
   if (typeof source !== 'string') {
     source = JSON.stringify(source);
   }
-  localStorage['oauth2_' + this.adapterName] = source;
+  chrome.storage.local['oauth2_' + this.adapterName] = source;
 };
 
 /**
@@ -379,7 +379,7 @@ OAuth2.adapter = function(name, impl) {
   // Make an entry in the adapter lookup table
   OAuth2.adapterReverse[impl.redirectURL()] = name;
   // Store the the adapter lookup table in localStorage
-  localStorage.oauth2_adapterReverse = JSON.stringify(OAuth2.adapterReverse);
+  chrome.storage.local.oauth2_adapterReverse = JSON.stringify(OAuth2.adapterReverse);
 };
 
 /**
@@ -390,7 +390,7 @@ OAuth2.adapter = function(name, impl) {
  * @return The adapter for the current page
  */
 OAuth2.lookupAdapterName = function(url) {
-  var adapterReverse = JSON.parse(localStorage.oauth2_adapterReverse);
+  var adapterReverse = JSON.parse(chrome.storage.local.oauth2_adapterReverse);
   return adapterReverse[url];
 };
 

@@ -3,12 +3,20 @@
 (function (window, document) {
   "use strict";
   $(function () {
-    Audica.start();
-
     window.onerror = function (error, src, row) {
       window.event.preventDefault();
       console.log('Error: %s in %s row %s', error, src, row);
     };
+
+    Audica.start();
+    Mousetrap.bind('mod+o', function () {
+      chrome.app.window.create("../options/index.html", {
+        "bounds": {
+          "width": 684,
+          "height": 481
+        }
+      });
+    });
 
     // TODO move this to FileImporter.init()
     // TODO add dropzone div also in FileImporter.init()
