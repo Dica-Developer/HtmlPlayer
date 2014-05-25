@@ -17,6 +17,7 @@
   },
   "offline_enabled": true,
   "permissions": [
+    "webview",
     "storage",
     "fileBrowserHandler",
     "unlimitedStorage",

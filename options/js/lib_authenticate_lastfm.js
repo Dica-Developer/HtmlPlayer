@@ -1,2 +1,1 @@
-chrome.extension.sendRequest({url: document.URL}, function(response) {});
-
+chrome.runtime.sendMessage({url: document.URL}, function(response) {});

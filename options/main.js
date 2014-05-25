@@ -40,31 +40,35 @@
 
   function selectTab(event) {
     var currentTab = $("li.navbar-item-selected");
-    //noinspection JSUnresolvedVariable
     currentTab.removeClass("navbar-item-selected");
     $("#" + currentTab.attr('id') + "Page").hide();
-    //noinspection JSUnresolvedVariable
     var currentTarget = $(event.currentTarget);
     currentTarget.addClass("navbar-item-selected");
     $("#" + currentTarget.attr('id') + "Page").show();
   }
 
   function fill() {
-    chrome.storage.local.get(['authentication_password', 'authentication_login', 'serverUrl', 'audica_lastfm_login', 'gracenoteClient_ID', 'gracenoteWepAPI_ID'], function () {
-      var password = items.authentication_password;
-      if (null !== password && undefined !== password) {
-        $("#passwordBox").val(JSON.parse(password));
+    chrome.storage.local.get(['authentication_password', 'authentication_login', 'serverUrl', 'audica_lastfm_login', 'gracenoteClient_ID', 'gracenoteWepAPI_ID'], function (items) {
+      if (items.hasOwnProperty('authentication_password')) {
+        var password = items.authentication_password;
+        if (null !== password && undefined !== password) {
+          $("#passwordBox").val(JSON.parse(password));
+        }
       }
-      var login = items.authentication_login;
-      if (null !== login && undefined !== login) {
-        $("#loginBox").val(JSON.parse(login));
+      if (items.hasOwnProperty('authentication_login')) {
+        var login = items.authentication_login;
+        if (null !== login && undefined !== login) {
+          $("#loginBox").val(JSON.parse(login));
+        }
       }
-      var serverUrl = items.serverUrl;
-      if (null !== serverUrl && undefined !== serverUrl) {
-        var serverUrlClear = JSON.parse(serverUrl);
-        $("#serverUrlBox").val(serverUrlClear);
-        var selectElement = $("#backendSelection");
-        selectOption(selectElement, "subsonic");
+      if (items.hasOwnProperty('serverUrl')) {
+        var serverUrl = items.serverUrl;
+        if (null !== serverUrl && undefined !== serverUrl) {
+          var serverUrlClear = JSON.parse(serverUrl);
+          $("#serverUrlBox").val(serverUrlClear);
+          var selectElement = $("#backendSelection");
+          selectOption(selectElement, "subsonic");
+        }
       }
       initBackend();
 
@@ -110,7 +114,12 @@
 
   function lastFmLoginClick(e) {
     // TODO if the plugin registers a option page it should add this event too
-    e.target.href = "http://www.last.fm/api/auth/?api_key=ac2f676e5b95231ac4706b3dcb5d379d&cb=" + chrome.extension.getURL("options/authenticate_lastfm.html");
+    chrome.app.window.create("options/authenticate_ask_lastfm.html?cb=" + chrome.runtime.getURL("options/authenticate_lastfm.html"), {
+      "bounds": {
+        "width": 1009,
+        "height": 600
+      }
+    });
   }
 
   function lastfmUserLink(e) {
@@ -144,14 +153,13 @@
     $('#passwordBox').on('change', savePassword);
     $('#gracenoteClient_ID, #gracenoteWepAPI_ID').on('change', saveField);
 
-    //noinspection JSUnresolvedVariable,JSUnresolvedFunction
-    chrome.extension.onRequest.addListener(function (request, sender) {
+    chrome.runtime.onRequest.addListener(function (request, sender) {
       var pattLastFM = new RegExp("^chrome-extension://.+/options/authenticate_lastfm\\.html.token=(.+)$");
       var match = null;
       if (pattLastFM.test(request.url)) {
         match = pattLastFM.exec(request.url);
         getSession(match[1], function (data) {
-          if (undefined === data.error) { /** @namespace data.session */
+          if (undefined === data.error) {
             chrome.storage.local.set({'audica_lastfm_sessionKey': data.session.key, 'audica_lastfm_login = ': data.session.name});
             var lastfmUserLink = $("#lastfmUserLink");
             lastfmUserLink.text(data.session.name);
