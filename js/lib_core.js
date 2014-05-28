@@ -630,7 +630,7 @@
     });
 
     this.on('fillSongBox', function () {
-      var currentSongList = this.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
+      var currentSongList = this.songDb.query().order('artist logical, album logical, year logical, track logical, title logical').get();
       this.fillSongBox(currentSongList);
     });
 
