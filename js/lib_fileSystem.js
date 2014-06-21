@@ -1,5 +1,5 @@
 /*global $, FileError, console, Audica, PERSISTENT, window*/
-(function (window) {
+(function(window) {
   "use strict";
 
   function Filesystem() {
@@ -14,24 +14,24 @@
     function errorHandler(e) {
       var msg = '';
       switch (e.code) {
-      case FileError.QUOTA_EXCEEDED_ERR:
-        msg = 'QUOTA_EXCEEDED_ERR';
-        break;
-      case FileError.NOT_FOUND_ERR:
-        msg = 'NOT_FOUND_ERR';
-        break;
-      case FileError.SECURITY_ERR:
-        msg = 'SECURITY_ERR';
-        break;
-      case FileError.INVALID_MODIFICATION_ERR:
-        msg = 'INVALID_MODIFICATION_ERR';
-        break;
-      case FileError.INVALID_STATE_ERR:
-        msg = 'INVALID_STATE_ERR';
-        break;
-      default:
-        msg = 'Unknown Error: ' + e;
-        break;
+        case FileError.QUOTA_EXCEEDED_ERR:
+          msg = 'QUOTA_EXCEEDED_ERR';
+          break;
+        case FileError.NOT_FOUND_ERR:
+          msg = 'NOT_FOUND_ERR';
+          break;
+        case FileError.SECURITY_ERR:
+          msg = 'SECURITY_ERR';
+          break;
+        case FileError.INVALID_MODIFICATION_ERR:
+          msg = 'INVALID_MODIFICATION_ERR';
+          break;
+        case FileError.INVALID_STATE_ERR:
+          msg = 'INVALID_STATE_ERR';
+          break;
+        default:
+          msg = 'Unknown Error: ' + e;
+          break;
       }
       Audica.trigger('initReady');
       throw msg;
@@ -42,9 +42,9 @@
      * @param {Number} timestamp
      * @private
      */
-    var _searchForSongs = function (timestamp) {
+    var _searchForSongs = function(timestamp) {
       var reader = fileSystem.root.createReader();
-      reader.readEntries(function (results) {
+      reader.readEntries(function(results) {
         var songList = [];
         for (var i = 0; i < results.length; i++) {
           var song = readFile(results[i], timestamp);
@@ -55,7 +55,7 @@
           backendId: backendId,
           timestamp: timestamp
         });
-      }, function (e) {
+      }, function(e) {
         console.error(e);
       });
     };
@@ -92,11 +92,11 @@
       return song;
     }
 
-    this.setPlaySrc = function (src, player) {
-      player.src = src;
+    this.getPlaySrc = function(src) {
+      return src;
     };
 
-    this.setCoverArt = function () {};
+    this.setCoverArt = function() {};
 
     /**
      *
@@ -105,21 +105,21 @@
 
     function onInitFs(fs) {
       fileSystem = fs;
-      Audica.on('updateSongList', function (args) {
+      Audica.on('updateSongList', function(args) {
         _searchForSongs(args.timestamp);
       });
 
-      Audica.on('filesImported', function () {
+      Audica.on('filesImported', function() {
         _searchForSongs($.now());
       });
       Audica.trigger('initReady');
     }
 
-    this.init = function () {
+    this.init = function() {
       if (window.webkitStorageInfo) {
-        window.webkitStorageInfo.requestQuota(PERSISTENT, 1024 * 1024 * 1024, function (grantedBytes) {
+        window.webkitStorageInfo.requestQuota(PERSISTENT, 1024 * 1024 * 1024, function(grantedBytes) {
           window.webkitRequestFileSystem(PERSISTENT, grantedBytes, onInitFs, errorHandler);
-        }, function (e) {
+        }, function(e) {
           console.error('Error: ' + e);
           Audica.trigger('initReady');
         });

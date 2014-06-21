@@ -18,23 +18,300 @@ body {
 #searchViewPreview {
     position: absolute; top: 0; left: 0; height: 100%;
     min-width: 5%; z-index: 200;
+}
 
+#preferencesView {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
+    cursor:default;
+    font-size:13px;
+    a:link {
+        color:#3f6ec2;
+    }
+    a:active {
+        color:#254071;
+    }
+    #navbar-content-title
+    {
+        -webkit-padding-end:24px;
+        -webkit-user-select:none;
+        color:#333;
+        cursor:pointer;
+        font-size:200%;
+        font-weight:normal;
+        margin:0;
+        padding-bottom:14px;
+        padding-top:13px;
+        text-align:end;
+        text-shadow:white 0 1px 2px;
+    }
+    #main-content {
+        display:-webkit-box;
+        position:absolute;
+        left:0;
+        right:0;
+        top:0;
+        bottom:0;
+    }
+    #navbar {
+        margin:0;
+    }
+    #navbar-container{
+        -webkit-border-end:1px solid #c6c9ce;
+        background-color:#f1f1f1;
+        position: absolute;
+        bottom:0;
+        left:0;
+        right:0;
+        top:0;
+        width:216px;
+        z-index:2;
+    }
+    hide-menu #navbar-container{
+        display:none;
+    }
+    #navbar-container>ul {
+        -webkit-user-select:none;
+        list-style-type:none;
+        margin:0;
+        padding:0;
+    }
+    .navbar-item {
+        border-bottom:1px solid transparent;
+        border-top:1px solid transparent;
+        color:#333;
+        cursor:pointer;
+        display:block;
+        font-size:105%;
+        outline:none;padding:7px 0;
+        text-align:end;
+        text-shadow:white 0 1px 1px;
+        -webkit-padding-end:24px;
+    }
+    .navbar-item:active {
+        border-bottom:1px solid #8faad9;
+        border-top:1px solid #8faad9;
+    }
+    .navbar-item-selected {
+        -webkit-box-shadow:0 1px 0 #f7f7f7;
+        background-color:#bbcee9;
+        border-bottom:1px solid #8faad9;
+        border-top:1px solid #8faad9;
+        color:black;
+        text-shadow:#bbcee9 0 1px 1px;
+    }
+    #mainview {
+        -webkit-box-align:stretch;
+        -webkit-padding-start:216px;
+        margin:0;
+        position:absolute;
+        left:0;
+        right:0;
+        top:0;
+        bottom:0;
+        z-index:1;
+    }
+    hide-menu #mainview{
+        -webkit-padding-start:0;
+    }
+    #mainview-content {
+        min-height:100%;
+        position:relative;
+    }
+    #page-container {
+        box-sizing:border-box;
+        max-width:888px;
+        min-width:600px;
+        padding:0 24px;
+    }
+    div.disabled{color:#888;}
+    input[type='password'],input[type='text'],input[type='url'],input:not([type]){-webkit-border-radius:2px;border:1px solid #aaa;font-size:inherit;padding:3px;}
+    input[type='text']:disabled{color:#888;}
+    html[dir='rtl'] .weakrtl{
+        direction:ltr;
+        text-align:right;
+    }
+    html[dir='rtl'] div.weakrtl input{
+        direction:ltr;text-align:right;
+    }
+    html[dir='rtl'] .favicon-cell.weakrtl{
+        -webkit-padding-end:22px;-webkit-padding-start:0;
+    }html[dir='rtl'] select.weakrtl{direction:rtl;}
+    html[dir='rtl'] select.weakrtl option{direction:ltr;}
+    html[dir='rtl'] input.weakrtl::-webkit-input-placeholder,html[dir='rtl'] .weakrtl input::-webkit-input-placeholder{direction:rtl;}
+    .page h1{
+        -webkit-padding-end:24px;
+        -webkit-user-select:none;
+        border-bottom:1px solid #eee;
+        color:#333;font-size:200%;
+        font-weight:normal;
+        margin:0;padding-bottom:4px;
+        padding-top:13px;text-shadow:white 0 1px 2px;
+    }
+    font-family:Helvetica,sans-serif;
+    .page {
+        display:none;
+    }
+    .avatar {
+        float:left;
+        margin:10px;
+    }
+    .avatar h3 {
+        text-align:center;
+        margin:5px 0 0 0;
+        width:128px;
+        text-overflow:ellipsis;
+        overflow:hidden;
+    }
+    .avatar img {
+        -webkit-border-radius:5px;
+        -webkit-box-shadow:0 -1px 0 #CCC;
+    }
+    .account {
+        margin-top:15px !important;
+    }
+    .account h1 {
+        overflow:auto;
+        padding-top:6px !important;
+    }
+    .account input {
+        margin-left:10px !important;
+    }
+    .actions {
+        text-align:center;
+        clear:both;
+        padding:6px 10px 5px 10px;
+        border-top:1px solid #D9D9D9;
+    }
+    .default {
+        float:right;
+        margin-top:-33px;
+        margin-right:10px;
+    }
+    #displaySection .section-group span {
+        min-width:75px;
+        display:inline-block;
+    }
+    .section-group:not(:last-child) {
+        margin-bottom:10px;
+    }
+    #displaySection .section-group select {
+        min-width:145px;
+    }
+    #donate {
+        width:100%;
+        height:100%;
+        position:absolute;
+        background-color:rgba(0,0,0,.75);
+        z-index:2;
+        top:0;
+        left:0;
+        display:none;
+    }
+    #donateWindow {
+        position:absolute;
+        width:500px;
+        height:300px;
+        left:50%;
+        top:50%;
+        margin-left:-250px;
+        margin-top:-150px;
+        background-color:#CCC;
+        border-radius:5px;
+        border:1px solid #000;
+        text-align:center;
+    }
+    #donateWindow h1 {
+        border-bottom:1px solid #999;
+        padding-bottom:15px;
+        color:#333;
+        margin-bottom:20px;
+    }
+    #donateWindow p {
+        color:#666;
+        font-size:14px;
+        padding-left:10px;
+        padding-right:10px;
+    }
+    #nodonate {
+        text-decoration:none;
+        font-size:11px;
+        color:#666;
+    }
+    #nodonate:hover {
+        color:#333;
+    }
+    #donateButton {
+        width:100%;
+        background-color:#FFF;
+        text-align:center;
+        border-top:1px solid #999;
+        border-bottom:1px solid #999;
+        margin-top:20px;
+        padding-top:10px;
+        padding-bottom:10px;
+    }
+    #postDonate {
+        display:none;
+    }
+    #backendPage {
+      display:block;
+    }
+    #fileImporter_dropZone {
+      width: 40%;
+      background-color: #EEE;
+      border: 5px dashed #CCC;
+      color: #CCC;
+      border-radius: 10px;
+      margin: 0 10px;
+      text-align: center;
+      font: 20pt bold,"Vollkorn";
+    }
 }
 
 #playerView {
-    height: 100%; width: 100%; overflow: hidden; background-color: black;
-    position: absolute; top: 0; left: 0; z-index: 1;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
 
     #descriptionBox {
-        color: #bbbbbb; width: 49%; float: left; text-align: right; padding-right: 10px;
+        color: #bbbbbb;
+        width: 49%;
+        float: left;
+        text-align: right;
+        padding-right: 10px;
         font-size: 12px; position: absolute;
 
-        #title { color: white; font-size: 40px; }
-        #album { color: white; font-size: 24px; }
-        #artist { color: white; font-size: 24px; }
+        #title {
+            color: white;
+            font-size: 40px;
+        }
+        #album {
+            color: white;
+            font-size: 24px;
+        }
+        #artist {
+            color: white;
+            font-size: 24px;
+        }
     }
     #coverArtBox {
-        color: #bbbbbb; width: 49%; float: right; padding-left: 10px; margin: auto;
+        color: #bbbbbb;
+        width: 49%;
+        float: right;
+        padding-left: 10px;
+        margin: auto;
     }
 
     #gnSuggestionsCon {
@@ -68,22 +345,48 @@ body {
 }
 
 #searchView {
-    height: 100%; width: 100%; overflow: hidden; background-color: white;
-    position: absolute; top: 0; left: 0; z-index: 20;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background-color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 20;
 
-    #filterBox { position: absolute; z-index: 100; display: none; }
-    #songBoxContainer, #playlistBoxContainer {
-        height: 100%; width: 45%; overflow-x: hidden; overflow-y: scroll;
-
-        .selected{ background: #4169e1; }
-        .added{ background: red; }
-        .active{ border: 1px solid black; }
-        [positionX]{ font-weight: bold; background: red; }
-
+    #filterBox {
+        position: absolute;
+        z-index: 100;
+        display: none;
     }
-    #searchBox { font-size: 18px; margin: 10px; }
-    #songBox { font-size: 12px; margin: 10px; }
+    #songBoxContainer, #playlistBoxContainer {
+        height: 100%;
+        width: 45%;
+        overflow-x: hidden;
+        overflow-y: scroll;
 
+        .selected {
+            background: #4169e1;
+        }
+        .added {
+            background: red;
+        }
+        .active {
+            border: 1px solid black;
+        }
+        [positionX] {
+            font-weight: bold;
+            background: red;
+        }
+    }
+    #searchBox {
+        font-size: 18px;
+        margin: 10px;
+    }
+    #songBox {
+        font-size: 12px;
+        margin: 10px;
+    }
 }
 
 
@@ -110,7 +413,8 @@ progress::-webkit-progress-value,
 progress::-moz-progress-bar {
     background-color:#BBB
 }
-#navigationWheel{
+
+#navigationWheel {
     overflow: hidden; float: left;
 
     #ring{

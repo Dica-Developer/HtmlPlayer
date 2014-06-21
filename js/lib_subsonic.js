@@ -1,5 +1,5 @@
 /*global Audica:true, XMLHttpRequest:true, console:true, window*/
-(function (window, Audica) {
+(function(window, Audica) {
   "use strict";
 
   /**
@@ -73,7 +73,7 @@
       var url = _serverUrl + '/getSongsByGenre.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=chrome&f=json&count=' + maxResultsPerRequest + '&offset=' + offset + '&genre=' + encodeURIComponent(genre);
       var req = new XMLHttpRequest();
       req.open("GET", url, true);
-      req.onload = function () {
+      req.onload = function() {
         var response = JSON.parse(req.response);
         var collectedSongs = _collect(response, timestamp);
         if (collectedSongs.length > 0) {
@@ -101,21 +101,21 @@
         var url = _serverUrl + "/getGenres.view?u=" + _login + "&p=" + _password + "&v=1.10.2&c=chrome&f=json";
         var req = new XMLHttpRequest();
         req.open("GET", url, true);
-        req.onload = function (event) {
-            var response = JSON.parse(event.currentTarget.response);
-            if (response.hasOwnProperty('subsonic-response')) {
-              var subSonicResponse = response['subsonic-response'];
-              if (subSonicResponse.status === 'ok') {
-                var genres = subSonicResponse.genres.genre;
-                for (var i = 0; i < genres.length; i++) {
-                  getSongsByGenre(timestamp, Audica.decodeHtml(genres[i].value), 0, _maxResultsPerRequest);
-                }
-              } else {
-                // TODO error
+        req.onload = function(event) {
+          var response = JSON.parse(event.currentTarget.response);
+          if (response.hasOwnProperty('subsonic-response')) {
+            var subSonicResponse = response['subsonic-response'];
+            if (subSonicResponse.status === 'ok') {
+              var genres = subSonicResponse.genres.genre;
+              for (var i = 0; i < 1 /*genres.length*/ ; i++) {
+                getSongsByGenre(timestamp, Audica.decodeHtml(genres[i].value), 0, _maxResultsPerRequest);
               }
             } else {
-              // todo error
+              // TODO error
             }
+          } else {
+            // todo error
+          }
         };
         req.onerror = collectErrors;
         req.onprogress = collectProgress;
@@ -125,20 +125,20 @@
       }
     }
 
-    this.setPlaySrc = function (src, player) {
-      player.src = src;
+    this.getPlaySrc = function(src) {
+      return src;
     };
 
-    this.setCoverArt = function (src, coverArt) {
+    this.setCoverArt = function(src, coverArt) {
       coverArt.attr("src", src);
     };
 
-    Audica.on('updateSongList', function (args) {
+    Audica.on('updateSongList', function(args) {
       _searchForSongs(args.timestamp, null, null);
     });
 
-    this.init = function () {
-      chrome.storage.local.get(['authentication_login', 'authentication_password', 'serverUrl'], function (items) {
+    this.init = function() {
+      chrome.storage.local.get(['authentication_login', 'authentication_password', 'serverUrl'], function(items) {
         var password = items.authentication_password;
         var serverUrl = items.serverUrl;
         var login = items.authentication_login;

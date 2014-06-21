@@ -1,64 +1,64 @@
 /*global $:true, Audica:true, document:true,  Mousetrap:true */
-(function(window, Mousetrap, Audica){
-  "use strict";
-  window.bindKeyEvents = function (Audica) {
+(function(window, Mousetrap) {
+  'use strict';
+  window.bindKeyEvents = function(Audica) {
     var bindKeysToView = {};
     var dom = Audica.Dom;
-    var audio = dom.player[0];
+    var audio = Audica.plugins.player;
     var songBox = dom.songBox;
     var playListBox = dom.playlistBox;
     var searchView = dom.searchView;
     var boxWidth = ($(document).width() / 2) - 22 - 2;
     var boxHeight = $(document).height() - 22;
     var playerView = dom.playerView;
-    var playerControlView = dom.playerControlView;
     var coverArtBox = dom.coverArtBox;
     var filterBox = dom.filterBox;
     var descriptionBox = dom.descriptionBox;
     var filterBoxTimeout = null;
 
-    Audica.on('viewStateChanged', function (args) {
+    Audica.on('viewStateChanged', function(args) {
       Mousetrap.reset();
-      bindKeysToView[args.to].call(this);
-      if (args.to === 'search' && dom.songBox.find('li').length === 0) {
-        var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
-        // TODO listen for event in seperate plugin
-        Audica.fillSongBox(currentSongList);
+      if (bindKeysToView[args.to]) {
+        bindKeysToView[args.to].call(this);
+        if (args.to === 'search' && dom.songBox.find('li').length === 0) {
+          var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
+          // TODO listen for event in seperate plugin
+          Audica.fillSongBox(currentSongList);
+        }
       }
     });
 
-    bindKeysToView.player = function () {
-      Mousetrap.bind(['right'], function () {
-        audio.currentTime = audio.currentTime + 10;
+    bindKeysToView.preferences = function() {
+      Mousetrap.bind(['escape'], function() {
+        playerView.animate({
+          left: 0
+        });
+        Audica.setViewState('player');
+      });
+    };
+
+    bindKeysToView.player = function() {
+      Mousetrap.bind(['right'], function() {
+        audio.forwardSeconds(10);
       });
 
-      Mousetrap.bind(['left'], function () {
-        audio.currentTime = audio.currentTime - 10;
+      Mousetrap.bind(['left'], function() {
+        audio.rewindSeconds(10);
       });
 
-      Mousetrap.bind(['shift+up'], function () {
-        var currentVolume = Audica.getVolume();
-        var volume = currentVolume + 0.02;
-        if (volume > 1) {
-          return false;
-        }
-        Audica.setVolume(volume);
+      Mousetrap.bind(['shift+up'], function() {
+        audio.voulmeUp(0.02);
       });
 
-      Mousetrap.bind(['shift+down'], function () {
-        var currentVolume = Audica.getVolume();
-        var volume = currentVolume - 0.02;
-        if (volume < 0) {
-          return false;
-        }
-        Audica.setVolume(volume);
+      Mousetrap.bind(['shift+down'], function() {
+        audio.voulmeDown(0.02);
       });
 
-      Mousetrap.bind(['s'], function () {
+      Mousetrap.bind(['s'], function() {
         Audica.shuffle();
       });
 
-      Mousetrap.bind(['l'], function () {
+      Mousetrap.bind(['l'], function() {
         songBox.focus();
         songBox.width(boxWidth);
         songBox.height(boxHeight);
@@ -72,13 +72,13 @@
         dom.searchViewPreview.hide();
       });
 
-      Mousetrap.bind(['n'], function () {
+      Mousetrap.bind(['n'], function() {
         Audica.nextSong();
         Audica.scrobbleNowPlaying();
         Audica.setNotScrobbled(true);
       });
 
-      Mousetrap.bind(['p'], function () {
+      Mousetrap.bind(['p'], function() {
         Audica.trigger('scroll', {
           dir: 'up'
         });
@@ -87,13 +87,13 @@
         Audica.setNotScrobbled(true);
       });
 
-      Mousetrap.bind(['space'], function () {
+      Mousetrap.bind(['space'], function() {
         return audio.paused ? audio.play() : audio.pause();
       });
 
     };
 
-    bindKeysToView.search = function () {
+    bindKeysToView.search = function() {
       function findNextByPositionX(dir) {
         var currentXClass = Audica.positionXClassMap[Audica.getSongBoxPositionX()];
         var currentXValue = Audica.getSongBoxPositionY().find(currentXClass).data('value');
@@ -105,7 +105,7 @@
         return tmpNext;
       }
 
-      Mousetrap.bind(['right'], function () {
+      Mousetrap.bind(['right'], function() {
         var x = Audica.getSongBoxPositionX();
         if (3 === x) {
           Audica.setSongBoxPositionX(0);
@@ -116,7 +116,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['left'], function () {
+      Mousetrap.bind(['left'], function() {
         var x = Audica.getSongBoxPositionX();
         if (0 === x) {
           Audica.setSongBoxPositionX(3);
@@ -127,7 +127,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['up'], function () {
+      Mousetrap.bind(['up'], function() {
         var prev = null;
         if (!Audica.getSongBoxPositionY()) {
           Audica.setSongBoxPositionY(songBox.find('li').eq(0));
@@ -148,7 +148,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['down'], function () {
+      Mousetrap.bind(['down'], function() {
         if (filterBox.data.open) {
           filterBox.data("open", false);
           filterBox.blur();
@@ -176,7 +176,7 @@
         Audica.indicateSongBoxXPosition();
       });
 
-      Mousetrap.bind(['escape'], function () {
+      Mousetrap.bind(['escape'], function() {
         if (filterBox.data("open")) {
           filterBox.data("open", false);
           filterBox.blur();
@@ -199,12 +199,12 @@
         }
       });
 
-      Mousetrap.bind(['enter'], function () {
+      Mousetrap.bind(['enter'], function() {
         var elemsToMove = dom.songBox.find(".selected");
         var clones = elemsToMove.clone();
         clones.animate({
           opacity: 0
-        }, function () {
+        }, function() {
           elemsToMove.removeClass('selected');
           clones.removeClass('selected');
           clones.css({
@@ -213,7 +213,7 @@
         });
         elemsToMove.addClass('added');
         clones.appendTo(dom.playlistBox);
-        dom.playlistBox.find('span').on('click', function () {
+        dom.playlistBox.find('span').on('click', function() {
           var thisUL = $(this).closest('ul');
           var value = $(this).data("value");
           var elems = thisUL.find('[data-value="' + value + '"]');
@@ -223,7 +223,32 @@
         Audica.trigger('tracklistChanged');
       });
 
-      Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü', 'backspace'], function () {
+      var element = document.getElementById('songBoxContainer');
+      new Hammer(element).on("doubletap", function(event) {
+        var elemsToMove = dom.songBox.find(".selected");
+        var clones = elemsToMove.clone();
+        clones.animate({
+          opacity: 0
+        }, function() {
+          elemsToMove.removeClass('selected');
+          clones.removeClass('selected');
+          clones.css({
+            opacity: 1
+          });
+        });
+        elemsToMove.addClass('added');
+        clones.appendTo(dom.playlistBox);
+        dom.playlistBox.find('span').on('click', function() {
+          var thisUL = $(this).closest('ul');
+          var value = $(this).data("value");
+          var elems = thisUL.find('[data-value="' + value + '"]');
+          thisUL.find('.selected').removeClass('selected');
+          elems.parent().addClass('selected');
+        });
+        Audica.trigger('tracklistChanged');
+      });
+
+      Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü', 'backspace'], function() {
         if (!filterBox.data("open")) {
           filterBox.data("open", true);
           filterBox.show();
@@ -232,7 +257,7 @@
         if (null !== filterBoxTimeout) {
           window.clearTimeout(filterBoxTimeout);
         }
-        filterBoxTimeout = window.setTimeout(function () {
+        filterBoxTimeout = window.setTimeout(function() {
           var currentSongList = [];
           var filterQuery = filterBox.val();
           if (null !== filterQuery && undefined !== filterQuery) {
@@ -262,16 +287,16 @@
         }, 500);
       });
 
-      Mousetrap.bind('tab', function () {
+      Mousetrap.bind('tab', function() {
         Audica.setViewState('playList');
         return false;
       });
     };
 
-    bindKeysToView.playList = function () {
-      Mousetrap.bind(['del'], function () {
+    bindKeysToView.playList = function() {
+      Mousetrap.bind(['del'], function() {
         var elems = dom.playlistBox.find(".selected");
-        elems.each(function () {
+        elems.each(function() {
           var song = dom.songBox.find('[data-song="' + $(this).data('song') + '"]');
           song.removeClass('added');
         });
@@ -279,13 +304,13 @@
         Audica.trigger('tracklistChanged');
       });
 
-      Mousetrap.bind('tab', function () {
+      Mousetrap.bind('tab', function() {
         Audica.setViewState('search');
         return false;
       });
 
-      Mousetrap.bind('down', function () {});
-      Mousetrap.bind('up', function () {});
+      Mousetrap.bind('down', function() {});
+      Mousetrap.bind('up', function() {});
     };
 
     bindKeysToView[Audica.getViewState()].call(Audica);

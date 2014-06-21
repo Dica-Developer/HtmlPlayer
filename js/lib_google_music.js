@@ -1,5 +1,5 @@
 /*global FormData, XMLHttpRequest, Audica, console, localStorage, chrome, window*/
-(function (window, Audica) {
+(function(window, Audica) {
   "use strict";
 
   function GoogleMusic() {
@@ -77,7 +77,7 @@
       var req = new XMLHttpRequest();
       req.open('POST', 'https://play.google.com/music/services/loadalltracks?u=0&xt=' + localStorage.googlemusic_xt_cookie, true);
       req.withCredentials = true;
-      req.onload = function (event) {
+      req.onload = function(event) {
         var contToken = parseSongs(event.target.response, songList);
         if (contToken) {
           getSongs(songList, contToken);
@@ -92,11 +92,11 @@
       req.send(formData);
     }
 
-    this.setPlaySrc = function (src, player) {
-      player.src = getSongStream(src);
+    this.getPlaySrc = function(src) {
+      return getSongStream(src);
     };
 
-    this.setCoverArt = function (src, coverArt) {
+    this.setCoverArt = function(src, coverArt) {
       if (src) {
         src = src.replace('=s130', '=s500');
       }
@@ -105,7 +105,7 @@
 
     Audica.on('updateSongList', updateSongList);
 
-    chrome.extension.onRequest.addListener(function (request, sender) {
+    chrome.extension.onRequest.addListener(function(request, sender) {
       if (request && request.cookie) {
         var startIndex = request.cookie.indexOf('xt=') + 3;
         var endIndex = request.cookie.indexOf(";", startIndex);

@@ -1,21 +1,27 @@
 /*global document:true, $:true, Scrobbler:true, alert:true, chrome:true , hex_md5*/
 
-(function (document) {
+(function(document) {
   "use strict";
 
   function saveLogin() {
     var login = $("#loginBox").val();
-    chrome.storage.local.set({ 'authentication_login': JSON.stringify(login)});
+    chrome.storage.local.set({
+      'authentication_login': JSON.stringify(login)
+    });
   }
 
   function savePassword() {
     var password = $("#passwordBox").val();
-    chrome.storage.local.set({ 'authentication_password': JSON.stringify(password)});
+    chrome.storage.local.set({
+      'authentication_password': JSON.stringify(password)
+    });
   }
 
   function saveServerUrl() {
     var serverUrl = $("#serverUrlBox").val();
-    chrome.storage.local.set({ 'serverUrl': JSON.stringify(serverUrl)});
+    chrome.storage.local.set({
+      'serverUrl': JSON.stringify(serverUrl)
+    });
   }
 
   function selectOption(selectElement, optionValue) {
@@ -48,7 +54,7 @@
   }
 
   function fill() {
-    chrome.storage.local.get(['authentication_password', 'authentication_login', 'serverUrl', 'audica_lastfm_login', 'gracenoteClient_ID', 'gracenoteWepAPI_ID'], function (items) {
+    chrome.storage.local.get(['authentication_password', 'authentication_login', 'serverUrl', 'audica_lastfm_login', 'gracenoteClient_ID', 'gracenoteWepAPI_ID'], function(items) {
       if (items.hasOwnProperty('authentication_password')) {
         var password = items.authentication_password;
         if (null !== password && undefined !== password) {
@@ -126,7 +132,7 @@
     e.target.href = 'http://last.fm/user/' + e.target.innerHTML;
   }
 
-  var saveField = function () {
+  var saveField = function() {
     var objectToSave = {};
     objectToSave[$(this).attr('id')] = JSON.stringify($(this).val());
     chrome.storage.local.set(objectToSave);
@@ -141,7 +147,7 @@
     });
   }
 
-  $(function () {
+  $(function() {
     fill();
 
     $('#lastfmLoginLink').on('click', lastFmLoginClick);
@@ -153,6 +159,7 @@
     $('#passwordBox').on('change', savePassword);
     $('#gracenoteClient_ID, #gracenoteWepAPI_ID').on('change', saveField);
 
+    /*
     chrome.runtime.onRequest.addListener(function (request, sender) {
       var pattLastFM = new RegExp("^chrome-extension://.+/options/authenticate_lastfm\\.html.token=(.+)$");
       var match = null;
@@ -176,5 +183,6 @@
       }
       chrome.tabs.remove(sender.tab.id);
     });
+  */
   });
 }(document));

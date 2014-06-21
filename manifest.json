@@ -15,14 +15,14 @@
     "48": "images/icon48.png",
     "16": "images/icon16.png"
   },
-  "offline_enabled": true,
+  "offline_enabled": false,
   "permissions": [
-    "webview",
     "storage",
     "fileBrowserHandler",
     "unlimitedStorage",
-    "https://*.web.cddbp.net/webapi/xml/1.0/",
-    "https://*.google.com/*"
+    "<all_urls>",
+    "http://*/*",
+    "https://*/*"
   ],
   "manifest_version": 2
 }
