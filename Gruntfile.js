@@ -2,9 +2,11 @@
 module.exports = function (grunt) {
   "use strict";
 
+  require('time-grunt')(grunt);
+  require('load-grunt-tasks')(grunt);
   // Project configuration.
   grunt.initConfig({
-    lint:{
+    jshint:{
       all:['Gruntfile.js', 'js/*.js', 'options/**/*.js']
     },
     concat:{
@@ -17,13 +19,13 @@ module.exports = function (grunt) {
         dest: 'test/tmp/specs.js'
       }
     },
-    min: {
+    uglify: {
       test_specs:{
-        src: '<config:concat.specs.dest>',
+        src: 'test/tmp/specs.js',
         dest: 'test/tmp/specs.min.js'
       },
       test_libs:{
-        src: '<config:concat.libs.dest>',
+        src: 'test/tmp/libs.js',
         dest: 'test/tmp/libs.min.js'
       }
     },
@@ -54,11 +56,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib');
 
   grunt.registerTask('travis', 'Runs tests',function(){
-    grunt.task.run('lint');
+    grunt.task.run('jshint');
     grunt.task.run('concat:libs');
     grunt.task.run('concat:specs');
-    grunt.task.run('min:test_specs');
-    grunt.task.run(['min:test_libs']);
+    grunt.task.run('uglify:test_specs');
+    grunt.task.run(['uglify:test_libs']);
   });
 
 //  grunt.registerTask('test-local', 'Runs tests',function(){
