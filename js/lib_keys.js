@@ -47,11 +47,11 @@
       });
 
       Mousetrap.bind(['shift+up'], function() {
-        audio.voulmeUp(0.02);
+        audio.volumeUp(0.02);
       });
 
       Mousetrap.bind(['shift+down'], function() {
-        audio.voulmeDown(0.02);
+        audio.volumeDown(0.02);
       });
 
       Mousetrap.bind(['s'], function() {

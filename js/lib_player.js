@@ -7,9 +7,9 @@
 
     var _player = null;
 
-    this.paused = true;
+    var _volume = 1.0;
 
-    this.volume = 0;
+    this.paused = true;
 
     this.type = '';
 
@@ -64,19 +64,41 @@
     };
 
     this.forwardSeconds = function(seconds) {
-
+      if (_useAudioTag) {
+        _player.currentTime = _player.currentTime + seconds;
+      } else {
+        _player.seekTo((_player.getCurrentPosition() + seconds) * 1000);
+      }
     };
 
     this.rewindSeconds = function(seconds) {
-
+      if (_useAudioTag) {
+        _player.currentTime = _player.currentTime - seconds;
+      } else {
+        _player.seekTo((_player.getCurrentPosition() - seconds) * 1000);
+      }
     };
 
     this.volumeUp = function(percentage) {
-
+      if (_useAudioTag) {
+        var currentVolume = _player.volume;
+        _volume = Math.min(currentVolume + percentage, 1.0);
+        _player.volume = _volume;
+      } else {
+        _volume = Math.min(_volume + percentage, 1.0);
+        _player.setVolume(_volume);
+      }
     };
 
     this.volumeDown = function(percentage) {
-
+      if (_useAudioTag) {
+        var currentVolume = _player.volume;
+        _volume = Math.max(currentVolume - percentage, 0);
+        _player.volume = _volume;
+      } else {
+        _volume = Math.max(_volume - percentage, 0);
+        _player.setVolume(_volume);
+      }
     };
 
     this.play = function(src) {
@@ -90,6 +112,7 @@
             _player.release();
           }
           _player = new Media(src /*, callbacks*/ );
+          _player.setVolume(_volume);
         }
       }
       _player.play();

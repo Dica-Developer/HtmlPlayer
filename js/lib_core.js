@@ -96,10 +96,6 @@
     this.setNotScrobbled = function(scrobbled) {
       notScrobbled = scrobbled;
     };
-    this.getVolume = function() {
-      return this.plugins.player.volume;
-    };
-
   }
 
   Audica.prototype.Dom = {
