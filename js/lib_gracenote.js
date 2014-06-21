@@ -365,7 +365,7 @@
         }
       }
     });
-  };
+  }
 
 
   Audica.on('updateSongList', function(args) {

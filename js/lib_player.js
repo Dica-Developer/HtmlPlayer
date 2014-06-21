@@ -19,7 +19,7 @@
       Audica.setNotScrobbled(true);
     }
 
-    function onErrorCallbackAudioTag(event) {
+    var onErrorCallbackAudioTag = function(event) {
       var errorMsg = 'The file "' + this.src + '" cannot be played. The possible reasons is: ';
       switch (event.currentTarget.error.code) {
         case 4:
@@ -41,7 +41,7 @@
         message: errorMsg
       });
       // TODO trigger here player ended to play next song
-    }
+    };
 
     this.getCurrentTime = function() {
       var result = 0;
