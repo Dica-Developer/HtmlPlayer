@@ -528,7 +528,7 @@
           searchView.animate({
             left: -1 * $(document).width()
           });
-          if (this.plugins.player.paused) {
+          if (self.plugins.player.paused) {
             self.nextSong();
             self.scrobbleNowPlaying();
             self.setNotScrobbled(true);
