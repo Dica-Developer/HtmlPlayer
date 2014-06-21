@@ -48,7 +48,8 @@
       if (_useAudioTag) {
         result = _player.currentTime;
       } else {
-        result = _player.getCurrentTime();
+        _player.getCurrentPosition();
+        result = _player._position;
       }
       return result;
     };
@@ -67,7 +68,7 @@
       if (_useAudioTag) {
         _player.currentTime = _player.currentTime + seconds;
       } else {
-        _player.seekTo((_player.getCurrentPosition() + seconds) * 1000);
+        _player.seekTo((this.getCurrentTime() + seconds) * 1000);
       }
     };
 
@@ -75,7 +76,7 @@
       if (_useAudioTag) {
         _player.currentTime = _player.currentTime - seconds;
       } else {
-        _player.seekTo((_player.getCurrentPosition() - seconds) * 1000);
+        _player.seekTo((this.getCurrentTime() - seconds) * 1000);
       }
     };
 
