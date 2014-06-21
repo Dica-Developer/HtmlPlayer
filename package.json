@@ -6,16 +6,15 @@
   "engines": {
     "node": ">= 0.8.0"
   },
-  "dependencies": {
-    "grunt": "0.3.17",
-    "grunt-contrib": "0.3.0"
-  },
   "scripts": {
     "test": "grunt travis -v && phantomjs ./test/testRunner.js -v && grunt clean",
     "travis": "grunt travis -v && phantomjs ./test/testRunner.js -v"
   },
   "devDependencies": {
-    "grunt": "~0.3.17",
-    "grunt-contrib": "~0.3.0"
+    "grunt": "~0.4.5",
+    "grunt-contrib": "^0.11.0",
+    "time-grunt": "^0.3.2",
+    "load-grunt-tasks": "^0.6.0",
+    "phantomjs": "^1.9.7-9"
   }
 }
