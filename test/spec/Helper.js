@@ -1,17 +1,33 @@
-beforeEach(function() {
-  jasmine.getFixtures().fixturesPath = 'fixtures';
-  jasmine.getJSONFixtures().fixturesPath = 'fixtures';
-  loadFixtures('coreDom.html');
+beforeEach(function () {
+    jasmine.getFixtures().fixturesPath = 'base/test/fixtures';
+    jasmine.getJSONFixtures().fixturesPath = 'base/test/fixtures';
+    loadFixtures('coreDom.html');
 
-  subsonicSongList = getJSONFixture('songList.json');
-  mockSongList = getJSONFixture('mockSonglist.json');
-  if (!Audica.eventList.domElementsSet){
-    Audica.start();
-  }
+    subsonicSongList = getJSONFixture('songList.json');
+    mockSongList = getJSONFixture('mockSonglist.json');
+    chrome = {
+        storage: {
+            local: {
+                get: function (dbName, cb) {
+                    cb([]);
+                }
+            }
+        },
+        runtime: {
+            onSuspend: {
+                addListener: function () {
+                }
+            }
+        }
+
+    };
+    if (!Audica.eventList.domElementsSet) {
+        Audica.start();
+    }
 });
 
-afterEach(function(){
-  Audica.clearPlaylist();
-  Audica.songHistory = [];
-  Audica.Dom.songBox.empty();
+afterEach(function () {
+    Audica.clearPlaylist();
+    Audica.songHistory = [];
+    Audica.Dom.songBox.empty();
 });
