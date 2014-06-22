@@ -134,7 +134,9 @@
           _player.type = this.type;
         } else {
           if (_player !== null) {
-            _player.stop();
+            if (!this.paused) {
+              _player.stop();
+            }
             _player.release();
           }
           _player = new Media(src, onSuccessCallbackMedia, onErrorCallbackMedia, onStatusChangeCallbackMedia);
