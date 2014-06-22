@@ -48,7 +48,7 @@
       if (_useAudioTag) {
         result = _player.currentTime;
       } else {
-        _player.getCurrentPosition();
+        _player.getCurrentPosition(function() {});
         result = _player._position;
       }
       return result;
