@@ -9,6 +9,8 @@
 
     var _volume = 1.0;
 
+    var _self = this;
+
     this.paused = true;
 
     this.type = '';
@@ -41,6 +43,29 @@
         message: errorMsg
       });
       // TODO trigger here player ended to play next song
+    }
+
+    function onSuccessCallbackMedia() {
+
+    }
+
+    function onErrorCallbackMedia(error) {
+      window.Audica.trigger('ERROR', {
+        message: 'cordova media error code: ' + error.code
+      });
+      // TODO trigger here player ended to play next song
+    }
+
+    function onStatusChangeCallbackMedia(status) {
+      if (Media.MEDIA_RUNNING === status) {
+        _self.paused = false;
+      } else {
+        _self.paused = true;
+      }
+
+      if (Media.MEDIA_STOPPED === status) {
+        onEndedCallback();
+      }
     }
 
     this.getCurrentTime = function() {
@@ -112,18 +137,16 @@
             _player.stop();
             _player.release();
           }
-          _player = new Media(src /*, callbacks*/ );
+          _player = new Media(src, onSuccessCallbackMedia, onErrorCallbackMedia, onStatusChangeCallbackMedia);
           _player.setVolume(_volume);
         }
       }
       _player.play();
-      this.paused = false;
     };
 
     this.pause = function() {
       if (null !== _player) {
         _player.pause();
-        this.paused = true;
       }
     };
 
@@ -139,6 +162,7 @@
       Audica.trigger('initReady');
     };
   }
+
 
   Audica.extend('player', new Player());
 }(Audica));
