@@ -16,5 +16,9 @@
     "time-grunt": "~0.3.2",
     "load-grunt-tasks": "~0.6.0",
     "phantomjs": "~1.9.7-9"
+    "karma": "^0.12.16",
+    "grunt-karma": "^0.8.3",
+    "karma-jasmine": "^0.2.2",
+    "karma-firefox-launcher": "^0.1.3"
   }
 }
