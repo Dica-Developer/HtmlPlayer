@@ -1,30 +1,33 @@
-/*global module:true, require:true, process:true*/
-module.exports = function (grunt) {
-  "use strict";
+/*global module:true, require:true*/
+module.exports = function(grunt) {
+  'use strict';
 
   require('time-grunt')(grunt);
   require('load-grunt-tasks')(grunt);
   // Project configuration.
   grunt.initConfig({
-    jshint:{
-      all:['Gruntfile.js', 'js/*.js', 'options/**/*.js']
+    jshint: {
+      options: {
+        jshintrc: '.jshintrc'
+      },
+      all: ['Gruntfile.js', 'js/*.js', 'options/**/*.js']
     },
-    concat:{
-      libs:{
+    concat: {
+      libs: {
         src: ['js/lib_core.js'],
         dest: 'test/tmp/libs.js'
       },
-      specs:{
-        src: ['test/spec/Helper.js','test/spec/*Spec.js'],
+      specs: {
+        src: ['test/spec/Helper.js', 'test/spec/*Spec.js'],
         dest: 'test/tmp/specs.js'
       }
     },
     uglify: {
-      test_specs:{
+      test_specs: {
         src: 'test/tmp/specs.js',
         dest: 'test/tmp/specs.min.js'
       },
-      test_libs:{
+      test_libs: {
         src: 'test/tmp/libs.js',
         dest: 'test/tmp/libs.min.js'
       }
@@ -48,32 +51,24 @@ module.exports = function (grunt) {
         }
       }
     },
-    clean:{
+    clean: {
       tmp: 'test/tmp'
     },
-      karma: {
-          dev: {
-              configFile: 'test/karma.conf.js'
-          },
-          travis: {
-              configFile: '<%= config.test %>/travis.karma.conf.js'
-          }
+    karma: {
+      dev: {
+        configFile: 'test/karma.conf.js'
+      },
+      travis: {
+        configFile: '<%= config.test %>/travis.karma.conf.js'
       }
+    }
   });
 
-  grunt.loadNpmTasks('grunt-contrib');
-
-  grunt.registerTask('travis', 'Runs tests',function(){
-    grunt.task.run('jshint');
-    grunt.task.run('concat:libs');
-    grunt.task.run('concat:specs');
-    grunt.task.run('uglify:test_specs');
-    grunt.task.run(['uglify:test_libs']);
-  });
-
-//  grunt.registerTask('test-local', 'Runs tests',function(){
-//    grunt.task.run('lint');
-//    grunt.task.run('min:travis_specs');
-//    grunt.task.run('min:travis_libs');
-//  });
+  grunt.registerTask('travis', [
+    'jshint',
+    'concat:libs',
+    'concat:specs',
+    'uglify:test_specs',
+    'uglify:test_libs'
+  ]);
 };
