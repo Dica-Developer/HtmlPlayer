@@ -19,11 +19,11 @@
       Audica.setNotScrobbled(true);
     }
 
-    var onErrorCallbackAudioTag = function(event) {
-      var errorMsg = 'The file "' + this.src + '" cannot be played. The possible reasons is: ';
+    function onErrorCallbackAudioTag(event) {
+      var errorMsg = 'The file "' + _player.src + '" cannot be played. The possible reasons is: ';
       switch (event.currentTarget.error.code) {
         case 4:
-          errorMsg += 'The current media type "' + this.type + '" is not supported.';
+          errorMsg += 'The current media type "' + _player.type + '" is not supported.';
           break;
         case 1:
           errorMsg += 'The user agent stopped fetching the media data.';
@@ -41,7 +41,7 @@
         message: errorMsg
       });
       // TODO trigger here player ended to play next song
-    };
+    }
 
     this.getCurrentTime = function() {
       var result = 0;
