@@ -8,13 +8,6 @@
     "url": "https://github.com/Dica-Developer/HtmlPlayer",
     "path": "/"
   }],
-  "engines": {
-    "node": ">= 0.8.0"
-  },
-  "scripts": {
-    "test": "grunt travis -v && phantomjs ./test/testRunner.js -v && grunt clean",
-    "travis": "grunt travis -v && phantomjs ./test/testRunner.js -v"
-  },
   "devDependencies": {
     "grunt": "~0.4.5",
     "grunt-contrib-copy": "~0.5.0",
