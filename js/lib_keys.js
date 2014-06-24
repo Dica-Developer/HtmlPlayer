@@ -191,12 +191,12 @@
       });
 
       Mousetrap.bind(['escape'], function() {
-        if (filterBox.data("open")) {
-          filterBox.data("open", false);
+        if (filterBox.data('open')) {
+          filterBox.data('open', false);
           filterBox.blur();
           songBox.focus();
           filterBox.hide();
-          filterBox.val("");
+          filterBox.val('');
         } else {
           searchView.animate({
             left: -1 * $(document).width()
@@ -209,14 +209,14 @@
             $('#playPauseButton').addClass('pauseButton');
           }
           Audica.setViewState('player');
-          coverArtBox.css("padding-top", ($(document).height() - coverArtBox.height()) / 2);
-          descriptionBox.css("padding-top", ($(document).height() - descriptionBox.height()) / 2);
+          coverArtBox.css('padding-top', ($(document).height() - coverArtBox.height()) / 2);
+          descriptionBox.css('padding-top', ($(document).height() - descriptionBox.height()) / 2);
           dom.searchViewPreview.show();
         }
       });
 
       Mousetrap.bind(['enter'], function() {
-        var elemsToMove = dom.songBox.find(".selected");
+        var elemsToMove = dom.songBox.find('.selected');
         var clones = elemsToMove.clone();
         clones.animate({
           opacity: 0
