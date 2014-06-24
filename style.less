@@ -436,3 +436,105 @@ progress::-moz-progress-bar {
         }
     }
 }
+
+.playButton {
+    &:before {
+        content: '';
+        height:0;
+        width:0;
+        display:block;
+        border:10px transparent solid;
+        border-right-width: 0;
+        border-left-color: white;
+        position:absolute;
+        top:8px;
+        left:14px;
+    }
+    display:block;
+    position:relative;
+    height:36px;
+    width:36px;
+    border:2px solid white;
+    border-radius:40px;
+    -webkit-border-radius:40px;
+    -moz-border-radius:40px;
+}
+
+.pauseButton {
+    &:before, &:after {
+        content:'';
+        height:20px;
+        width:4px;
+        display:block;
+        background: white;
+        position: absolute;
+        top: 8px;
+        left: 12px;
+    }
+    display: block;
+    position: relative;
+    height: 36px;
+    width: 36px;
+    border: 2px solid white;
+    border-radius: 20px;
+    -webkit-border-radius: 20px;
+    -moz-border-radius: 20px;
+
+    &:after{
+        left:20px;
+    }
+}
+
+.backButton {
+    display:block;
+    position:relative;
+    height:36px;
+    width:36px;
+    border:2px
+    solid #333;
+    border-radius:20px;
+    -webkit-border-radius:20px;
+    -moz-border-radius:20px;
+
+    &:before {
+        content:'';
+        height:0;
+        width:0;
+        display:block;
+        border:10px transparent solid;
+        border-left-width:0;
+        border-right-color: white;
+        position:absolute;
+        top:8px;
+        left:16px;
+    }
+
+    &:after {
+        content:'';
+        height:20px;
+        width:4px;
+        display:block;
+        background: white;
+        position:absolute;
+        top:8px;
+        left:10px;
+    }
+}
+
+.foreButton {
+    display:block;
+    position:relative; 
+    height:36px; width:36px; border:2px solid #333; border-radius:20px;-webkit-border-radius:20px;-moz-border-radius:20px;
+
+    &:before{content:''; height:0; width:0; display:block; border:10px transparent solid; border-right-width:0; border-left-color: white; position:absolute; top:8px; left:10px;}
+    &:after{content:''; height:20px; width:4px; display:block; background: white; position:absolute; top:8px; left:22px;}
+}
+
+.playerControlBar {
+    padding-top: 10px;
+    width: 100%;
+    padding-left: ~"calc(50% - 60px)";
+    span {
+        float: left;
+    }
+}
