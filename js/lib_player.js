@@ -49,6 +49,14 @@
 
     }
 
+    function onPlayingCallback() {
+      _self.paused = false;
+    }
+
+    function onPauseCallback() {
+      _self.paused = true;
+    }
+
     function onErrorCallbackMedia(error) {
       window.Audica.trigger('ERROR', {
         message: 'cordova media error code: ' + error.code
@@ -160,6 +168,8 @@
         _player = $('<audio id="player" autoplay="false" preload="auto"></audio>')[0];
         $(_player).on('ended', onEndedCallback);
         $(_player).on('error', onErrorCallbackAudioTag);
+        $(_player).on('playing', onPlayingCallback);
+        $(_player).on('pause', onPauseCallback);
       }
       Audica.trigger('initReady');
     };
