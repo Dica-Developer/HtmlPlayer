@@ -329,7 +329,11 @@
   Audica.prototype.updateTimings = function() {
     if (this.Dom.playerControlView.data('open')) {
       if (!this.plugins.player.paused) {
-        this.Dom.timeField.text(Math.round(this.plugins.player.getCurrentTime()) + ' / ' + Math.round(this.plugins.player.getDuration()));
+        var duration = 0;
+        if (this.plugins.player.getDuration() > 0) {
+          duration = Math.round(this.plugins.player.getDuration());
+        }
+        this.Dom.timeField.text(Math.round(this.plugins.player.getCurrentTime()) + ' / ' + duration);
       }
     }
   };
