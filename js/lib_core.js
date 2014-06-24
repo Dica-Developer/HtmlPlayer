@@ -298,31 +298,6 @@
       self.setSongBoxPositionX($(this).index());
       self.indicateSongBoxXPosition();
     });
-
-    this.Dom.songBox.find('span').on('dblclick', function() {
-      // TODO same code like in lib_keys.js
-      var elemsToMove = self.Dom.songBox.find('.selected');
-      var clones = elemsToMove.clone();
-      clones.animate({
-        opacity: 0
-      }, function() {
-        elemsToMove.removeClass('selected');
-        clones.removeClass('selected');
-        clones.css({
-          opacity: 1
-        });
-      });
-      elemsToMove.addClass('added');
-      clones.appendTo(self.Dom.playlistBox);
-      self.Dom.playlistBox.find('span').on('click', function() {
-        var thisUL = $(this).closest('ul');
-        var value = $(this).data('value');
-        var elems = thisUL.find('[data-value="' + value + '"]');
-        thisUL.find('.selected').removeClass('selected');
-        elems.parent().addClass('selected');
-      });
-      Audica.trigger('tracklistChanged');
-    });
   };
 
   Audica.prototype.closePlayerControlView = function() {
