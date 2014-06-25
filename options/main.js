@@ -1,7 +1,7 @@
 /*global document:true, $:true, Scrobbler:true, alert:true, chrome:true , hex_md5*/
 
-(function(document) {
-  "use strict";
+(function(document, Audica) {
+  'use strict';
 
   function saveLogin() {
     var login = $("#loginBox").val();
@@ -154,6 +154,10 @@
     $('#lastfmLogoutLink').on('click', logoutFromLastFm);
     $('#lastfmUserLink').on('click', lastfmUserLink);
     $('#backendSelection').on('change', initBackend);
+    $('#retreiveSubsonicSongList').on('click', function() {
+      Audica.plugins.subsonic.init();
+      Audica.updateSongList();
+    });
     $('#serverUrlBox').on('change', saveServerUrl);
     $('#loginBox').on('change', saveLogin);
     $('#passwordBox').on('change', savePassword);
@@ -185,4 +189,4 @@
     });
   */
   });
-}(document));
+}(document, window.Audica));

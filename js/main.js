@@ -1,9 +1,9 @@
-/*global $:true, AUDICA:true, Filesystem:true, FileImporter:true, RadioImporter:true, GoogleDrive:true, GoogleMusic:true,
- Subsonic:true, Scrobbler:true, Gracenote:true, window:true, Audica:true, console:true, chrome:true, document:true, localStorage:true*/
-(function (window, document) {
-  "use strict";
-  $(function () {
-    window.onerror = function (error, src, row) {
+/*global $:true, window:true, Audica:true, console:true, document:true*/
+(function(window, document) {
+  'use strict';
+
+  $(function() {
+    window.onerror = function(error, src, row) {
       window.event.preventDefault();
       console.log('Error: %s in %s row %s', error, src, row);
     };
@@ -12,7 +12,7 @@
 
     // TODO move this to FileImporter.init()
     // TODO add dropzone div also in FileImporter.init()
-    document.querySelector('#fileImporter_dropZone').addEventListener('drop', function (event) {
+    document.querySelector('#fileImporter_dropZone').addEventListener('drop', function(event) {
       event.stopPropagation();
       event.preventDefault();
       event.dataTransfer.dropEffect = 'copy';

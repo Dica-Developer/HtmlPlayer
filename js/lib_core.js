@@ -20,11 +20,26 @@
      */
     this.query = null;
 
+    this.save = function() {
+      var serializedDb = {};
+      serializedDb[_dbName] = JSON.stringify(this.query().get());
+      chrome.storage.local.set(serializedDb, function() {
+        if (chrome.runtime.lastError) {
+          window.Audica.trigger('ERROR', {
+            message: chrome.runtime.lastError
+          });
+        }
+      });
+    };
+
     /**
      * @param {String} dbName
      */
     this.init = function(dbName) {
       var db = this;
+      window.Audica.on('collectSongs', function() {
+        db.save();
+      });
       _dbName = 'db.' + dbName;
       chrome.storage.local.get([_dbName], function(items) {
         var dbContent = items[_dbName];
@@ -33,11 +48,6 @@
         } else {
           db.query = TAFFY();
         }
-      });
-    };
-    this.save = function() {
-      chrome.storage.local.set({
-        _dbName: JSON.stringify(this.query().get())
       });
     };
   };
@@ -52,7 +62,6 @@
     this.song = null;
     this.closePlayerControlViewTimerId = null;
     this.resizeEventTimeoutId = null;
-    this.pluginsToInitialize = 0;
 
     this.positionXClassMap = {
       0: '.artist',
@@ -368,11 +377,11 @@
   };
 
   Audica.prototype.updateSongList = function() {
-    this.trigger('fillSongBox');
-    this.trigger('updateSongList', {
+    window.Audica.trigger('fillSongBox');
+    window.Audica.trigger('updateSongList', {
       timestamp: $.now()
     });
-    this.trigger('finished');
+    window.Audica.trigger('finished');
   };
 
   Audica.prototype.backgroundTasks = function() {
@@ -469,10 +478,10 @@
         if (null !== self.closePlayerControlViewTimerId) {
           window.clearTimeout(self.closePlayerControlViewTimerId);
         }
-        if (!playerControlView.data("open")) {
-          playerControlView.data("open", true);
+        if (!playerControlView.data('open')) {
+          playerControlView.data('open', true);
           playerControlView.animate({
-            height: "50px"
+            height: '50px'
           });
         }
         self.closePlayerControlViewTimerId = window.setTimeout(function() {
@@ -601,12 +610,12 @@
           self.Dom.preferencesView.animate({
             left: 1 * Math.round($(document).width() * 0.95)
           });
-        } else if ("mouseleave" === event.type) {
+        } else if ('mouseleave' === event.type) {
           self.Dom.preferencesView.height($(document).height());
           self.Dom.preferencesView.animate({
             left: $(document).width()
           });
-        } else if ("click" === event.type) {
+        } else if ('click' === event.type) {
           self.Dom.preferencesView.height($(document).height());
           self.Dom.preferencesView.animate({
             left: $(document).width()
@@ -634,29 +643,22 @@
     });
 
     this.on('fillSongBox', function() {
-      var currentSongList = this.songDb.query().order('artist logical, album logical, year logical, track logical, title logical').get();
+      var currentSongList = this.songDb.query().order('artist logical, album logical, year logical, track logical, title logical').limit(15).get();
       this.fillSongBox(currentSongList);
     });
 
     this.on('domElementsSet', this.applyCoverArtStyle);
     this.on('nextSong', this.applyCoverArtStyle);
     this.on('previousSong', this.applyCoverArtStyle);
-    this.songDb.init('song');
-    this.historyDb.init('history');
     this.on('readyCollectingSongs', function(args) {
       self.collectSongs(args.songList, args.backendId, args.timestamp);
     });
-    this.on('initReady', function() {
-      this.pluginsToInitialize--;
-      if (0 === this.pluginsToInitialize) {
-        this.updateSongList();
-      }
-    });
+    this.on('initReady', function() {});
+    this.songDb.init('song');
+    this.historyDb.init('history');
 
-    chrome.runtime.onSuspend.addListener(function() {
+    Audica.prototype.cleanup = function() {
       var plugin = null;
-      self.songDb.save();
-      self.historyDb.save();
       for (plugin in self.plugins) {
         if (self.plugins.hasOwnProperty(plugin)) {
           if (self.plugins[plugin].db instanceof Function) {
@@ -664,7 +666,7 @@
           }
         }
       }
-    });
+    };
 
     $(window).on('resize', function() {
       if (null !== self.resizeEventTimeoutId) {
@@ -731,7 +733,6 @@
       if (this.plugins.hasOwnProperty(name)) {
         if (this.plugins[name].init instanceof Function) {
           this.plugins[name].init.call(this);
-          this.pluginsToInitialize++;
         }
       }
     }

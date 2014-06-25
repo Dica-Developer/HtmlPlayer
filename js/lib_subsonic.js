@@ -109,11 +109,11 @@
             var subSonicResponse = response['subsonic-response'];
             if (subSonicResponse.status === 'ok') {
               var genres = subSonicResponse.genres.genre;
-              for (var i = 0; i < 1 /*genres.length*/ ; i++) {
+              for (var i = 0; i < genres.length; i++) {
                 getSongsByGenre(timestamp, Audica.decodeHtml(genres[i].value), 0, _maxResultsPerRequest);
               }
             } else {
-              // TODO error
+              console.error(subSonicResponse.message);
             }
           } else {
             // todo error
@@ -136,14 +136,7 @@
     };
 
     Audica.on('updateSongList', function(args) {
-      var lastSongUpdate = Audica.songDb.query({
-        backendId: {
-          is: this.backendid
-        }
-      }).max('addedOn');
-      if (null === lastSongUpdate || undefined === lastSongUpdate || (args.timestamp - lastSongUpdate > _dayInMilliseconds)) {
-        _searchForSongs(args.timestamp, null, null);
-      }
+      _searchForSongs(args.timestamp, null, null);
     });
 
     this.init = function() {
