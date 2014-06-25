@@ -1,4 +1,4 @@
-/*global Audica:true, XMLHttpRequest:true, console:true, window*/
+/*global Audica:true, XMLHttpRequest:true, console:true, window, chrome*/
 (function(window, Audica) {
   "use strict";
 
@@ -27,6 +27,8 @@
     var _serverUrl = null;
 
     var _maxResultsPerRequest = 500;
+
+    var _dayInMilliseconds = 24 * 60 * 60 * 1000;
 
     /**
      * @param {Event} event
@@ -72,7 +74,7 @@
     function getSongsByGenre(timestamp, genre, offset, maxResultsPerRequest) {
       var url = _serverUrl + '/getSongsByGenre.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=chrome&f=json&count=' + maxResultsPerRequest + '&offset=' + offset + '&genre=' + encodeURIComponent(genre);
       var req = new XMLHttpRequest();
-      req.open("GET", url, true);
+      req.open('GET', url, true);
       req.onload = function() {
         var response = JSON.parse(req.response);
         var collectedSongs = _collect(response, timestamp);
@@ -98,9 +100,9 @@
      */
     function _searchForSongs(timestamp, collectErrors, collectProgress) {
       if (_serverUrl && _login && _password) {
-        var url = _serverUrl + "/getGenres.view?u=" + _login + "&p=" + _password + "&v=1.10.2&c=chrome&f=json";
+        var url = _serverUrl + '/getGenres.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=chrome&f=json';
         var req = new XMLHttpRequest();
-        req.open("GET", url, true);
+        req.open('GET', url, true);
         req.onload = function(event) {
           var response = JSON.parse(event.currentTarget.response);
           if (response.hasOwnProperty('subsonic-response')) {
@@ -130,11 +132,18 @@
     };
 
     this.setCoverArt = function(src, coverArt) {
-      coverArt.attr("src", src);
+      coverArt.attr('src', src);
     };
 
     Audica.on('updateSongList', function(args) {
-      _searchForSongs(args.timestamp, null, null);
+      var lastSongUpdate = Audica.songDb.query({
+        backendId: {
+          is: this.backendid
+        }
+      }).max('addedOn');
+      if (null === lastSongUpdate || undefined === lastSongUpdate || (args.timestamp - lastSongUpdate > _dayInMilliseconds)) {
+        _searchForSongs(args.timestamp, null, null);
+      }
     });
 
     this.init = function() {
