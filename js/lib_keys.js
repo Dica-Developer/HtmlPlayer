@@ -1,4 +1,4 @@
-/*global $:true, Audica:true, document:true,  Mousetrap:true */
+/*global $:true, Audica:true, document:true,  Mousetrap:true, Hammer */
 (function(window, Mousetrap) {
   'use strict';
   window.bindKeyEvents = function(Audica) {
@@ -231,7 +231,7 @@
         clones.appendTo(dom.playlistBox);
         dom.playlistBox.find('span').on('click', function() {
           var thisUL = $(this).closest('ul');
-          var value = $(this).data("value");
+          var value = $(this).data('value');
           var elems = thisUL.find('[data-value="' + value + '"]');
           thisUL.find('.selected').removeClass('selected');
           elems.parent().addClass('selected');
@@ -240,8 +240,8 @@
       });
 
       var element = document.getElementById('songBoxContainer');
-      new Hammer(element).on("doubletap", function(event) {
-        var elemsToMove = dom.songBox.find(".selected");
+      new Hammer(element).on('doubletap', function() {
+        var elemsToMove = dom.songBox.find('.selected');
         var clones = elemsToMove.clone();
         clones.animate({
           opacity: 0
@@ -256,7 +256,7 @@
         clones.appendTo(dom.playlistBox);
         dom.playlistBox.find('span').on('click', function() {
           var thisUL = $(this).closest('ul');
-          var value = $(this).data("value");
+          var value = $(this).data('value');
           var elems = thisUL.find('[data-value="' + value + '"]');
           thisUL.find('.selected').removeClass('selected');
           elems.parent().addClass('selected');
@@ -264,12 +264,7 @@
         Audica.trigger('tracklistChanged');
       });
 
-      Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'ä', 'ö', 'ü', 'backspace'], function() {
-        if (!filterBox.data("open")) {
-          filterBox.data("open", true);
-          filterBox.show();
-          filterBox.focus();
-        }
+      function search() {
         if (null !== filterBoxTimeout) {
           window.clearTimeout(filterBoxTimeout);
         }
@@ -301,7 +296,27 @@
           }
           Audica.fillSongBox(currentSongList);
         }, 500);
+      }
+
+      function openSearchBox() {
+        if (!filterBox.data('open')) {
+          filterBox.data('open', true);
+          filterBox.show();
+          filterBox.focus();
+          filterBox.on('keyup', search);
+          filterBox.one('blur', function() {
+            filterBox.off('keyup', '**');
+            filterBox.data('open', false);
+            filterBox.hide();
+            songBox.focus();
+          });
+        }
+      }
+
+      new Hammer(element).on('hold', function(event) {
+        openSearchBox();
       });
+      Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '/'], openSearchBox);
 
       Mousetrap.bind('tab', function() {
         Audica.setViewState('playList');
@@ -310,8 +325,10 @@
     };
 
     bindKeysToView.playList = function() {
+      //new Hammer(element).on('doubletap', function() {});
+
       Mousetrap.bind(['del'], function() {
-        var elems = dom.playlistBox.find(".selected");
+        var elems = dom.playlistBox.find('.selected');
         elems.each(function() {
           var song = dom.songBox.find('[data-song="' + $(this).data('song') + '"]');
           song.removeClass('added');
