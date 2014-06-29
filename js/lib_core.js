@@ -1,4 +1,4 @@
-/*global TAFFY:true, escape:true, unescape:true, console:true, chrome, Mousetrap*/
+/*global TAFFY:true, escape:true, unescape:true, console:true, Mousetrap*/
 (function(window, document) {
   'use strict';
 
@@ -15,21 +15,18 @@
      */
     var _dbName = null;
 
+    var _timeout = null;
+
     /**
      * @type {Function|Null}
      */
     this.query = null;
 
-    this.save = function() {
-      var serializedDb = {};
-      serializedDb[_dbName] = JSON.stringify(this.query().get());
-      chrome.storage.local.set(serializedDb, function() {
-        if (chrome.runtime.lastError) {
-          window.Audica.trigger('ERROR', {
-            message: chrome.runtime.lastError
-          });
-        }
-      });
+    this.save = function(db) {
+      var serializedDb = JSON.stringify(db);
+      window.Audica.plugins.fileSystem.writeFile(_dbName, new Blob([serializedDb], {
+        type: 'text/plain'
+      }));
     };
 
     /**
@@ -37,17 +34,33 @@
      */
     this.init = function(dbName) {
       var db = this;
-      window.Audica.on('collectSongs', function() {
-        db.save();
-      });
       _dbName = 'db.' + dbName;
-      chrome.storage.local.get([_dbName], function(items) {
-        var dbContent = items[_dbName];
-        if (null !== dbContent && undefined !== dbContent) {
-          db.query = TAFFY(JSON.parse(dbContent));
-        } else {
-          db.query = TAFFY();
-        }
+      window.Audica.plugins.fileSystem.readFile(_dbName, function(dbContent) {
+        db.query = TAFFY(JSON.parse(dbContent));
+        db.query.settings({
+          onDBChange: function() {
+            var dbContent = this;
+            if (null !== _timeout) {
+              clearTimeout(_timeout);
+            }
+            _timeout = window.setTimeout(function() {
+              db.save(dbContent);
+            }, 1000);
+          }
+        });
+      }, function() {
+        db.query = TAFFY();
+        db.query.settings({
+          onDBChange: function() {
+            var dbContent = this;
+            if (null !== _timeout) {
+              clearTimeout(_timeout);
+            }
+            _timeout = window.setTimeout(function() {
+              db.save(dbContent);
+            }, 1000);
+          }
+        });
       });
     };
   };
@@ -654,8 +667,10 @@
       self.collectSongs(args.songList, args.backendId, args.timestamp);
     });
     this.on('initReady', function() {});
-    this.songDb.init('song');
-    this.historyDb.init('history');
+    this.on('fileSystemInitReady', function() {
+      this.songDb.init('song');
+      this.historyDb.init('history');
+    });
 
     Audica.prototype.cleanup = function() {
       var plugin = null;

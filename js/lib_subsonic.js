@@ -1,6 +1,6 @@
 /*global Audica:true, XMLHttpRequest:true, console:true, window, chrome*/
 (function(window, Audica) {
-  "use strict";
+  'use strict';
 
   /**
    * @class
@@ -28,18 +28,15 @@
 
     var _maxResultsPerRequest = 500;
 
-    var _dayInMilliseconds = 24 * 60 * 60 * 1000;
-
     /**
      * @param {Event} event
      * @param {Number} timestamp
      * @private
      */
-
     function _collect(response, timestamp) {
       var songList = [];
-      var ssr = response["subsonic-response"];
-      if ("ok" === ssr.status) {
+      var ssr = response['subsonic-response'];
+      if ('ok' === ssr.status) {
         if (ssr.songsByGenre.hasOwnProperty('song')) {
           var songs = ssr.songsByGenre.song;
           var i = 0,
@@ -47,7 +44,7 @@
           for (i; i < length; i++) {
             var song = songs[i];
             var songObj = {
-              "artist": Audica.decodeHtml(song.artist),
+              'artist': Audica.decodeHtml(song.artist),
               "album": Audica.decodeHtml(song.album),
               "title": Audica.decodeHtml(song.title),
               "id": song.id,
@@ -66,7 +63,7 @@
           }
         }
       } else {
-        console.error("fetching songs failed with status '" + ssr.status + "'");
+        console.error('fetching songs failed with status "' + ssr.status + '"');
       }
       return songList;
     }
