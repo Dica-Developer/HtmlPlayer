@@ -36,7 +36,14 @@
       var db = this;
       _dbName = 'db.' + dbName;
       window.Audica.plugins.fileSystem.readFile(_dbName, function(dbContent) {
-        db.query = TAFFY(JSON.parse(dbContent));
+        try {
+          db.query = TAFFY(JSON.parse(dbContent));
+        } catch (e) {
+          window.Audica.trigger('ERROR', {
+            message: 'Cannot initialize db with old content. Set it to an empty db.' + e
+          });
+          db.query = TAFFY();
+        }
         db.query.settings({
           onDBChange: function() {
             var dbContent = this;
