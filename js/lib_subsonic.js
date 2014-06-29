@@ -45,10 +45,10 @@
             var song = songs[i];
             var songObj = {
               'artist': Audica.decodeHtml(song.artist),
-              "album": Audica.decodeHtml(song.album),
+              'album': Audica.decodeHtml(song.album),
               "title": Audica.decodeHtml(song.title),
               "id": song.id,
-              "coverArt": song.coverArt ? _serverUrl + '/getCoverArt.view?u=' + _login + '&p=' + _password + "&v=1.10.2&c=chrome&size=1024&id=" + song.coverArt : null,
+              "coverArt": song.coverArt ? _serverUrl + '/getCoverArt.view?u=' + _login + '&p=' + _password + "&v=1.10.2&c=audica&size=1024&id=" + song.coverArt : null,
               "contentType": song.contentType,
               "track": song.track ? song.track : null,
               "cd": 0,
@@ -56,7 +56,7 @@
               "genre": Audica.decodeHtml(song.genre),
               "year": song.year ? song.year : null,
               "addedOn": timestamp,
-              "src": _serverUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=chrome&id=' + song.id,
+              "src": _serverUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&id=' + song.id,
               "backendId": backendId
             };
             songList.push(songObj);
@@ -69,7 +69,7 @@
     }
 
     function getSongsByGenre(timestamp, genre, offset, maxResultsPerRequest) {
-      var url = _serverUrl + '/getSongsByGenre.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=chrome&f=json&count=' + maxResultsPerRequest + '&offset=' + offset + '&genre=' + encodeURIComponent(genre);
+      var url = _serverUrl + '/getSongsByGenre.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&f=json&count=' + maxResultsPerRequest + '&offset=' + offset + '&genre=' + encodeURIComponent(genre);
       var req = new XMLHttpRequest();
       req.open('GET', url, true);
       req.onload = function() {
@@ -97,7 +97,7 @@
      */
     function _searchForSongs(timestamp, collectErrors, collectProgress) {
       if (_serverUrl && _login && _password) {
-        var url = _serverUrl + '/getGenres.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=chrome&f=json';
+        var url = _serverUrl + '/getGenres.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&f=json';
         var req = new XMLHttpRequest();
         req.open('GET', url, true);
         req.onload = function(event) {
