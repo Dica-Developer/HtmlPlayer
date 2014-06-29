@@ -37,8 +37,8 @@
       var songList = [];
       var ssr = response['subsonic-response'];
       if ('ok' === ssr.status) {
-        if (ssr.songsByGenre.hasOwnProperty('song')) {
-          var songs = ssr.songsByGenre.song;
+        if (ssr.album.hasOwnProperty('song')) {
+          var songs = ssr.album.song;
           var i = 0,
             length = songs.length;
           for (i; i < length; i++) {
@@ -46,18 +46,19 @@
             var songObj = {
               'artist': Audica.decodeHtml(song.artist),
               'album': Audica.decodeHtml(song.album),
-              "title": Audica.decodeHtml(song.title),
-              "id": song.id,
-              "coverArt": song.coverArt ? _serverUrl + '/getCoverArt.view?u=' + _login + '&p=' + _password + "&v=1.10.2&c=audica&size=1024&id=" + song.coverArt : null,
-              "contentType": song.contentType,
-              "track": song.track ? song.track : null,
-              "cd": 0,
-              "duration": song.duration,
-              "genre": Audica.decodeHtml(song.genre),
-              "year": song.year ? song.year : null,
-              "addedOn": timestamp,
-              "src": _serverUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&id=' + song.id,
-              "backendId": backendId
+              'title': Audica.decodeHtml(song.title),
+              'id': song.id,
+              'coverArt': song.coverArt ? _serverUrl + '/getCoverArt.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&size=1024&id=' + song.coverArt : null,
+              'contentType': song.contentType,
+              'track': song.track ? song.track : null,
+              'cd': 0,
+              'created': song.created ? song.created : null,
+              'duration': song.duration,
+              'genre': Audica.decodeHtml(song.genre),
+              'year': song.year ? song.year : null,
+              'addedOn': timestamp,
+              'src': _serverUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&id=' + song.id,
+              'backendId': backendId
             };
             songList.push(songObj);
           }
@@ -68,8 +69,8 @@
       return songList;
     }
 
-    function getSongsByGenre(timestamp, genre, offset, maxResultsPerRequest) {
-      var url = _serverUrl + '/getSongsByGenre.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&f=json&count=' + maxResultsPerRequest + '&offset=' + offset + '&genre=' + encodeURIComponent(genre);
+    function getSongsByAlbum(timestamp, albumId) {
+      var url = _serverUrl + '/getAlbum.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&f=json&id=' + albumId;
       var req = new XMLHttpRequest();
       req.open('GET', url, true);
       req.onload = function() {
@@ -81,9 +82,6 @@
             backendId: backendId,
             timestamp: timestamp
           });
-          if (collectedSongs.length === maxResultsPerRequest) {
-            getSongsByGenre(timestamp, genre, (offset + maxResultsPerRequest), maxResultsPerRequest);
-          }
         }
       };
       req.send();
@@ -95,9 +93,9 @@
      * @param {Function} collectProgress
      * @private
      */
-    function _searchForSongs(timestamp, collectErrors, collectProgress) {
+    function _searchForSongs(timestamp, offset, maxResultsPerRequest, collectErrors, collectProgress) {
       if (_serverUrl && _login && _password) {
-        var url = _serverUrl + '/getGenres.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&f=json';
+        var url = _serverUrl + '/getAlbumList2.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&f=json&size=' + maxResultsPerRequest + '&type=alphabeticalByName&offset=' + offset;
         var req = new XMLHttpRequest();
         req.open('GET', url, true);
         req.onload = function(event) {
@@ -105,9 +103,12 @@
           if (response.hasOwnProperty('subsonic-response')) {
             var subSonicResponse = response['subsonic-response'];
             if (subSonicResponse.status === 'ok') {
-              var genres = subSonicResponse.genres.genre;
-              for (var i = 0; i < genres.length; i++) {
-                getSongsByGenre(timestamp, Audica.decodeHtml(genres[i].value), 0, _maxResultsPerRequest);
+              var albums = subSonicResponse.albumList2.album;
+              for (var i = 0; i < albums.length; i++) {
+                getSongsByAlbum(timestamp, albums[i].id);
+              }
+              if (albums.length === maxResultsPerRequest) {
+                _searchForSongs(timestamp, (offset + maxResultsPerRequest), maxResultsPerRequest, collectErrors, collectProgress);
               }
             } else {
               console.error(subSonicResponse.message);
@@ -133,7 +134,7 @@
     };
 
     Audica.on('updateSongList', function(args) {
-      _searchForSongs(args.timestamp, null, null);
+      _searchForSongs(args.timestamp, 0, _maxResultsPerRequest, null, null);
     });
 
     this.init = function() {
