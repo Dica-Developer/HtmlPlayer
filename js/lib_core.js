@@ -516,23 +516,21 @@
     });
 
     var handleRightZone = function(event) {
-      var playerView = self.Dom.playerView;
       if ('search' === self.getViewState()) {
         var searchView = self.Dom.searchView;
-        var playerControlView = self.Dom.playerControlView;
         var coverArtBox = self.Dom.coverArtBox;
         var descriptionBox = self.Dom.descriptionBox;
-        if ("mouseenter" === event.type) {
+        if ('mouseenter' === event.type) {
           searchView.height($(document).height());
           searchView.animate({
             left: -1 * Math.round($(document).width() * 0.05)
           });
-        } else if ("mouseleave" === event.type) {
+        } else if ('mouseleave' === event.type) {
           searchView.height($(document).height());
           searchView.animate({
-            left: "0"
+            left: '0'
           });
-        } else if ("click" === event.type) {
+        } else if ('click' === event.type) {
           searchView.animate({
             left: -1 * $(document).width()
           });
@@ -542,22 +540,22 @@
             self.setNotScrobbled(true);
           }
           self.setViewState('player');
-          coverArtBox.css("padding-top", ($(document).height() - coverArtBox.height()) / 2);
-          descriptionBox.css("padding-top", ($(document).height() - descriptionBox.height()) / 2);
+          coverArtBox.css('padding-top', ($(document).height() - coverArtBox.height()) / 2);
+          descriptionBox.css('padding-top', ($(document).height() - descriptionBox.height()) / 2);
           self.Dom.searchViewPreview.show();
         }
       } else if ('player' === self.getViewState()) {
-        if ("mouseenter" === event.type) {
+        if ('mouseenter' === event.type) {
           self.Dom.preferencesView.height($(document).height());
           self.Dom.preferencesView.animate({
             left: 1 * Math.round($(document).width() * 0.05)
           });
-        } else if ("mouseleave" === event.type) {
+        } else if ('mouseleave' === event.type) {
           self.Dom.preferencesView.height($(document).height());
           self.Dom.preferencesView.animate({
             left: $(document).width()
           });
-        } else if ("click" === event.type) {
+        } else if ('click' === event.type) {
           self.Dom.preferencesView.height($(document).height());
           self.Dom.preferencesView.animate({
             left: 0
@@ -594,8 +592,6 @@
 
     var handleLeftZone = function(event) {
       var searchView = self.Dom.searchView;
-      var playerView = self.Dom.playerView;
-      var playerControlView = self.Dom.playerControlView;
       var songBox = self.Dom.songBox;
       var playlistBox = self.Dom.playlistBox;
       var boxWidth = ($(document).width() / 2) - 22 - 2;
@@ -606,12 +602,12 @@
           searchView.animate({
             left: -1 * Math.round($(document).width() * 0.95)
           });
-        } else if ("mouseleave" === event.type) {
+        } else if ('mouseleave' === event.type) {
           searchView.height($(document).height());
           searchView.animate({
             left: -1 * $(document).width()
           });
-        } else if ("click" === event.type) {
+        } else if ('click' === event.type) {
           self.Dom.searchViewPreview.hide();
           songBox.focus();
           songBox.width(boxWidth);
