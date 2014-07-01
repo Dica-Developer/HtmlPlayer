@@ -18,6 +18,7 @@
 
     Audica.on('viewStateChanged', function(args) {
       Mousetrap.reset();
+      $('body').off('click');
       if (bindKeysToView[args.to]) {
         bindKeysToView[args.to].call(this);
         if (args.to === 'search' && dom.songBox.find('li').length === 0) {
@@ -78,7 +79,7 @@
         Audica.scrobbleNowPlaying();
         Audica.setNotScrobbled(true);
       }
-      $('#foreButton').on('click', next);
+      $('body').on('click', '#foreButton', next);
       Mousetrap.bind(['n'], next);
 
       function previous() {
@@ -89,7 +90,7 @@
         Audica.scrobbleNowPlaying();
         Audica.setNotScrobbled(true);
       }
-      $('#backButton').on('click', previous);
+      $('body').on('click', '#backButton', previous);
       Mousetrap.bind(['p'], previous);
 
       function togglePlay() {
@@ -103,7 +104,7 @@
           audio.pause();
         }
       }
-      $('#playPauseButton').on('click', togglePlay);
+      $('body').on('click', '#playPauseButton', togglePlay);
       Mousetrap.bind(['space'], togglePlay);
     };
 
@@ -164,11 +165,11 @@
 
       Mousetrap.bind(['down'], function() {
         if (filterBox.data.open) {
-          filterBox.data("open", false);
+          filterBox.data('open', false);
           filterBox.blur();
           songBox.focus();
           filterBox.hide();
-          filterBox.val("");
+          filterBox.val('');
         }
         var next = null;
         if (!Audica.getSongBoxPositionY()) {
@@ -313,7 +314,7 @@
         }
       }
 
-      new Hammer(element).on('hold', function(event) {
+      new Hammer(element).on('hold', function() {
         openSearchBox();
       });
       Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '/'], openSearchBox);
