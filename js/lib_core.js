@@ -177,7 +177,6 @@
     this.trigger('domElementsSet');
     this.applyCoverArtStyle();
     this.Dom.searchView.css('left', -1 * $(document).width());
-    this.Dom.preferencesView.css('left', 1 * $(document).width());
   };
 
   Audica.prototype.setFirstPlaylistElement = function(li) {
@@ -546,19 +545,19 @@
         }
       } else if ('player' === self.getViewState()) {
         if ('mouseenter' === event.type) {
-          self.Dom.preferencesView.height($(document).height());
-          self.Dom.preferencesView.animate({
-            left: 1 * Math.round($(document).width() * 0.05)
+          self.Dom.playerView.height($(document).height());
+          self.Dom.playerView.animate({
+            left: -1 * Math.round($(document).width() * 0.05)
           });
         } else if ('mouseleave' === event.type) {
-          self.Dom.preferencesView.height($(document).height());
-          self.Dom.preferencesView.animate({
-            left: $(document).width()
+          self.Dom.playerView.height($(document).height());
+          self.Dom.playerView.animate({
+            left: 0
           });
         } else if ('click' === event.type) {
-          self.Dom.preferencesView.height($(document).height());
-          self.Dom.preferencesView.animate({
-            left: 0
+          self.Dom.playerView.height($(document).height());
+          self.Dom.playerView.animate({
+            left: -1 * $(document).width()
           });
           self.setViewState('preferences');
         }
@@ -622,19 +621,19 @@
         }
       } else if ('preferences' === self.getViewState()) {
         if ('mouseenter' === event.type) {
-          self.Dom.preferencesView.height($(document).height());
-          self.Dom.preferencesView.animate({
-            left: 1 * Math.round($(document).width() * 0.95)
+          self.Dom.playerView.height($(document).height());
+          self.Dom.playerView.animate({
+            left: -1 * Math.round($(document).width() * 0.95)
           });
         } else if ('mouseleave' === event.type) {
-          self.Dom.preferencesView.height($(document).height());
-          self.Dom.preferencesView.animate({
-            left: $(document).width()
+          self.Dom.playerView.height($(document).height());
+          self.Dom.playerView.animate({
+            left: -1 * $(document).width()
           });
         } else if ('click' === event.type) {
-          self.Dom.preferencesView.height($(document).height());
-          self.Dom.preferencesView.animate({
-            left: $(document).width()
+          self.Dom.playerView.height($(document).height());
+          self.Dom.playerView.animate({
+            left: 0
           });
           self.setViewState('player');
         }
