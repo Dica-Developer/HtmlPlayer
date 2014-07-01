@@ -39,13 +39,18 @@
     };
 
     bindKeysToView.player = function() {
-      Mousetrap.bind(['right'], function() {
-        audio.forwardSeconds(10);
-      });
 
-      Mousetrap.bind(['left'], function() {
+      function forward() {
+        audio.forwardSeconds(10);
+      }
+      $('body').on('click', '#forwardButton', forward);
+      Mousetrap.bind(['right'], forward);
+
+      function rewind() {
         audio.rewindSeconds(10);
-      });
+      }
+      $('body').on('click', '#rewindButton', rewind);
+      Mousetrap.bind(['left'], rewind);
 
       Mousetrap.bind(['shift+up'], function() {
         audio.volumeUp(0.02);
@@ -79,7 +84,7 @@
         Audica.scrobbleNowPlaying();
         Audica.setNotScrobbled(true);
       }
-      $('body').on('click', '#foreButton', next);
+      $('body').on('click', '#nextButton', next);
       Mousetrap.bind(['n'], next);
 
       function previous() {
@@ -90,7 +95,7 @@
         Audica.scrobbleNowPlaying();
         Audica.setNotScrobbled(true);
       }
-      $('body').on('click', '#backButton', previous);
+      $('body').on('click', '#prevButton', previous);
       Mousetrap.bind(['p'], previous);
 
       function togglePlay() {
