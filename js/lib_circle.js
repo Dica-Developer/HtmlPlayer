@@ -1,5 +1,10 @@
+/*global Hammer*/
 (function(name) {
+  'use strict';
+
   var triggered = false;
+
+  var prevEvent = null;
 
   function circleGesture(ev, inst) {
     switch (ev.eventType) {
@@ -12,23 +17,18 @@
           return;
         }
 
-        var rotationThreshold = Math.abs(ev.rotation);
-        if (rotationThreshold < inst.options.circleMinRotation) {
-          return;
+        var rotationSpeed = 0;
+        if (null !== prevEvent) {
+          var deltaTime = ev.timeStamp - prevEvent.timeStamp;
+          var deltaAngle = ev.angle - prevEvent.angle;
+          rotationSpeed = (deltaAngle / deltaTime);
         }
-
-        // we are transforming!
-        Detection.current.name = name;
-
-        // first time, trigger dragstart event
-        if (!triggered) {
-          inst.trigger(name + 'start', ev);
-          triggered = true;
-        }
-
-        inst.trigger(name, ev); // basic transform event
-
-        if (rotationThreshold > inst.options.circleMinRotation) {
+        prevEvent = ev;
+        if (Math.abs(rotationSpeed) >= inst.options.circleMinRotation) {
+          if (!triggered) {
+            triggered = true;
+          }
+          ev.rotationSpeed = rotationSpeed;
           inst.trigger('circle', ev);
         }
         break;
@@ -45,7 +45,7 @@
     name: 'circle',
     index: 2000,
     defaults: {
-      circleMinRotation: 1
+      circleMinRotation: 0.08
     },
     handler: circleGesture
   };
