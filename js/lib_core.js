@@ -45,6 +45,7 @@
           db.query = TAFFY();
         }
         db.query.settings({
+          cacheSize: 10000,
           onDBChange: function() {
             var dbContent = this;
             if (null !== _timeout) {
@@ -58,6 +59,7 @@
       }, function() {
         db.query = TAFFY();
         db.query.settings({
+          cacheSize: 10000,
           onDBChange: function() {
             var dbContent = this;
             if (null !== _timeout) {
@@ -375,13 +377,7 @@
   };
 
   Audica.prototype.collectSongs = function(songList, backendId, timestamp) {
-    var i = 0,
-      length = songList.length,
-      song;
-    for (i; i < length; i++) {
-      song = songList[i];
-      this.songDb.query.insert(song);
-    }
+    this.songDb.query.insert(songList);
     this.songDb.query({
       backendId: {
         is: backendId
@@ -391,12 +387,10 @@
       }
     }).remove();
 
-    this.trigger('fillSongBox');
     this.trigger('collectSongs');
   };
 
   Audica.prototype.updateSongList = function() {
-    window.Audica.trigger('fillSongBox');
     window.Audica.trigger('updateSongList', {
       timestamp: $.now()
     });
