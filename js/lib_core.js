@@ -338,16 +338,24 @@
     });
   };
 
-  Audica.prototype.applyCoverArtStyle = function() {
-    // Use original window elem to set height because reflect is need this
-    this.Dom.coverArt[0].height = $(document).height() * 0.6;
-    this.Dom.coverArt[0].width = $(document).height() * 0.6;
-    this.Dom.coverArt.reflect({
+  function applyCoverArtStyleToOneView(view) {
+    view.height(window.innerHeight);
+    view.width(window.innerWidth);
+    // Use original window elem to set height because reflect needs this
+    window.Audica.Dom.coverArt[0].height = window.innerHeight / 2;
+    window.Audica.Dom.coverArt[0].width = window.innerWidth / 2;
+    window.Audica.Dom.coverArt.reflect({
       height: 0.165,
       opacity: 0.25
     });
-    this.Dom.coverArtBox.css('padding-top', ($(document).height() - this.Dom.coverArtBox.height()) / 2);
-    this.Dom.descriptionBox.css('padding-top', ($(document).height() - this.Dom.descriptionBox.height()) / 2);
+    window.Audica.Dom.coverArtBox.css('padding-top', (window.innerHeight - window.Audica.Dom.coverArtBox.height()) / 2);
+    window.Audica.Dom.descriptionBox.css('padding-top', (window.innerHeight - window.Audica.Dom.descriptionBox.height()) / 2);
+  }
+
+  Audica.prototype.applyCoverArtStyle = function() {
+    applyCoverArtStyleToOneView(this.Dom.playerView);
+    applyCoverArtStyleToOneView(this.Dom.searchView);
+    applyCoverArtStyleToOneView(this.Dom.preferencesView);
   };
 
   Audica.prototype.updateProgress = function() {
@@ -514,12 +522,10 @@
         var coverArtBox = self.Dom.coverArtBox;
         var descriptionBox = self.Dom.descriptionBox;
         if ('mouseenter' === event.type) {
-          searchView.height($(document).height());
           searchView.animate({
             left: -1 * Math.round($(document).width() * 0.05)
           });
         } else if ('mouseleave' === event.type) {
-          searchView.height($(document).height());
           searchView.animate({
             left: '0'
           });
@@ -539,17 +545,14 @@
         }
       } else if ('player' === self.getViewState()) {
         if ('mouseenter' === event.type) {
-          self.Dom.playerView.height($(document).height());
           self.Dom.playerView.animate({
             left: -1 * Math.round($(document).width() * 0.05)
           });
         } else if ('mouseleave' === event.type) {
-          self.Dom.playerView.height($(document).height());
           self.Dom.playerView.animate({
             left: 0
           });
         } else if ('click' === event.type) {
-          self.Dom.playerView.height($(document).height());
           self.Dom.playerView.animate({
             left: -1 * $(document).width()
           });
@@ -591,12 +594,10 @@
       var boxHeight = $(document).height() - 22;
       if ('player' === self.getViewState()) {
         if ('mouseenter' === event.type) {
-          searchView.height($(document).height());
           searchView.animate({
             left: -1 * Math.round($(document).width() * 0.95)
           });
         } else if ('mouseleave' === event.type) {
-          searchView.height($(document).height());
           searchView.animate({
             left: -1 * $(document).width()
           });
@@ -615,17 +616,14 @@
         }
       } else if ('preferences' === self.getViewState()) {
         if ('mouseenter' === event.type) {
-          self.Dom.playerView.height($(document).height());
           self.Dom.playerView.animate({
             left: -1 * Math.round($(document).width() * 0.95)
           });
         } else if ('mouseleave' === event.type) {
-          self.Dom.playerView.height($(document).height());
           self.Dom.playerView.animate({
             left: -1 * $(document).width()
           });
         } else if ('click' === event.type) {
-          self.Dom.playerView.height($(document).height());
           self.Dom.playerView.animate({
             left: 0
           });
