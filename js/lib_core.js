@@ -338,9 +338,7 @@
     });
   };
 
-  function applyCoverArtStyleToOneView(view) {
-    view.height(window.innerHeight);
-    view.width(window.innerWidth);
+  function applyCoverArtStyleToOneView() {
     // Use original window elem to set height because reflect needs this
     window.Audica.Dom.coverArt[0].height = window.innerHeight / 2;
     window.Audica.Dom.coverArt[0].width = window.innerWidth / 2;
@@ -353,9 +351,13 @@
   }
 
   Audica.prototype.applyCoverArtStyle = function() {
-    applyCoverArtStyleToOneView(this.Dom.playerView);
-    applyCoverArtStyleToOneView(this.Dom.searchView);
-    applyCoverArtStyleToOneView(this.Dom.preferencesView);
+    this.Dom.playerView.height(window.innerHeight);
+    this.Dom.playerView.width(window.innerWidth);
+    applyCoverArtStyleToOneView();
+    this.Dom.searchView.height(window.innerHeight);
+    this.Dom.searchView.width(window.innerWidth);
+    this.Dom.preferencesView.height(window.innerHeight);
+    this.Dom.preferencesView.width(window.innerWidth);
   };
 
   Audica.prototype.updateProgress = function() {
