@@ -16,6 +16,9 @@
     var descriptionBox = dom.descriptionBox;
     var filterBoxTimeout = null;
 
+    window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+      window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+
     Audica.on('viewStateChanged', function(args) {
       Mousetrap.reset();
       $('body').off('click');
@@ -321,6 +324,22 @@
 
       new Hammer(element).on('hold', function() {
         openSearchBox();
+      });
+      var center = {};
+      new Hammer(document.getElementById('pointerCircle')).on('pan', function(event) {
+        window.requestAnimationFrame(function() {
+          var outerCircle = $('#outerCircle');
+          var outerCirclePos = outerCircle.position();
+          center.x = (outerCirclePos.left + 100);
+          center.y = (outerCirclePos.top + 100);
+          var siteA = Math.abs(event.center.x - center.x);
+          var siteB = Math.abs(event.center.y - center.y);
+          var siteC = Math.sqrt(Math.pow(siteA, 2) + Math.pow(siteB, 2));
+          if (siteC > 80 && siteC < 120) {
+            var pointer = document.getElementById('pointerCircle');
+            pointer.style.webkitTransform = 'translate3d(' + Math.round(event.center.x - outerCirclePos.left - 24) + 'px, ' + Math.round(event.center.y - outerCirclePos.top - 24) + 'px, 0)';
+          }
+        });
       });
       Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '/'], openSearchBox);
 
