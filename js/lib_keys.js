@@ -322,7 +322,7 @@
         }
       }
 
-      new Hammer(element).on('hold', function() {
+      new Hammer(element).on('press', function() {
         openSearchBox();
       });
       var center = {};
