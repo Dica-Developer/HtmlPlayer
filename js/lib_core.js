@@ -307,7 +307,7 @@
       song;
     for (i; i < length; i++) {
       song = songs[i];
-      var li = '<li ' + 'data-song="' + escape(JSON.stringify(song)) + '">' + '<span class="artist" data-value="' + escape(JSON.stringify(song.artist)) + '">' + this.encodeHtml(song.artist) + '</span> / ' + '<span class="album" data-value="' + escape(JSON.stringify(song.album)) + '">' + this.encodeHtml(song.album) + '</span> / ' + '<span class="track" data-value="' + escape(JSON.stringify(song.track)) + '">' + this.encodeHtml(song.track) + '.</span> ' + '<span class="title" data-value="' + escape(JSON.stringify(song.title)) + '">' + this.encodeHtml(song.title) + '</span>' + '</li>';
+      var li = '<li data-song="' + escape(JSON.stringify(song)) + '"><span class="artist" data-value="' + escape(song.artist) + '">' + this.encodeHtml(song.artist) + '</span> / <span class="album" data-value="' + escape(song.album) + '">' + this.encodeHtml(song.album) + '</span> / <span class="track" data-value="' + escape(song.track) + '">' + this.encodeHtml(song.track) + '.</span><span class="title" data-value="' + escape(song.title) + '">' + this.encodeHtml(song.title) + '</span></li>';
       lis = lis + li;
     }
     this.Dom.songBox.html(lis);
@@ -316,7 +316,7 @@
 
   Audica.prototype.bindSongBoxEvents = function() {
     var self = this;
-    this.Dom.songBox.find('span').on('click', function() {
+    this.Dom.songBox.on('click', 'span', function() {
       var value = $(this).data('value');
       var clazz = $(this).attr('class');
       var yIndex = $(this).closest('li');
@@ -691,9 +691,10 @@
     this.trigger('registerEvents');
   };
 
+  var encodeDecodeElement = $('<div />');
   Audica.prototype.encodeHtml = function(string) {
     if (string !== undefined && string !== null) {
-      return $('<div />').text(string).html();
+        return encodeDecodeElement.text(string).html();
     } else {
       return string;
     }
@@ -701,7 +702,7 @@
 
   Audica.prototype.decodeHtml = function(string) {
     if (string !== undefined && string !== null) {
-      return $('<div />').html(string).text();
+      return encodeDecodeElement.html(string).text();
     } else {
       return string;
     }

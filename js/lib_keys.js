@@ -25,7 +25,7 @@
       if (bindKeysToView[args.to]) {
         bindKeysToView[args.to].call(this);
         if (args.to === 'search' && dom.songBox.find('li').length === 0) {
-          var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
+          var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').limit(50).get();
           // TODO listen for event in seperate plugin
           Audica.fillSongBox(currentSongList);
         }
