@@ -15,6 +15,9 @@
     <script type="text/javascript" src="js/3rd/ID3/id4.js"></script>
     <script type="text/javascript" src="js/3rd/ID3/id3.js"></script>
     <script type="text/javascript" src="js/3rd/reflection.js"></script>
+    <script type="text/javascript" src="js/3rd/promise-polyfill.js"></script>
+    <script type="text/javascript" src="js/3rd/tcp-client.js"></script>
+    <script type="text/javascript" src="js/3rd/ftp-client.js"></script>
     <script type="text/javascript" src="js/3rd/mousetrap.min.js"></script>
     <script type="text/javascript" src="js/3rd/oauth2/oauth2.js"></script>
     <script type="text/javascript" src="js/lib_core.js"></script>
@@ -23,11 +26,12 @@
     <!-- script type="text/javascript" src="js/lib_google.js"></script>
     <script type="text/javascript" src="js/lib_google_music.js"></script -->
     <script type="text/javascript" src="js/lib_subsonic.js"></script>
+    <script type="text/javascript" src="js/lib_ftp.js"></script>
     <!-- script type="text/javascript" src="js/lib_radioImporter.js"></script>
     <script type="text/javascript" src="js/lib_fileImporter.js"></script -->
     <script type="text/javascript" src="js/lib_fileSystem.js"></script>
     <script type="text/javascript" src="js/lib_lastfm.js"></script>
-    <script type="text/javascript" src="js/lib_gracenote.js"></script>
+    <!--<script type="text/javascript" src="js/lib_gracenote.js"></script>-->
     <script type="text/javascript" src="js/main.js"></script>
 
     <!-- begin: options css and js -->
@@ -102,6 +106,7 @@
                       <select id="backendSelection">
                         <option value="" disabled="disabled">Select a backend</option>
                         <option value="subsonic">Subsonic</option>
+                        <option value="ftp">FTP</option>
                       </select>
                     </div>
                     <div id="subsonicAuthParams">
@@ -119,6 +124,20 @@
                       </div>
                       <div>
                         <input type="button" id="retreiveSubsonicSongList" value="Retreive all songs metadata from server now"/>
+                      </div>
+                    </div>
+                    <div id="ftpAuthParams">
+                      <div class="section-group">
+                        <h3>ftp url</h3>
+                        <input spellcheck="false" id="ftpUrlBox" type="text" size="20" />
+                      </div>
+                      <div id="loginBoxDiv" class="section-group">
+                        <h3>ftp login</h3>
+                        <input spellcheck="false" id="ftpLoginBox" type="text" size="20" />
+                      </div>
+                      <div id="passwordBoxDiv" class="section-group">
+                        <h3>ftp password</h3>
+                        <input spellcheck="false" id="ftpPasswordBox" type="password" size="30" />
                       </div>
                     </div>
                   </section>
