@@ -24,6 +24,27 @@
     });
   }
 
+    function saveFtpLogin() {
+        var login = $("#ftpLoginBox").val();
+        chrome.storage.local.set({
+            'ftp_login': JSON.stringify(login)
+        });
+    }
+
+    function saveFtpPassword() {
+        var password = $("#ftpPasswordBox").val();
+        chrome.storage.local.set({
+            'ftp_pass': JSON.stringify(password)
+        });
+    }
+
+    function saveFtpServerUrl() {
+        var serverUrl = $("#ftpUrlBox").val();
+        chrome.storage.local.set({
+            'ftp_url': JSON.stringify(serverUrl)
+        });
+    }
+
   function selectOption(selectElement, optionValue) {
     var children = selectElement.children();
     var i = null;
@@ -37,10 +58,13 @@
   function initBackend() {
     var value = $('#backendSelection').find(':selected').val();
     var subsonicAuthParams = $("#subsonicAuthParams");
+    var ftpAuthParams = $("#ftpAuthParams");
     if ("subsonic" === value) {
+      ftpAuthParams.hide();
       subsonicAuthParams.show();
-    } else {
+    } else if("ftp" === value){
       subsonicAuthParams.hide();
+      ftpAuthParams.show();
     }
   }
 
@@ -54,7 +78,17 @@
   }
 
   function fill() {
-    chrome.storage.local.get(['authentication_password', 'authentication_login', 'serverUrl', 'audica_lastfm_login', 'gracenoteClient_ID', 'gracenoteWepAPI_ID'], function(items) {
+    chrome.storage.local.get([
+        'authentication_password',
+        'authentication_login',
+        'serverUrl',
+        'audica_lastfm_login',
+        'gracenoteClient_ID',
+        'gracenoteWepAPI_ID',
+        'ftp_url',
+        'ftp_login',
+        'ftp_pass'
+    ], function(items) {
       if (items.hasOwnProperty('authentication_password')) {
         var password = items.authentication_password;
         if (null !== password && undefined !== password) {
@@ -76,6 +110,29 @@
           selectOption(selectElement, "subsonic");
         }
       }
+
+        if (items.hasOwnProperty('ftp_pass')) {
+            var ftpPass = items.ftp_pass;
+            if (null !== ftpPass && undefined !== ftpPass) {
+                $("#ftpPasswordBox").val(JSON.parse(ftpPass));
+            }
+        }
+
+        if (items.hasOwnProperty('ftp_login')) {
+            var ftpLogin = items.ftp_login;
+            if (null !== ftpLogin && undefined !== ftpLogin) {
+                $("#ftpLoginBox").val(JSON.parse(ftpLogin));
+            }
+        }
+
+        if (items.hasOwnProperty('ftp_url')) {
+            var ftpUrl = items.ftp_url;
+            if (null !== ftpUrl && undefined !== ftpUrl) {
+                $("#ftpUrlBox").val(JSON.parse(ftpUrl));
+            }
+        }
+
+
       initBackend();
 
       var gracenoteClient_ID = items.gracenoteClient_ID;
@@ -161,6 +218,10 @@
     $('#serverUrlBox').on('change', saveServerUrl);
     $('#loginBox').on('change', saveLogin);
     $('#passwordBox').on('change', savePassword);
+
+    $('#ftpUrlBox').on('change', saveFtpServerUrl);
+    $('#ftpLoginBox').on('change', saveFtpLogin);
+    $('#ftpPasswordBox').on('change', saveFtpPassword);
     $('#gracenoteClient_ID, #gracenoteWepAPI_ID').on('change', saveField);
 
     /*
