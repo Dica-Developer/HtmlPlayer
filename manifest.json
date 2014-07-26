@@ -23,7 +23,8 @@
     "unlimitedStorage",
     "<all_urls>",
     "http://*/*",
-    "https://*/*"
+    "https://*/*",
+    {"socket": ["tcp-connect:*:*"]}
   ],
   "manifest_version": 2
 }
