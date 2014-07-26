@@ -693,11 +693,11 @@
 
   var encodeDecodeElement = $('<div />');
   Audica.prototype.encodeHtml = function(string) {
-    if (string !== undefined && string !== null) {
-        return encodeDecodeElement.text(string).html();
-    } else {
-      return string;
-    }
+        if (typeof string !== 'string') {
+            return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        } else {
+          return string;
+        }
   };
 
   Audica.prototype.decodeHtml = function(string) {
