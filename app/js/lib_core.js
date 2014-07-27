@@ -693,7 +693,7 @@
 
   var encodeDecodeElement = $('<div />');
   Audica.prototype.encodeHtml = function(string) {
-        if (typeof string !== 'string') {
+        if (typeof string === 'string') {
             return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         } else {
           return string;
