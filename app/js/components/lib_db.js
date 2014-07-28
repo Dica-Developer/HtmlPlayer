@@ -1,21 +1,21 @@
 /*global TAFFY*/
-(function(root){
+(function (root) {
     'use strict';
 
     function Db() {
         var _dbName = null;
         this.query = null;
 
-        this.setDbName = function(dbName){
+        this.setDbName = function (dbName) {
             _dbName = dbName;
         };
 
-        this.getDbName = function(){
+        this.getDbName = function () {
             return _dbName;
         };
     }
 
-    Db.prototype.save = function(db){
+    Db.prototype.save = function (db) {
         var serializedDb = JSON.stringify(db),
             dbName = this.getDbName();
 
@@ -27,14 +27,14 @@
         );
     };
 
-    Db.prototype.init = function(dbName){
+    Db.prototype.init = function (dbName) {
         var _db = this,
             _timeout = null,
             _dbName = 'db.' + dbName;
 
         this.setDbName(_dbName);
 
-        root.Audica.plugins.fileSystem.readFile(_dbName, function(dbContent) {
+        root.Audica.plugins.fileSystem.readFile(_dbName, function (dbContent) {
             try {
                 _db.query = TAFFY(JSON.parse(dbContent));
             } catch (error) {
@@ -45,26 +45,26 @@
             }
             _db.query.settings({
                 cacheSize: 10000,
-                onDBChange: function() {
+                onDBChange: function () {
                     var dbContent = this;
                     if (null !== _timeout) {
                         clearTimeout(_timeout);
                     }
-                    _timeout = window.setTimeout(function() {
+                    _timeout = window.setTimeout(function () {
                         _db.save(dbContent);
                     }, 1000);
                 }
             });
-        }, function() {
+        }, function () {
             _db.query = TAFFY();
             _db.query.settings({
                 cacheSize: 10000,
-                onDBChange: function() {
+                onDBChange: function () {
                     var dbContent = this;
                     if (null !== _timeout) {
                         clearTimeout(_timeout);
                     }
-                    _timeout = window.setTimeout(function() {
+                    _timeout = window.setTimeout(function () {
                         _db.save(dbContent);
                     }, 1000);
                 }
