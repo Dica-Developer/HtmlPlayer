@@ -2,6 +2,11 @@
 (function (Audica) {
     'use strict';
 
+    function PluginPlayerError(message) {
+        this.message = (message || '');
+    }
+    PluginPlayerError.prototype = new Error();
+
     function Player() {
         var _useAudioTag = true;
 
@@ -38,9 +43,7 @@
                 default:
                     errorMsg += 'Unknown error with code "' + event.currentTarget.error.code + '" happened.';
             }
-            window.Audica.trigger('ERROR', {
-                message: errorMsg
-            });
+            window.Audica.trigger('ERROR', new PluginPlayerError(errorMsg));
             // TODO trigger here player ended to play next song
         }
 
@@ -57,9 +60,7 @@
         }
 
         function onErrorCallbackMedia(error) {
-            window.Audica.trigger('ERROR', {
-                message: 'cordova media error code: ' + error.code
-            });
+            window.Audica.trigger('ERROR', new PluginPlayerError('cordova media error code: ' + error.code));
             // TODO trigger here player ended to play next song
         }
 

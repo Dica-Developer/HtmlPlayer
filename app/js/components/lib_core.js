@@ -11,7 +11,10 @@
         this.eventList = {};
         this.songHistory = [];
         this.song = null;
+    function AudicaCoreError(message) {
+        this.message = (message || '');
     }
+    AudicaCoreError.prototype = new Error();
 
     Audica.prototype.playSong = function (song) {
         this.song = song;
@@ -29,9 +32,7 @@
             // TODO move this to a plugin
             this.plugins.player.play(src);
         } else {
-            this.trigger('ERROR', {
-                message: 'Cannot handle songs from backend ' + song.backendId + '.'
-            });
+            this.trigger('ERROR', new AudicaCoreError('Cannot handle songs from backend ' + song.backendId + '.'));
         }
 
         this.view.updateMainView(song.artist, song.album, song.title);
@@ -48,9 +49,7 @@
             this.historyAdd(song);
             this.trigger('nextSong');
         } else {
-            this.trigger('ERROR', {
-                message: 'No song found. Possible reason: Empty Playlist'
-            });
+            this.trigger('ERROR', new AudicaCoreError('No song found. Possible reason: Empty Playlist'));
         }
     };
 
@@ -67,14 +66,10 @@
                 this.view.setSongAsFirstPlaylistElement(song);
                 this.trigger('previousSong');
             } else {
-                this.trigger('ERROR', {
-                    message: 'No song found. Possible reason: Empty Playlist'
-                });
+                this.trigger('ERROR', new AudicaCoreError('No song found. Possible reason: Empty Playlist'));
             }
         } else {
-            this.trigger('ERROR', {
-                message: 'No song found. Possible reason: Empty History'
-            });
+            this.trigger('ERROR', new AudicaCoreError('No song found. Possible reason: Empty History'));
         }
     };
 
@@ -133,8 +128,8 @@
             console.log(args.message);
         });
 
-        this.on('ERROR', function (args) {
-            console.error(args.message);
+        this.on('ERROR', function (error) {
+            console.error(error.stack);
         });
 
         this.on('WARN', function (args) {

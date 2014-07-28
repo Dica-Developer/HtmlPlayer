@@ -2,12 +2,17 @@
 (function(window, Audica) {
     'use strict';
 
+    function AudicaViewError(message) {
+        this.message = (message || '');
+    }
+    AudicaViewError.prototype = new Error();
+
     //private
     function checkDomElements(dom) {
         for (var selector in dom) {
             if (dom.hasOwnProperty(selector)) {
                 if (null === dom[selector] || undefined === dom[selector]) {
-                    throw new Error('"' + selector + '" does not exist in DOM!');
+                    Audica.trigger('ERROR', new AudicaViewError('"' + selector + '" does not exist in DOM!'));
                 }
             }
         }
