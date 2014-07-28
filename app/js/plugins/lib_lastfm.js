@@ -92,7 +92,7 @@
                 if (Math.round((Audica.plugins.player.getCurrentTime() * 100) / Audica.plugins.player.getDuration()) > 50 && this.notScrobbled) {
                     var history = Audica.getLastSong();
                     if (null !== history) {
-                        var song = this.songDb.query({
+                        var song = Audica.songDb.query({
                             id: history.songId,
                             backendId: history.backendId
                         }).get()[0];
