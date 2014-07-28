@@ -527,17 +527,6 @@
       this.historyDb.init('history');
     });
 
-    Audica.prototype.cleanup = function() {
-      var plugin = null;
-      for (plugin in self.plugins) {
-        if (self.plugins.hasOwnProperty(plugin)) {
-          if (self.plugins[plugin].db instanceof Function) {
-            self.plugins[plugin].db.save.call();
-          }
-        }
-      }
-    };
-
     $(window).on('resize', function() {
       if (null !== self.resizeEventTimeoutId) {
         window.clearTimeout(self.resizeEventTimeoutId);
@@ -549,6 +538,16 @@
 
     this.trigger('registerEvents');
   };
+
+    Audica.prototype.cleanup = function() {
+        for (var plugin in this.plugins) {
+            if (this.plugins.hasOwnProperty(plugin)) {
+                if (this.plugins[plugin].db instanceof Function) {
+                    this.plugins[plugin].db.save.call();
+                }
+            }
+        }
+    };
 
   var encodeDecodeElement = $('<div />');
   Audica.prototype.encodeHtml = function(string) {
