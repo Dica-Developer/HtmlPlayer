@@ -3,7 +3,7 @@
     'use strict';
     window.bindKeyEvents = function (Audica) {
         var bindKeysToView = {};
-        var dom = Audica.Dom;
+        var dom = Audica.view.Dom;
         var audio = Audica.plugins.player;
         var songBox = dom.songBox;
         var playListBox = dom.playlistBox;
@@ -27,7 +27,7 @@
                 if (args.to === 'search' && dom.songBox.find('li').length === 0) {
                     var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
                     // TODO listen for event in seperate plugin
-                    Audica.fillSongBox(currentSongList);
+                    Audica.view.fillSongBox(currentSongList);
                 }
             }
         });
@@ -37,7 +37,7 @@
                 playerView.animate({
                     left: 0
                 });
-                Audica.setViewState('player');
+                Audica.view.setViewState('player');
             });
         };
 
@@ -80,7 +80,7 @@
                 searchView.animate({
                     left: 0
                 });
-                Audica.setViewState('search');
+                Audica.view.setViewState('search');
                 dom.searchViewPreview.hide();
             });
 
@@ -124,9 +124,10 @@
 
         bindKeysToView.search = function () {
             function findNextByPositionX(dir) {
-                var currentXClass = Audica.positionXClassMap[Audica.getSongBoxPositionX()];
-                var currentXValue = Audica.getSongBoxPositionY().find(currentXClass).data('value');
-                var tmpNext = Audica.getSongBoxPositionY();
+                var view = Audica.view;
+                var currentXClass = view.positionXClassMap[view.getSongBoxPositionX()];
+                var currentXValue = view.getSongBoxPositionY().find(currentXClass).data('value');
+                var tmpNext = view.getSongBoxPositionY();
                 //TODO maybe replace with for loop (secure)
                 while (tmpNext.find(currentXClass).data('value') === currentXValue) {
                     tmpNext = tmpNext[dir]();
@@ -135,35 +136,38 @@
             }
 
             Mousetrap.bind(['right'], function () {
-                var x = Audica.getSongBoxPositionX();
+                var view = Audica.view;
+                var x = view.getSongBoxPositionX();
                 if (3 === x) {
-                    Audica.setSongBoxPositionX(0);
+                    view.setSongBoxPositionX(0);
                 } else {
-                    Audica.setSongBoxPositionX(++x);
+                    view.setSongBoxPositionX(++x);
                 }
-                Audica.getSongBoxPositionY().find('span').eq(x).trigger('click');
-                Audica.indicateSongBoxXPosition();
+                view.getSongBoxPositionY().find('span').eq(x).trigger('click');
+                view.indicateSongBoxXPosition();
             });
 
             Mousetrap.bind(['left'], function () {
-                var x = Audica.getSongBoxPositionX();
+                var view = Audica.view;
+                var x = view.getSongBoxPositionX();
                 if (0 === x) {
-                    Audica.setSongBoxPositionX(3);
+                    view.setSongBoxPositionX(3);
                 } else {
-                    Audica.setSongBoxPositionX(--x);
+                    view.setSongBoxPositionX(--x);
                 }
-                Audica.getSongBoxPositionY().find('span').eq(x).trigger('click');
-                Audica.indicateSongBoxXPosition();
+                view.getSongBoxPositionY().find('span').eq(x).trigger('click');
+                view.indicateSongBoxXPosition();
             });
 
             Mousetrap.bind(['up'], function () {
                 var prev = null;
-                if (!Audica.getSongBoxPositionY()) {
-                    Audica.setSongBoxPositionY(songBox.find('li').eq(0));
-                    prev = Audica.getSongBoxPositionY();
+                var view = Audica.view;
+                if (!view.getSongBoxPositionY()) {
+                    view.setSongBoxPositionY(songBox.find('li').eq(0));
+                    prev = view.getSongBoxPositionY();
                 } else {
                     prev = findNextByPositionX('prev');
-                    Audica.getSongBoxPositionY().removeClass('active');
+                    view.getSongBoxPositionY().removeClass('active');
                     if (prev.length === 0) {
                         prev = dom.songBox.find('li').last();
                     }
@@ -172,9 +176,9 @@
                 var scrollPos = Math.abs(songBox.parent().scrollTop() + prev.position().top) - halfWindowSize;
                 songBox.parent().scrollTop(scrollPos);
                 prev.addClass('active');
-                Audica.setSongBoxPositionY(prev);
-                prev.find('span').eq(Audica.getSongBoxPositionX()).trigger('click');
-                Audica.indicateSongBoxXPosition();
+                view.setSongBoxPositionY(prev);
+                prev.find('span').eq(view.getSongBoxPositionX()).trigger('click');
+                view.indicateSongBoxXPosition();
             });
 
             Mousetrap.bind(['down'], function () {
@@ -186,12 +190,13 @@
                     filterBox.val('');
                 }
                 var next = null;
-                if (!Audica.getSongBoxPositionY()) {
-                    Audica.setSongBoxPositionY(songBox.find('li').eq(0));
-                    next = Audica.getSongBoxPositionY();
+                var view = Audica.view;
+                if (!view.getSongBoxPositionY()) {
+                    view.setSongBoxPositionY(songBox.find('li').eq(0));
+                    next = view.getSongBoxPositionY();
                 } else {
                     next = findNextByPositionX('next');
-                    Audica.getSongBoxPositionY().removeClass('active');
+                    view.getSongBoxPositionY().removeClass('active');
                     if (next.length === 0) {
                         next = songBox.find('li').eq(0);
                     }
@@ -200,9 +205,9 @@
                 var scrollPos = Math.abs(next.position().top + songBox.parent().scrollTop()) - halfWindowSize;
                 songBox.parent().scrollTop(scrollPos);
                 next.addClass('active');
-                Audica.setSongBoxPositionY(next);
-                next.find('span').eq(Audica.getSongBoxPositionX()).trigger('click');
-                Audica.indicateSongBoxXPosition();
+                view.setSongBoxPositionY(next);
+                next.find('span').eq(view.getSongBoxPositionX()).trigger('click');
+                view.indicateSongBoxXPosition();
             });
 
             Mousetrap.bind(['escape'], function () {
@@ -224,7 +229,7 @@
                         $playPauseButton.removeClass('playButton');
                         $playPauseButton.addClass('pauseButton');
                     }
-                    Audica.setViewState('player');
+                    Audica.view.setViewState('player');
                     coverArtBox.css('padding-top', ($(document).height() - coverArtBox.height()) / 2);
                     descriptionBox.css('padding-top', ($(document).height() - descriptionBox.height()) / 2);
                     dom.searchViewPreview.show();
@@ -315,7 +320,7 @@
                     } else {
                         currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
                     }
-                    Audica.fillSongBox(currentSongList);
+                    Audica.view.fillSongBox(currentSongList);
                 }, 500);
             }
 
@@ -356,7 +361,7 @@
             Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '/'], openSearchBox);
 
             Mousetrap.bind('tab', function () {
-                Audica.setViewState('playList');
+                Audica.view.setViewState('playList');
                 return false;
             });
         };
@@ -375,7 +380,7 @@
             });
 
             Mousetrap.bind('tab', function () {
-                Audica.setViewState('search');
+                Audica.view.setViewState('search');
                 return false;
             });
 
@@ -385,6 +390,6 @@
             });
         };
 
-        bindKeysToView[Audica.getViewState()].call(Audica);
+        bindKeysToView[Audica.view.getViewState()].call(Audica);
     };
 })(window, Mousetrap, Audica);
