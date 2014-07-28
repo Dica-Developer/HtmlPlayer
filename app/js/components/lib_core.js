@@ -50,12 +50,6 @@
     this.setSongBoxPositionY = function(positionY) {
       songBoxPositionY = positionY;
     };
-    this.getNotScrobbled = function() {
-      return notScrobbled;
-    };
-    this.setNotScrobbled = function(scrobbled) {
-      notScrobbled = scrobbled;
-    };
   }
 
   Audica.prototype.Dom = {
@@ -339,72 +333,9 @@
   Audica.prototype.backgroundTasks = function() {
     this.updateProgress();
     this.updateTimings();
-    this.scrobbleSong();
-  };
-
-  Audica.prototype.scrobbleNowPlaying = function() {
-    if (this.plugins.scrobbler) {
-      var history = this.getLastSong();
-      if (null !== history) {
-        var song = this.songDb.query({
-          id: history.songId,
-          backendId: history.backendId
-        }).get()[0];
-        if (song) {
-          this.plugins.scrobbler.setNowPlaying(song.artist, song.title, song.album, song.duration, function(data) {
-            if (undefined !== data.error) {
-              switch (data.error) {
-                case 6:
-                case 13:
-                  console.warn('Cannot set now playing there is a parameter missing/wrong!', data.message);
-                  break;
-                default:
-                  console.error('Cannot set last.fm now playing track. ' + data.error + ' - ' + data.message);
-              }
-            }
-          }, null);
-        }
+      if(this.plugins['scrobbler']) {
+          this.plugins['scrobbler'].scrobbleSong();
       }
-    }
-  };
-
-  Audica.prototype.scrobbleSong = function() {
-    if (this.plugins.scrobbler) {
-      var notScrobbled = this.getNotScrobbled();
-      if (!this.plugins.player.paused) {
-        if (Math.round((this.plugins.player.getCurrentTime() * 100) / this.plugins.player.getDuration()) > 50 && notScrobbled) {
-          var history = this.getLastSong();
-          if (null !== history) {
-            var song = this.songDb.query({
-              id: history.songId,
-              backendId: history.backendId
-            }).get()[0];
-            if (null !== song) {
-              var timestamp = Math.round((new Date()).getTime() / 1000);
-              this.plugins.scrobbler.scrobble(song.artist, song.title, song.album, song.duration, timestamp, function(data) {
-                if (undefined !== data.error) {
-                  switch (data.error) {
-                    case 6:
-                    case 13:
-                      window.Audica.trigger('WARN', {
-                        message: 'Cannot scrobble the song there is a parameter missing/wrong! - ' + data.message
-                      });
-                      window.Audica.setNotScrobbled(true);
-                      break;
-                    default:
-                      window.Audica.trigger('ERROR', {
-                        message: 'Cannot scrobble track to last.fm. ' + data.error + ' - ' + data.message
-                      });
-                  }
-                } else {
-                  window.Audica.setNotScrobbled(false);
-                }
-              }, null);
-            }
-          }
-        }
-      }
-    }
   };
 
   Audica.prototype.historyAdd = function() {
@@ -466,8 +397,7 @@
           });
           if (self.plugins.player.paused) {
             self.nextSong();
-            self.scrobbleNowPlaying();
-            self.setNotScrobbled(true);
+            self.trigger('scrobble');
           }
           self.setViewState('player');
           coverArtBox.css('padding-top', ($(document).height() - coverArtBox.height()) / 2);
