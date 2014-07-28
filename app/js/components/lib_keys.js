@@ -25,7 +25,7 @@
             if (bindKeysToView[args.to]) {
                 bindKeysToView[args.to].call(this);
                 if (args.to === 'search' && dom.songBox.find('li').length === 0) {
-                    var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').limit(50).get();
+                    var currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
                     // TODO listen for event in seperate plugin
                     Audica.fillSongBox(currentSongList);
                 }
@@ -367,7 +367,7 @@
             Mousetrap.bind(['del'], function () {
                 var elems = dom.playlistBox.find('.selected');
                 elems.each(function () {
-                    var song = dom.songBox.find('[data-song="' + $(this).data('song') + '"]');
+                    var song = dom.songBox.find('[data-song-id="' + $(this).data('song-id') + '"]');
                     song.removeClass('added');
                 });
                 elems.remove();

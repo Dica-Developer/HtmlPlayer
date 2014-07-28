@@ -190,7 +190,8 @@
         var result = null;
         var elements = this.firstPlayListElement();
         if (elements.length > 0) {
-            result = JSON.parse(unescape(elements.data('song')));
+            var songId = elements.data('song-id');
+            result = this.songDb.query(songId).get()[0];
         }
         return result;
     };
@@ -221,16 +222,22 @@
     };
 
     Audica.prototype.fillSongBox = function (songs) {
-        var lis = '',
+        var lis = [],
             i = 0,
             length = songs.length,
             song;
         for (i; i < length; i++) {
             song = songs[i];
-            var li = '<li data-song="' + escape(JSON.stringify(song)) + '"><span class="artist" data-value="' + escape(song.artist) + '">' + this.encodeHtml(song.artist) + '</span> / <span class="album" data-value="' + escape(song.album) + '">' + this.encodeHtml(song.album) + '</span> / <span class="track" data-value="' + escape(song.track) + '">' + this.encodeHtml(song.track) + '.</span><span class="title" data-value="' + escape(song.title) + '">' + this.encodeHtml(song.title) + '</span></li>';
-            lis = lis + li;
+            var li = [];
+            li.push('<li data-song-id="' + escape(song.___id) + '">');
+            li.push('<span class="artist" data-value="' + escape(song.artist) + '">' + this.encodeHtml(song.artist) + '</span> / ');
+            li.push('<span class="album" data-value="' + escape(song.album) + '">' + this.encodeHtml(song.album) + '</span> / ');
+            li.push('<span class="track" data-value="' + escape(song.track) + '">' + this.encodeHtml(song.track) + '.</span>');
+            li.push('<span class="title" data-value="' + escape(song.title) + '">' + this.encodeHtml(song.title) + '</span>');
+            li.push('</li>');
+            lis[i] = li.join('');
         }
-        this.Dom.songBox.html(lis);
+        this.Dom.songBox[0].innerHTML = lis.join('');
         this.bindSongBoxEvents();
     };
 
