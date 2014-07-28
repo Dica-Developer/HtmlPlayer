@@ -2,18 +2,26 @@
 (function (window) {
     'use strict';
 
-
-    function Audica() {
-        this.plugins = {};
-        this.songDb = new window.Db();
-        this.historyDb = new window.Db();
-        this.eventList = {};
-        this.songHistory = [];
-        this.song = null;
     function AudicaCoreError(message) {
         this.message = (message || '');
     }
     AudicaCoreError.prototype = new Error();
+
+
+
+    function Audica() {}
+
+    Audica.prototype.plugins = {};
+
+    Audica.prototype.eventList = {};
+
+    Audica.prototype.songHistory = [];
+
+    Audica.prototype.song = null;
+
+    Audica.prototype.songDb = new window.Db();
+
+    Audica.prototype.historyDb = new window.Db();
 
     Audica.prototype.playSong = function (song) {
         this.song = song;
