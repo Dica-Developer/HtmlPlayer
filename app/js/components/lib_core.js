@@ -22,7 +22,6 @@
     };
 
     var viewState = 'player';
-    var notScrobbled = true;
     var songBoxPositionY = null;
     var songBoxPositionX = 0;
 
