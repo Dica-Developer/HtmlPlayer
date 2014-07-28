@@ -528,12 +528,8 @@
     });
 
     $(window).on('resize', function() {
-      if (null !== self.resizeEventTimeoutId) {
-        window.clearTimeout(self.resizeEventTimeoutId);
-      }
-      self.resizeEventTimeoutId = window.setTimeout(function() {
-        self.applyCoverArtStyle();
-      }, 250);
+      window.clearTimeout(self.resizeEventTimeoutId);
+      self.resizeEventTimeoutId = window.setTimeout(self.applyCoverArtStyle.bind(self), 250);
     });
 
     this.trigger('registerEvents');
@@ -559,7 +555,7 @@
   };
 
   Audica.prototype.decodeHtml = function(string) {
-    if (string !== undefined && string !== null) {
+    if (typeof string === 'string') {
       return encodeDecodeElement.html(string).text();
     } else {
       return string;
@@ -586,7 +582,7 @@
       i = 0,
       length = events.length,
       subscription;
-    for (i; i < length; i++) {
+    for (; i < length; i++) {
       subscription = events[i];
       subscription.callback.apply(subscription.context, args);
     }
@@ -598,8 +594,7 @@
   };
 
   Audica.prototype.initPlugins = function() {
-    var name = null;
-    for (name in this.plugins) {
+    for (var name in this.plugins) {
       if (this.plugins.hasOwnProperty(name)) {
         if (this.plugins[name].init instanceof Function) {
           this.plugins[name].init.call(this);
