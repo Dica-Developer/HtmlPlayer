@@ -1,5 +1,5 @@
 /*global TAFFY:true, escape:true, unescape:true, console:true, Mousetrap*/
-(function (window, document) {
+(function (window) {
     'use strict';
 
     /*global window, document*/
@@ -217,4 +217,4 @@
 
     window.Audica = new Audica();
 
-}(window, document, Mousetrap));
+}(window));
