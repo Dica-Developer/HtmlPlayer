@@ -19,13 +19,10 @@
     }
 
     function applyCoverArtStyleToOneView(scope) {
-        // Use original window elem to set height because reflect needs this
+        // TODO calculation is wrong
+        // maybe calculate a ratio to set correct width height
         scope.Dom.coverArt[0].height = window.innerHeight / 2;
         scope.Dom.coverArt[0].width = window.innerWidth / 2;
-        scope.Dom.coverArt.reflect({
-            height: 0.165,
-            opacity: 0.25
-        });
         scope.Dom.coverArtBox.css('padding-top', (window.innerHeight - scope.Dom.coverArtBox.height()) / 2);
         scope.Dom.descriptionBox.css('padding-top', (window.innerHeight - scope.Dom.descriptionBox.height()) / 2);
     }
