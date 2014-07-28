@@ -1,8 +1,7 @@
-/*global TAFFY:true, escape:true, unescape:true, console:true, Mousetrap*/
+/*global TAFFY, window*/
 (function (window) {
     'use strict';
 
-    /*global window, document*/
 
     function Audica() {
         this.plugins = {};
