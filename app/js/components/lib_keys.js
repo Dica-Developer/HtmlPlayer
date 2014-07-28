@@ -84,8 +84,7 @@
 
       function next() {
         Audica.nextSong();
-        Audica.scrobbleNowPlaying();
-        Audica.setNotScrobbled(true);
+        Audica.trigger('scrobble');
       }
       $('body').on('click', '#nextButton', next);
       Mousetrap.bind(['n'], next);
@@ -95,8 +94,7 @@
           dir: 'up'
         });
         Audica.previousSong();
-        Audica.scrobbleNowPlaying();
-        Audica.setNotScrobbled(true);
+        Audica.trigger('scrobble');
       }
       $('body').on('click', '#prevButton', previous);
       Mousetrap.bind(['p'], previous);
@@ -212,8 +210,7 @@
           });
           if (audio.paused) {
             Audica.nextSong();
-            Audica.scrobbleNowPlaying();
-            Audica.setNotScrobbled(true);
+            Audica.trigger('scrobble');
             $('#playPauseButton').removeClass('playButton');
             $('#playPauseButton').addClass('pauseButton');
           }

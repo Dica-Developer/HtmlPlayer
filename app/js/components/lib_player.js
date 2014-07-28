@@ -17,8 +17,7 @@
 
     function onEndedCallback() {
       Audica.nextSong();
-      Audica.scrobbleNowPlaying();
-      Audica.setNotScrobbled(true);
+      Audica.trigger('scrobble');
     }
 
     function onErrorCallbackAudioTag(event) {
