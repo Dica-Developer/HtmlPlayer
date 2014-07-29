@@ -175,7 +175,11 @@
         Audica.trigger('firstPlayListElementRemoved');
     };
 
-    View.prototype.updateMainView = function (artist, album, title) {
+    View.prototype.updateMainView = function (song) {
+        var title = song.title,
+            album = song.album,
+            artist = song.artist;
+
         this.Dom.title.text(title);
         this.Dom.album.text(album);
         this.Dom.artist.text(artist);
@@ -420,6 +424,7 @@
         Audica.on('domElementsSet', this.applyCoverArtStyle.bind(this));
         Audica.on('nextSong', this.applyCoverArtStyle.bind(this));
         Audica.on('previousSong', this.applyCoverArtStyle.bind(this));
+        Audica.on('playSong', this.updateMainView.bind(this));
 
         $(window).on('resize', function () {
             window.clearTimeout(_this.resizeEventTimeoutId);
