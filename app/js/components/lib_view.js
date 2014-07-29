@@ -2,25 +2,27 @@
 (function(window, Audica) {
     'use strict';
 
+    function AudicaViewError(message) {
+        this.message = (message || '');
+    }
+    AudicaViewError.prototype = new Error();
+
     //private
     function checkDomElements(dom) {
         for (var selector in dom) {
             if (dom.hasOwnProperty(selector)) {
                 if (null === dom[selector] || undefined === dom[selector]) {
-                    throw new Error('"' + selector + '" does not exist in DOM!');
+                    Audica.trigger('ERROR', new AudicaViewError('"' + selector + '" does not exist in DOM!'));
                 }
             }
         }
     }
 
     function applyCoverArtStyleToOneView(scope) {
-        // Use original window elem to set height because reflect needs this
+        // TODO calculation is wrong
+        // maybe calculate a ratio to set correct width height
         scope.Dom.coverArt[0].height = window.innerHeight / 2;
         scope.Dom.coverArt[0].width = window.innerWidth / 2;
-        scope.Dom.coverArt.reflect({
-            height: 0.165,
-            opacity: 0.25
-        });
         scope.Dom.coverArtBox.css('padding-top', (window.innerHeight - scope.Dom.coverArtBox.height()) / 2);
         scope.Dom.descriptionBox.css('padding-top', (window.innerHeight - scope.Dom.descriptionBox.height()) / 2);
     }

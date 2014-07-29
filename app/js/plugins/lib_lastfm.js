@@ -2,6 +2,11 @@
 (function (window, Audica) {
   "use strict";
 
+    function PluginLastFMError(message) {
+        this.message = (message || '');
+    }
+    PluginLastFMError.prototype = new Error();
+
   var Scrobbler = function () {
     var _serviceUrl = "http://ws.audioscrobbler.com/2.0/";
     var _apiKey = "ac2f676e5b95231ac4706b3dcb5d379d";
@@ -53,9 +58,7 @@
           _sessionKey = items.audica_lastfm_sessionKey;
           _login = items.audica_lastfm_login;
         } else {
-          Audica.trigger('ERROR', {
-            message: 'Last.fm Scrobbler is not configured so not initialised!'
-          });
+          Audica.trigger('ERROR', new PluginLastFMError('Last.fm Scrobbler is not configured so not initialised!'));
         }
         Audica.trigger('initReady');
       });
@@ -79,7 +82,7 @@
                                 console.warn('Cannot set now playing there is a parameter missing/wrong!', data.message);
                                 break;
                             default:
-                                console.error('Cannot set last.fm now playing track. ' + data.error + ' - ' + data.message);
+                                Audica.trigger('Error', new PluginLastFMError('Cannot set last.fm now playing track. ' + data.error + ' - ' + data.message));
                         }
                     }
                 }, null);
@@ -92,7 +95,7 @@
                 if (Math.round((Audica.plugins.player.getCurrentTime() * 100) / Audica.plugins.player.getDuration()) > 50 && this.notScrobbled) {
                     var history = Audica.getLastSong();
                     if (null !== history) {
-                        var song = this.songDb.query({
+                        var song = Audica.songDb.query({
                             id: history.songId,
                             backendId: history.backendId
                         }).get()[0];
@@ -109,9 +112,7 @@
                                             this.notScrobbled = true;
                                             break;
                                         default:
-                                            Audica.trigger('ERROR', {
-                                                message: 'Cannot scrobble track to last.fm. ' + data.error + ' - ' + data.message
-                                            });
+                                            Audica.trigger('ERROR', new PluginLastFMError('Cannot scrobble track to last.fm. ' + data.error + ' - ' + data.message));
                                     }
                                 } else {
                                     this.notScrobbled = false;

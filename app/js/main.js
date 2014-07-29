@@ -3,10 +3,10 @@
   'use strict';
 
   $(function() {
-    window.onerror = function(error, src, row) {
-      window.event.preventDefault();
-      console.log('Error: %s in %s row %s', error, src, row);
-    };
+//    window.onerror = function(error, src, row) {
+//      window.event.preventDefault();
+//      console.log('Error: %s in %s row %s', error, src, row);
+//    };
 
     Audica.start();
 
