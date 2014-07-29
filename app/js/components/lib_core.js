@@ -103,8 +103,6 @@
     };
 
     Audica.prototype.backgroundTasks = function () {
-        this.view.updateProgress();
-        this.view.updateTimings();
         if (this.plugins.scrobbler) {
             this.plugins.scrobbler.scrobbleSong();
         }

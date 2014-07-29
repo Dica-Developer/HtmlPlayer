@@ -33,6 +33,7 @@
     function View() {
         this.closePlayerControlViewTimerId = null;
         this.resizeEventTimeoutId = null;
+        this.backgroundInterval = null;
 
         this.positionXClassMap = {
             0: '.artist',
@@ -243,22 +244,22 @@
         this.Dom.preferencesView.width(window.innerWidth);
     };
 
-    View.prototype.updateProgress = function () {
+    View.prototype.updateProgress = function (duration, currentTime) {
         var player = Audica.plugins.player;
-        if (!player.paused && player.getDuration() > 0) {
-            this.Dom.progressBar.val(Math.round((player.getCurrentTime() * 100) / player.getDuration()));
+
+        if (!player.paused && duration > 0) {
+            this.Dom.progressBar.val(Math.round((currentTime * 100) / duration));
         }
     };
 
-    View.prototype.updateTimings = function () {
+    View.prototype.updateTimings = function (duration, currentTime) {
         if (this.Dom.playerControlView.data('open')) {
             var player = Audica.plugins.player;
             if (!player.paused) {
-                var duration = 0;
-                if (player.getDuration() > 0) {
-                    duration = Math.round(player.getDuration());
+                if (duration > 0) {
+                    duration = Math.round(duration);
                 }
-                this.Dom.timeField.text(Math.round(player.getCurrentTime()) + ' / ' + duration);
+                this.Dom.timeField.text(Math.round(currentTime) + ' / ' + duration);
             }
         }
     };
@@ -427,10 +428,32 @@
         Audica.on('previousSong', this.applyCoverArtStyle.bind(this));
         Audica.on('playSong', this.updateMainView.bind(this));
 
+        Audica.on('player:play', this.startBackgroundTask.bind(this));
+        Audica.on('player:pause', this.stopBackgroundTask.bind(this));
+        Audica.on('player:error', this.stopBackgroundTask.bind(this));
+        Audica.on('player:end', this.stopBackgroundTask.bind(this));
+
+
         $(window).on('resize', function () {
             window.clearTimeout(_this.resizeEventTimeoutId);
             _this.resizeEventTimeoutId = window.setTimeout(_this.applyCoverArtStyle.bind(_this), 250);
         });
+    };
+
+    View.prototype.startBackgroundTask = function(){
+        var view = this;
+        this.backgroundInterval = window.setInterval(function(){
+            var player = Audica.plugins.player,
+                duration = player.getDuration(),
+                currentTime = player.getCurrentTime();
+
+            view.updateProgress(duration, currentTime);
+            view.updateTimings(duration, currentTime);
+        }, 1000);
+    };
+
+    View.prototype.stopBackgroundTask = function(){
+        window.clearInterval(this.backgroundInterval);
     };
 
     View.prototype.encodeHtml = function (string) {
