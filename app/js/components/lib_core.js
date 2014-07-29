@@ -177,18 +177,16 @@
     };
 
     Audica.prototype.trigger = function (eventName) {
-        if (!this.eventList[eventName]) {
+        var args = Array.prototype.slice.call(arguments, 1),
+            events = this.eventList[eventName];
+
+        if (!events) {
             return false;
         }
-        var args = Array.prototype.slice.call(arguments, 1),
-            events = this.eventList[eventName],
-            i = 0,
-            length = events.length,
-            subscription;
-        for (; i < length; i++) {
-            subscription = events[i];
+
+        events.forEach(function(subscription){
             subscription.callback.apply(subscription.context, args);
-        }
+        });
         return this;
     };
 
