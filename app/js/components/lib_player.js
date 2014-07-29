@@ -21,6 +21,7 @@
         this.type = '';
 
         function onEndedCallback() {
+            Audica.trigger('player:end');
             Audica.nextSong();
             Audica.trigger('scrobble');
         }
@@ -43,6 +44,7 @@
                 default:
                     errorMsg += 'Unknown error with code "' + event.currentTarget.error.code + '" happened.';
             }
+            Audica.trigger('player:error');
             Audica.trigger('ERROR', new PluginPlayerError(errorMsg));
             // TODO trigger here player ended to play next song
         }
@@ -53,13 +55,16 @@
 
         function onPlayingCallback() {
             _self.paused = false;
+            Audica.trigger('player:play');
         }
 
         function onPauseCallback() {
             _self.paused = true;
+            Audica.trigger('player:pause');
         }
 
         function onErrorCallbackMedia(error) {
+            Audica.trigger('player:error');
             Audica.trigger('ERROR', new PluginPlayerError('cordova media error code: ' + error.code));
             // TODO trigger here player ended to play next song
         }
@@ -100,6 +105,7 @@
             } else {
                 _player.seekTo((this.getCurrentTime() + seconds) * 1000);
             }
+            Audica.trigger('player:seek:forward');
         };
 
         this.rewindSeconds = function (seconds) {
@@ -108,6 +114,7 @@
             } else {
                 _player.seekTo((this.getCurrentTime() - seconds) * 1000);
             }
+            Audica.trigger('player:seek:rewind');
         };
 
         this.volumeUp = function (percentage) {
@@ -119,6 +126,7 @@
                 _volume = Math.min(_volume + percentage, 1.0);
                 _player.setVolume(_volume);
             }
+            Audica.trigger('player:volume:rewind');
         };
 
         this.volumeDown = function (percentage) {
@@ -130,6 +138,7 @@
                 _volume = Math.max(_volume - percentage, 0);
                 _player.setVolume(_volume);
             }
+            Audica.trigger('player:volume:down');
         };
 
         this.play = function (src) {
