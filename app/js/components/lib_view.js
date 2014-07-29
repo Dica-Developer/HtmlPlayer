@@ -413,7 +413,7 @@
         });
 
         Audica.on('fillSongBox', function () {
-            var currentSongList = Audica.songDb.query().order('artist logical, album logical, year logical, track logical, title logical').get();
+            var currentSongList = Audica.songDb.query().get();
             _this.fillSongBox(currentSongList);
         });
 
