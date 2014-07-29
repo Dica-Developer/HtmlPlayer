@@ -421,19 +421,63 @@
             new Hammer(element).on('press', function () {
                 openSearchBox();
             });
-            var center = {};
+
+
+            //CIRCLE Navigation
+            var center = {},
+                lastX = null,
+                abs = Math.abs,
+                round = Math.round;
+
             new Hammer(document.getElementById('pointerCircle')).on('pan', function (event) {
                 window.requestAnimationFrame(function () {
                     var outerCircle = $('#outerCircle');
                     var outerCirclePos = outerCircle.position();
                     center.x = (outerCirclePos.left + 100);
                     center.y = (outerCirclePos.top + 100);
-                    var siteA = Math.abs(event.center.x - center.x);
-                    var siteB = Math.abs(event.center.y - center.y);
+                    var siteA = abs(event.center.x - center.x);
+                    var siteB = abs(event.center.y - center.y);
                     var siteC = Math.sqrt(Math.pow(siteA, 2) + Math.pow(siteB, 2));
                     if (siteC > 80 && siteC < 120) {
                         var pointer = document.getElementById('pointerCircle');
-                        pointer.style.webkitTransform = 'translate3d(' + Math.round(event.center.x - outerCirclePos.left - 24) + 'px, ' + Math.round(event.center.y - outerCirclePos.top - 24) + 'px, 0)';
+                        pointer.style.webkitTransform = 'translate3d(' + round(event.center.x - outerCirclePos.left - 24) + 'px, ' + round(event.center.y - outerCirclePos.top - 24) + 'px, 0)';
+                        var deltaX = 0;
+                        var x = siteB / (siteC / Math.sin(90));
+                        if (null !== lastX) {
+                            deltaX = abs(lastX - x);
+                        }
+                        var direction = null;
+                        if ((event.center.x - center.x) > 0) {
+                            if ((event.center.y - center.y) > 0) {
+                                if ((lastX - x) < 0) {
+                                    direction = 'clock';
+                                } else {
+                                    direction = 'counterclock';
+                                }
+                            } else {
+                                if ((lastX - x) > 0) {
+                                    direction = 'clock';
+                                } else {
+                                    direction = 'counterclock';
+                                }
+                            }
+                        } else {
+                            if ((event.center.y - center.y) > 0) {
+                                if ((lastX - x) > 0) {
+                                    direction = 'clock';
+                                } else {
+                                    direction = 'counterclock';
+                                }
+                            } else {
+                                if ((lastX - x) < 0) {
+                                    direction = 'clock';
+                                } else {
+                                    direction = 'counterclock';
+                                }
+                            }
+                        }
+                        lastX = x;
+                        console.log('velocity: ', 100 * deltaX, 'direction: ', direction);
                     }
                 });
             });
