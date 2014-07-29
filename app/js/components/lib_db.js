@@ -5,6 +5,7 @@
     function Db() {
         var _dbName = null;
         this.query = null;
+        this.lock = false;
 
         this.setDbName = function (dbName) {
             _dbName = dbName;
@@ -15,16 +16,23 @@
         };
     }
 
-    Db.prototype.save = function (db) {
-        db.query.sort('artist asec, album asec, year asec, track asec, title asec');
-        var serializedDb = JSON.stringify(db),
+    Db.prototype.save = function () {
+        var db = this;
+        this.lock = true;
+        var dbContent = this.query().order('artist asec, album asec, year asec, track asec, title asec').get();
+        this.query().remove();
+        this.query.insert(dbContent);
+        var serializedDb = JSON.stringify(dbContent),
             dbName = this.getDbName();
 
         root.Audica.plugins.fileSystem.writeFile(
             dbName,
             new Blob([serializedDb], {
                 type: 'text/plain'
-            })
+            }),
+            function(){
+                db.lock = false;
+            }
         );
     };
 
@@ -47,13 +55,14 @@
             _db.query.settings({
                 cacheSize: 10000,
                 onDBChange: function () {
-                    var dbContent = this;
-                    if (null !== _timeout) {
-                        clearTimeout(_timeout);
+                    if(false === _db.lock){
+                        if (null !== _timeout) {
+                            clearTimeout(_timeout);
+                        }
+                        _timeout = window.setTimeout(function () {
+                            _db.save();
+                        }, 1000);
                     }
-                    _timeout = window.setTimeout(function () {
-                        _db.save(dbContent);
-                    }, 1000);
                 }
             });
         }, function () {
@@ -61,13 +70,14 @@
             _db.query.settings({
                 cacheSize: 10000,
                 onDBChange: function () {
-                    var dbContent = this;
-                    if (null !== _timeout) {
-                        clearTimeout(_timeout);
+                    if(false === _db.lock){
+                        if (null !== _timeout) {
+                            clearTimeout(_timeout);
+                        }
+                        _timeout = window.setTimeout(function () {
+                            _db.save();
+                        }, 1000);
                     }
-                    _timeout = window.setTimeout(function () {
-                        _db.save(dbContent);
-                    }, 1000);
                 }
             });
         });
