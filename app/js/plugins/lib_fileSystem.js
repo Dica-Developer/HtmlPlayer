@@ -125,12 +125,15 @@
       }
     };
 
-    function writeFileInDirectory(directory, filePath, fileBlob) {
+    function writeFileInDirectory(directory, filePath, fileBlob, successCallback) {
       directory.getFile(filePath, {
         create: true
       }, function(fileEntry) {
         fileEntry.createWriter(function(fileWriter) {
           fileWriter.onwriteend = function() {
+              if(typeof successCallback === 'function'){
+                  successCallback();
+              }
             Audica.trigger('INFO', {
               message: 'Writing file ' + filePath + ' completed.'
             });
@@ -153,17 +156,17 @@
       });
     }
 
-    this.writeFile = function(filePath, fileBlob) {
+    this.writeFile = function(filePath, fileBlob, successCallback) {
       if (_isCordova) {
         window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(directory) {
-          writeFileInDirectory(directory, filePath, fileBlob);
+          writeFileInDirectory(directory, filePath, fileBlob, successCallback);
         }, function(error) {
           Audica.trigger('ERROR', {
             message: error
           });
         });
       } else {
-        writeFileInDirectory(fileSystem.root, filePath, fileBlob);
+        writeFileInDirectory(fileSystem.root, filePath, fileBlob, successCallback);
       }
     };
 
