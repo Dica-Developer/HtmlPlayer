@@ -143,8 +143,10 @@
         this.on('readyCollectingSongs', function (args) {
             self.collectSongs(args.songList, args.backendId, args.timestamp);
         });
+
         this.on('initReady', function () {
         });
+
         this.on('fileSystemInitReady', function () {
             this.songDb.init('song');
             this.historyDb.init('history');
