@@ -96,10 +96,10 @@
     };
 
     Audica.prototype.updateSongList = function () {
-        window.Audica.trigger('updateSongList', {
+        this.trigger('updateSongList', {
             timestamp: $.now()
         });
-        window.Audica.trigger('finished');
+        this.trigger('finished');
     };
 
     Audica.prototype.backgroundTasks = function () {
