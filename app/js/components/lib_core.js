@@ -205,13 +205,10 @@
     };
 
     Audica.prototype.start = function () {
-        var self = this;
         this.view.init();
         this.registerEvents();
         this.initPlugins();
-        window.setInterval(function () {
-            self.backgroundTasks();
-        }, 1000);
+        window.setInterval(this.backgroundTasks.bind(this), 1000);
     };
 
     window.Audica = new Audica();
