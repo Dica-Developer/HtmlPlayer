@@ -124,21 +124,11 @@
 
     View.prototype.setSongAsFirstPlaylistElement = function (song) {
         var li = [
-            '<li data-song-id="',
-            song.___id,
-            '">',
-            '<span>',
-            this.encodeHtml(song.artist),
-            '</span> / ',
-            '<span>',
-            this.encodeHtml(song.album),
-            '</span> / ',
-            '<span>',
-            this.encodeHtml(song.track),
-            '.</span> ',
-            '<span>',
-            this.encodeHtml(song.title),
-            '</span>',
+            '<li data-song-id="' +song.___id + '">',
+            '<span>' + this.encodeHtml(song.artist) + '</span> / ',
+            '<span>' + this.encodeHtml(song.album) + '</span> / ',
+            '<span>' + this.encodeHtml(song.track) + '.</span> ',
+            '<span>' + this.encodeHtml(song.title) + '</span>',
             '</li>'
         ];
 
