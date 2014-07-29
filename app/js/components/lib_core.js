@@ -7,8 +7,6 @@
     }
     AudicaCoreError.prototype = new Error();
 
-
-
     function Audica() {}
 
     Audica.prototype.plugins = {};
