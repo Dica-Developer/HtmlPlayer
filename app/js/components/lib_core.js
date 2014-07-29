@@ -42,7 +42,6 @@
             this.trigger('ERROR', new AudicaCoreError('Cannot handle songs from backend ' + song.backendId + '.'));
         }
 
-        this.view.updateMainView(song.artist, song.album, song.title);
         this.trigger('playSong', {
             song: song
         });
