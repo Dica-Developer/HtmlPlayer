@@ -94,8 +94,6 @@
                 '!is': timestamp
             }
         }).remove();
-
-        this.trigger('collectSongs');
     };
 
     Audica.prototype.updateSongList = function () {
