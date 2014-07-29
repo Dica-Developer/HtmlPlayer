@@ -1,5 +1,5 @@
 /*global Audica*/
-(function (window, Audica) {
+(function (window, Audica, $) {
     'use strict';
 
     function AudicaViewError(message) {
@@ -445,4 +445,4 @@
     };
 
     Audica.view = new View();
-}(window, Audica));
+}(window, Audica, jQuery));
