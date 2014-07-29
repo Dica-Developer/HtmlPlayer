@@ -44,9 +44,9 @@
           for (i; i < length; i++) {
             var song = songs[i];
             var songObj = {
-              'artist': Audica.decodeHtml(song.artist),
-              'album': Audica.decodeHtml(song.album),
-              'title': Audica.decodeHtml(song.title),
+              'artist': Audica.view.decodeHtml(song.artist),
+              'album': Audica.view.decodeHtml(song.album),
+              'title': Audica.view.decodeHtml(song.title),
               'id': song.id,
               'coverArt': song.coverArt ? _serverUrl + '/getCoverArt.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&size=1024&id=' + song.coverArt : null,
               'contentType': song.contentType,
@@ -54,7 +54,7 @@
               'cd': 0,
               'created': song.created ? song.created : null,
               'duration': song.duration,
-              'genre': Audica.decodeHtml(song.genre),
+              'genre': Audica.view.decodeHtml(song.genre),
               'year': song.year ? song.year : null,
               'addedOn': timestamp,
               'src': _serverUrl + '/stream.view?u=' + _login + '&p=' + _password + '&v=1.10.2&c=audica&id=' + song.id,
