@@ -6,7 +6,7 @@
         var dom = Audica.view.Dom;
         var audio = Audica.plugins.player;
         var songBox = dom.songBox;
-        var playListBox = dom.playlistBox;
+        var playlistBox = dom.playlistBox;
         var searchView = dom.searchView;
         var boxWidth = ($(document).width() / 2) - 22 - 2;
         var boxHeight = $(document).height() - 22;
@@ -72,8 +72,8 @@
                 songBox.focus();
                 songBox.width(boxWidth);
                 songBox.height(boxHeight);
-                playListBox.width(boxWidth);
-                playListBox.height(boxHeight);
+                playlistBox.width(boxWidth);
+                playlistBox.height(boxHeight);
                 searchView.height($(document).height());
                 searchView.animate({
                     left: 0
