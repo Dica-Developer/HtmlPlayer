@@ -45,6 +45,8 @@
         var viewState = 'player';
         var songBoxPositionY = null;
         var songBoxPositionX = 0;
+        var playlistBoxPositionY = null;
+        var playlistBoxPositionX = 0;
 
         //  Getter & Setter
         this.getViewState = function () {
@@ -69,6 +71,18 @@
         };
         this.setSongBoxPositionY = function (positionY) {
             songBoxPositionY = positionY;
+        };
+        this.getPlaylistBoxPositionX = function () {
+            return playlistBoxPositionX;
+        };
+        this.setPlaylistBoxPositionX = function (positionX) {
+            playlistBoxPositionX = positionX;
+        };
+        this.getPlaylistBoxPositionY = function () {
+            return playlistBoxPositionY;
+        };
+        this.setPlaylistBoxPositionY = function (positionY) {
+            playlistBoxPositionY = positionY;
         };
     }
 
@@ -178,6 +192,62 @@
         Audica.trigger('updateMainView');
     };
 
+    View.prototype.selectInPlaylistBox = function (eventData) {
+        var thisUL = $(eventData.element).closest('ul');
+        var value = $(eventData.element).data('value');
+        var clazz = $(eventData.element).attr('class');
+        var yIndex = $(eventData.element).closest('li');
+        var elems = thisUL.find('.' + clazz + '[data-value="' + value + '"]');
+        thisUL.find('.selected').removeClass('selected');
+        elems.parent().addClass('selected');
+        this.setPlaylistBoxPositionY(yIndex);
+        this.setPlaylistBoxPositionX($(eventData.element).index());
+        this.indicatePlaylistBoxXPosition();
+    };
+
+    View.prototype.selectInSongBox = function (eventData) {
+        var value = $(eventData.element).data('value');
+        var clazz = $(eventData.element).attr('class');
+        var yIndex = $(eventData.element).closest('li');
+        var ul = $(eventData.element).closest('ul');
+        var elems = ul.find('.' + clazz + '[data-value="' + value + '"]');
+        ul.find('.selected').removeClass('selected');
+        elems.parent().addClass('selected');
+        this.setSongBoxPositionY(yIndex);
+        this.setSongBoxPositionX($(eventData.element).index());
+        this.indicateSongBoxXPosition();
+    };
+
+    View.prototype.bindPlaylistBoxEvents = function () {
+        this.Dom.playlistBox.on('click', 'span', function () {
+           Audica.trigger('view:selectInPlaylistBox', {element: this});
+        });
+        Audica.trigger('tracklistChanged');
+    };
+
+    View.prototype.fillPlaylist = function (songs) {
+        var _this = this,
+            lis = [];
+        songs.forEach(function(song, index){
+            var li = [],
+                artist = _this.encodeHtml(song.artist),
+                album = _this.encodeHtml(song.album),
+                track = _this.encodeHtml(song.track),
+                title = _this.encodeHtml(song.title);
+
+            li.push('<li data-song-id="' + song.___id + '">');
+            li.push('<span class="artist" data-value="' + artist + '">' + artist + '</span> / ');
+            li.push('<span class="album" data-value="' + album + '">' + album + '</span> / ');
+            li.push('<span class="track" data-value="' + track + '">' + track + '.</span>');
+            li.push('<span class="title" data-value="' + title + '">' + title + '</span>');
+            li.push('</li>');
+            lis[index] = li.join('');
+        });
+        this.Dom.playlistBox.append(lis.join(''));
+        this.bindPlaylistBoxEvents();
+    };
+
+
     View.prototype.fillSongBox = function (songs) {
         var _this = this,
             lis = [];
@@ -201,18 +271,8 @@
     };
 
     View.prototype.bindSongBoxEvents = function () {
-        var self = this;
         this.Dom.songBox.on('click', 'span', function () {
-            var value = $(this).data('value');
-            var clazz = $(this).attr('class');
-            var yIndex = $(this).closest('li');
-            var ul = $(this).closest('ul');
-            var elems = ul.find('.' + clazz + '[data-value="' + value + '"]');
-            ul.find('.selected').removeClass('selected');
-            elems.parent().addClass('selected');
-            self.setSongBoxPositionY(yIndex);
-            self.setSongBoxPositionX($(this).index());
-            self.indicateSongBoxXPosition();
+            Audica.trigger('view:selectInSongBox', {element: this});
         });
     };
 
@@ -259,6 +319,14 @@
         var songBox = this.Dom.songBox;
         var selectedElems = songBox.find('.selected');
         songBox.find('[positionX]').removeAttr('positionX');
+        selectedElems.find(currentXClass).attr('positionX', true);
+    };
+
+    View.prototype.indicatePlaylistBoxXPosition = function () {
+        var currentXClass = this.positionXClassMap[this.getPlaylistBoxPositionX()];
+        var playlistBox = this.Dom.playlistBox;
+        var selectedElems = playlistBox.find('.selected');
+        playlistBox.find('[positionX]').removeAttr('positionX');
         selectedElems.find(currentXClass).attr('positionX', true);
     };
 
@@ -413,6 +481,11 @@
             _this.fillSongBox(currentSongList);
         });
 
+        Audica.on('fillPlaylist', function (eventData) {
+            var songList = eventData.songs;
+            _this.fillPlaylist(songList);
+        });
+
         Audica.on('domElementsSet', this.applyCoverArtStyle.bind(this));
         Audica.on('nextSong', this.applyCoverArtStyle.bind(this));
         Audica.on('previousSong', this.applyCoverArtStyle.bind(this));
@@ -422,6 +495,9 @@
         Audica.on('player:pause', this.stopBackgroundTask.bind(this));
         Audica.on('player:error', this.stopBackgroundTask.bind(this));
         Audica.on('player:end', this.stopBackgroundTask.bind(this));
+
+        Audica.on('view:selectInPlaylistBox', this.selectInPlaylistBox.bind(this));
+        Audica.on('view:selectInSongBox', this.selectInSongBox.bind(this));
 
 
         $(window).on('resize', function () {

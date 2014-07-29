@@ -141,7 +141,7 @@
                 } else {
                     view.setSongBoxPositionX(++x);
                 }
-                view.getSongBoxPositionY().find('span').eq(x).trigger('click');
+                Audica.trigger('view:selectInSongBox', {element: view.getSongBoxPositionY().find('span').eq(x)[0]});
                 view.indicateSongBoxXPosition();
             });
 
@@ -153,7 +153,7 @@
                 } else {
                     view.setSongBoxPositionX(--x);
                 }
-                view.getSongBoxPositionY().find('span').eq(x).trigger('click');
+                Audica.trigger('view:selectInSongBox', {element: view.getSongBoxPositionY().find('span').eq(x)[0]});
                 view.indicateSongBoxXPosition();
             });
 
@@ -175,7 +175,7 @@
                 songBox.parent().scrollTop(scrollPos);
                 prev.addClass('active');
                 view.setSongBoxPositionY(prev);
-                prev.find('span').eq(view.getSongBoxPositionX()).trigger('click');
+                Audica.trigger('view:selectInSongBox', {element: prev.find('span').eq(view.getSongBoxPositionX())[0]});
                 view.indicateSongBoxXPosition();
             });
 
@@ -204,7 +204,7 @@
                 songBox.parent().scrollTop(scrollPos);
                 next.addClass('active');
                 view.setSongBoxPositionY(next);
-                next.find('span').eq(view.getSongBoxPositionX()).trigger('click');
+                Audica.trigger('view:selectInSongBox', {element: next.find('span').eq(view.getSongBoxPositionX())[0]});
                 view.indicateSongBoxXPosition();
             });
 
