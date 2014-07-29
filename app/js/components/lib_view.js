@@ -1,10 +1,11 @@
-/*global Audica:true, XMLHttpRequest:true, console:true, window, chrome*/
-(function(window, Audica) {
+/*global Audica*/
+(function (window, Audica) {
     'use strict';
 
     function AudicaViewError(message) {
         this.message = (message || '');
     }
+
     AudicaViewError.prototype = new Error();
 
     //private
@@ -29,7 +30,7 @@
 
 
     //module
-    function View(){
+    function View() {
         this.closePlayerControlViewTimerId = null;
         this.resizeEventTimeoutId = null;
 
@@ -90,7 +91,7 @@
         preferencesView: null
     };
 
-    View.prototype.init = function(){
+    View.prototype.init = function () {
         Audica.on('registerEvents', this.bindEvents.bind(this));
         for (var selector in this.Dom) {
             if (this.Dom.hasOwnProperty(selector)) {
@@ -244,7 +245,7 @@
         selectedElems.find(currentXClass).attr('positionX', true);
     };
 
-    View.prototype.bindEvents = function(){
+    View.prototype.bindEvents = function () {
         var _this = this;
         $(document).mousemove(function () {
             var playerControlView = _this.Dom.playerControlView;
@@ -400,12 +401,11 @@
         Audica.on('previousSong', this.applyCoverArtStyle.bind(this));
 
         $(window).on('resize', function () {
-            window.clearTimeout(self.resizeEventTimeoutId);
+            window.clearTimeout(_this.resizeEventTimeoutId);
             _this.resizeEventTimeoutId = window.setTimeout(_this.applyCoverArtStyle.bind(_this), 250);
         });
     };
 
-    var encodeDecodeElement = $('<div />');
     View.prototype.encodeHtml = function (string) {
         if (typeof string === 'string') {
             return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -414,6 +414,7 @@
         }
     };
 
+    var encodeDecodeElement = $('<div />');
     View.prototype.decodeHtml = function (string) {
         if (typeof string === 'string') {
             return encodeDecodeElement.html(string).text();
