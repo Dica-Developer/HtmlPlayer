@@ -105,11 +105,11 @@
     };
 
     View.prototype.firstPlayListElement = function () {
-        return this.Dom.playlistBox.find('li :first');
+        return this.Dom.playlistBox.find('li:first');
     };
 
     View.prototype.getNthPlayListElement = function (pos) {
-        return this.Dom.playlistBox.find('li :nth(' + pos + ')');
+        return this.Dom.playlistBox.find('li:nth(' + pos + ')');
     };
 
     View.prototype.setFirstPlaylistElement = function (li) {
