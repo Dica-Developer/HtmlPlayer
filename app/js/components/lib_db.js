@@ -16,6 +16,7 @@
     }
 
     Db.prototype.save = function (db) {
+        db.query.sort('artist asec, album asec, year asec, track asec, title asec');
         var serializedDb = JSON.stringify(db),
             dbName = this.getDbName();
 
