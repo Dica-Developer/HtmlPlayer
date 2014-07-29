@@ -183,22 +183,24 @@
     };
 
     View.prototype.fillSongBox = function (songs) {
-        var lis = [],
-            i = 0,
-            length = songs.length,
-            song;
-        for (i; i < length; i++) {
-            song = songs[i];
-            var li = [];
-            li.push('<li data-song-id="' + escape(song.___id) + '">');
-            li.push('<span class="artist" data-value="' + escape(song.artist) + '">' + this.encodeHtml(song.artist) + '</span> / ');
-            li.push('<span class="album" data-value="' + escape(song.album) + '">' + this.encodeHtml(song.album) + '</span> / ');
-            li.push('<span class="track" data-value="' + escape(song.track) + '">' + this.encodeHtml(song.track) + '.</span>');
-            li.push('<span class="title" data-value="' + escape(song.title) + '">' + this.encodeHtml(song.title) + '</span>');
+        var _this = this,
+            lis = [];
+        songs.forEach(function(song, index){
+            var li = [],
+                artist = _this.encodeHtml(song.artist),
+                album = _this.encodeHtml(song.album),
+                track = _this.encodeHtml(song.track),
+                title = _this.encodeHtml(song.title);
+
+            li.push('<li data-song-id="' + song.___id + '">');
+            li.push('<span class="artist" data-value="' + artist + '">' + artist + '</span> / ');
+            li.push('<span class="album" data-value="' + album + '">' + album + '</span> / ');
+            li.push('<span class="track" data-value="' + track + '">' + track + '.</span>');
+            li.push('<span class="title" data-value="' + title + '">' + title + '</span>');
             li.push('</li>');
-            lis[i] = li.join('');
-        }
-        this.Dom.songBox[0].innerHTML = lis.join('');
+            lis[index] = li.join('');
+        });
+        this.Dom.songBox.html(lis.join(''));
         this.bindSongBoxEvents();
     };
 
