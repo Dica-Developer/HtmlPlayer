@@ -122,8 +122,27 @@
     };
 
     View.prototype.setSongAsFirstPlaylistElement = function (song) {
-        var li = $('<li data-song="' + escape(JSON.stringify(song)) + '"><span>' + song.artist + '</span>g / <span>' + song.album + '</span> / <span>' + song.track + '.</span> <span>' + song.title + '</span></li>');
-        this.setFirstPlaylistElement(li);
+        var li = [
+            '<li data-song-id="',
+            song.___id,
+            '">',
+            '<span>',
+            this.encodeHtml(song.artist),
+            '</span> / ',
+            '<span>',
+            this.encodeHtml(song.album),
+            '</span> / ',
+            '<span>',
+            this.encodeHtml(song.track),
+            '.</span> ',
+            '<span>',
+            this.encodeHtml(song.title),
+            '</span>',
+            '</li>'
+        ];
+
+        var $li = $(li.join(''));
+        this.setFirstPlaylistElement($li);
     };
 
     View.prototype.clearPlaylist = function () {
