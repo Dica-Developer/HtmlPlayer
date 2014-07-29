@@ -1,5 +1,5 @@
-/*global TAFFY, window*/
-(function (window) {
+/*global window*/
+(function (window, $) {
     'use strict';
 
     function AudicaCoreError(message) {
@@ -94,8 +94,6 @@
                 '!is': timestamp
             }
         }).remove();
-
-        this.trigger('collectSongs');
     };
 
     Audica.prototype.updateSongList = function () {
@@ -108,8 +106,8 @@
     Audica.prototype.backgroundTasks = function () {
         this.view.updateProgress();
         this.view.updateTimings();
-        if (this.plugins['scrobbler']) {
-            this.plugins['scrobbler'].scrobbleSong();
+        if (this.plugins.scrobbler) {
+            this.plugins.scrobbler.scrobbleSong();
         }
     };
 
@@ -132,15 +130,15 @@
         window.bindKeyEvents(this);
 
         this.on('INFO', function (args) {
-            console.log(args.message);
+            window.console.log(args.message);
         });
 
         this.on('ERROR', function (error) {
-            console.error(error.stack);
+            window.console.error(error.stack);
         });
 
         this.on('WARN', function (args) {
-            console.warn(args.message);
+            window.console.warn(args.message);
         });
 
         this.on('readyCollectingSongs', function (args) {
@@ -219,4 +217,4 @@
 
     window.Audica = new Audica();
 
-}(window));
+}(window, jQuery));

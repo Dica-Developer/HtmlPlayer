@@ -1,10 +1,11 @@
-/*global Audica:true, XMLHttpRequest:true, console:true, window, chrome*/
-(function(window, Audica) {
+/*global Audica*/
+(function (window, Audica, $) {
     'use strict';
 
     function AudicaViewError(message) {
         this.message = (message || '');
     }
+
     AudicaViewError.prototype = new Error();
 
     //private
@@ -29,7 +30,7 @@
 
 
     //module
-    function View(){
+    function View() {
         this.closePlayerControlViewTimerId = null;
         this.resizeEventTimeoutId = null;
 
@@ -90,7 +91,7 @@
         preferencesView: null
     };
 
-    View.prototype.init = function(){
+    View.prototype.init = function () {
         Audica.on('registerEvents', this.bindEvents.bind(this));
         for (var selector in this.Dom) {
             if (this.Dom.hasOwnProperty(selector)) {
@@ -121,8 +122,27 @@
     };
 
     View.prototype.setSongAsFirstPlaylistElement = function (song) {
-        var li = $('<li data-song="' + escape(JSON.stringify(song)) + '"><span>' + song.artist + '</span>g / <span>' + song.album + '</span> / <span>' + song.track + '.</span> <span>' + song.title + '</span></li>');
-        this.setFirstPlaylistElement(li);
+        var li = [
+            '<li data-song-id="',
+            song.___id,
+            '">',
+            '<span>',
+            this.encodeHtml(song.artist),
+            '</span> / ',
+            '<span>',
+            this.encodeHtml(song.album),
+            '</span> / ',
+            '<span>',
+            this.encodeHtml(song.track),
+            '.</span> ',
+            '<span>',
+            this.encodeHtml(song.title),
+            '</span>',
+            '</li>'
+        ];
+
+        var $li = $(li.join(''));
+        this.setFirstPlaylistElement($li);
     };
 
     View.prototype.clearPlaylist = function () {
@@ -155,7 +175,11 @@
         Audica.trigger('firstPlayListElementRemoved');
     };
 
-    View.prototype.updateMainView = function (artist, album, title) {
+    View.prototype.updateMainView = function (song) {
+        var title = song.title,
+            album = song.album,
+            artist = song.artist;
+
         this.Dom.title.text(title);
         this.Dom.album.text(album);
         this.Dom.artist.text(artist);
@@ -163,22 +187,24 @@
     };
 
     View.prototype.fillSongBox = function (songs) {
-        var lis = [],
-            i = 0,
-            length = songs.length,
-            song;
-        for (i; i < length; i++) {
-            song = songs[i];
-            var li = [];
-            li.push('<li data-song-id="' + escape(song.___id) + '">');
-            li.push('<span class="artist" data-value="' + escape(song.artist) + '">' + this.encodeHtml(song.artist) + '</span> / ');
-            li.push('<span class="album" data-value="' + escape(song.album) + '">' + this.encodeHtml(song.album) + '</span> / ');
-            li.push('<span class="track" data-value="' + escape(song.track) + '">' + this.encodeHtml(song.track) + '.</span>');
-            li.push('<span class="title" data-value="' + escape(song.title) + '">' + this.encodeHtml(song.title) + '</span>');
+        var _this = this,
+            lis = [];
+        songs.forEach(function(song, index){
+            var li = [],
+                artist = _this.encodeHtml(song.artist),
+                album = _this.encodeHtml(song.album),
+                track = _this.encodeHtml(song.track),
+                title = _this.encodeHtml(song.title);
+
+            li.push('<li data-song-id="' + song.___id + '">');
+            li.push('<span class="artist" data-value="' + artist + '">' + artist + '</span> / ');
+            li.push('<span class="album" data-value="' + album + '">' + album + '</span> / ');
+            li.push('<span class="track" data-value="' + track + '">' + track + '.</span>');
+            li.push('<span class="title" data-value="' + title + '">' + title + '</span>');
             li.push('</li>');
-            lis[i] = li.join('');
-        }
-        this.Dom.songBox[0].innerHTML = lis.join('');
+            lis[index] = li.join('');
+        });
+        this.Dom.songBox.html(lis.join(''));
         this.bindSongBoxEvents();
     };
 
@@ -244,7 +270,7 @@
         selectedElems.find(currentXClass).attr('positionX', true);
     };
 
-    View.prototype.bindEvents = function(){
+    View.prototype.bindEvents = function () {
         var _this = this;
         $(document).mousemove(function () {
             var playerControlView = _this.Dom.playerControlView;
@@ -391,21 +417,21 @@
         });
 
         Audica.on('fillSongBox', function () {
-            var currentSongList = Audica.songDb.query().order('artist logical, album logical, year logical, track logical, title logical').limit(15).get();
+            var currentSongList = Audica.songDb.query().get();
             _this.fillSongBox(currentSongList);
         });
 
         Audica.on('domElementsSet', this.applyCoverArtStyle.bind(this));
         Audica.on('nextSong', this.applyCoverArtStyle.bind(this));
         Audica.on('previousSong', this.applyCoverArtStyle.bind(this));
+        Audica.on('playSong', this.updateMainView.bind(this));
 
         $(window).on('resize', function () {
-            window.clearTimeout(self.resizeEventTimeoutId);
+            window.clearTimeout(_this.resizeEventTimeoutId);
             _this.resizeEventTimeoutId = window.setTimeout(_this.applyCoverArtStyle.bind(_this), 250);
         });
     };
 
-    var encodeDecodeElement = $('<div />');
     View.prototype.encodeHtml = function (string) {
         if (typeof string === 'string') {
             return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -414,6 +440,7 @@
         }
     };
 
+    var encodeDecodeElement = $('<div />');
     View.prototype.decodeHtml = function (string) {
         if (typeof string === 'string') {
             return encodeDecodeElement.html(string).text();
@@ -423,4 +450,4 @@
     };
 
     Audica.view = new View();
-}(window, Audica));
+}(window, Audica, jQuery));
