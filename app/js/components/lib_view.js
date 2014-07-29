@@ -175,8 +175,9 @@
         Audica.trigger('firstPlayListElementRemoved');
     };
 
-    View.prototype.updateMainView = function (song) {
-        var title = song.title,
+    View.prototype.updateMainView = function (eventData) {
+        var song = eventData.song,
+            title = song.title,
             album = song.album,
             artist = song.artist;
 
