@@ -456,15 +456,15 @@
         window.clearInterval(this.backgroundInterval);
     };
 
+    var encodeDecodeElement = $('<div />');
     View.prototype.encodeHtml = function (string) {
         if (typeof string === 'string') {
-            return string.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            return encodeDecodeElement.text(string).html();
         } else {
             return string;
         }
     };
 
-    var encodeDecodeElement = $('<div />');
     View.prototype.decodeHtml = function (string) {
         if (typeof string === 'string') {
             return encodeDecodeElement.html(string).text();
