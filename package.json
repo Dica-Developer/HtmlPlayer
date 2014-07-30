@@ -35,6 +35,6 @@
     "sinon": "^1.10.3",
     "karma-sinon": "^1.0.3",
     "karma-mocha-reporter": "^0.2.8",
-    "grunt-coveralls": "^0.3.0"
+    "grunt-karma-coveralls": "^2.5.1"
   }
 }
