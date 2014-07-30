@@ -187,5 +187,80 @@
 
         });
 
+        describe('Audica.previousSong', function () {
+
+            describe('error handling', function () {
+
+                it('Should trigger "ERROR" if no history is empty', function (done) {
+                    Audica.on('ERROR', function testErrorCallback(error) {
+                        expect(error).not.to.be.an('undefined');
+                        expect(error.message).to.equal('No song found. Possible reason: Empty History');
+                        done();
+                    });
+
+                    Audica.previousSong();
+                });
+
+                it('Should trigger "ERROR" if database query returns empty Array', function (done) {
+                    Audica.songHistory.push({});
+                    Audica.songDb.query = function(){
+                        return {
+                            get: function(){
+                                return [];
+                            }
+                        };
+                    };
+
+                    Audica.on('ERROR', function testErrorCallback(error) {
+                        expect(error).not.to.be.an('undefined');
+                        expect(error.message).to.equal('No song found. Possible reason: Empty Playlist');
+                        Audica.songDb.query = null;
+                        done();
+                    });
+
+                    Audica.previousSong();
+                });
+            });
+
+            describe('actual previous song', function () {
+                var playSpy, setSongAsFirstPlaylistElementSpy;
+
+                beforeEach(function () {
+                    playSpy = sinon.stub(Audica, 'playSong');
+                    setSongAsFirstPlaylistElementSpy = sinon.stub(Audica.view, 'setSongAsFirstPlaylistElement');
+                    Audica.songHistory.push({});
+                    Audica.songDb.query = function(){
+                        return {
+                            get: function(){
+                                return [{}];
+                            }
+                        };
+                    };
+                });
+
+                afterEach(function () {
+                    playSpy.restore();
+                    setSongAsFirstPlaylistElementSpy.restore();
+                    Audica.songDb.query = null;
+                });
+
+                it('Should call "playSong", "view.setSongAsFirstPlaylistElement"', function () {
+                    Audica.previousSong();
+
+                    expect(setSongAsFirstPlaylistElementSpy.callCount).to.equal(1);
+                    expect(playSpy.callCount).to.equal(1);
+                });
+
+                it('Should trigger "previousSong"', function (done) {
+                    Audica.on('previousSong', function(){
+                        done();
+                    });
+
+                    Audica.previousSong();
+                });
+            });
+
+        });
+
     });
 }());
