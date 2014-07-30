@@ -264,5 +264,47 @@
 
         });
 
+        describe('Audica.getLastSong', function () {
+
+            it('Should return null if history is empty', function () {
+                var lastSong = Audica.getLastSong();
+                expect(lastSong).to.be.a('null');
+            });
+
+            it('Should return last entry of songHistory', function () {
+                Audica.songHistory.push('firstEntry');
+                Audica.songHistory.push('lastEntry');
+
+                var lastSong = Audica.getLastSong();
+
+                expect(lastSong).not.to.be.a('null');
+                expect(lastSong).to.equal('lastEntry');
+            });
+        });
+
+        describe('Audica.updateSonglist', function () {
+
+            it('Should trigger "updateSongList" with current timestamp', function (done) {
+                var timestamp;
+                Audica.on('updateSongList', function(eventData){
+                    expect(eventData).not.to.be.an('undefined');
+                    expect(eventData.timestamp).not.to.be.an('undefined');
+                    expect(eventData.timestamp).to.be.closeTo(timestamp, 100);
+                    done();
+                });
+
+                timestamp = $.now();
+                Audica.updateSongList();
+            });
+
+            it('Should trigger "finished"', function (done) {
+                Audica.on('finished', function(){
+                    done();
+                });
+
+                Audica.updateSongList();
+            });
+        });
+
     });
 }());
