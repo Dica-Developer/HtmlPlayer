@@ -470,7 +470,6 @@
                             }
                         }
                         lastX = x;
-                        console.log('velocity: ', 100 * deltaX, 'direction: ', direction);
                     }
                 });
             });
