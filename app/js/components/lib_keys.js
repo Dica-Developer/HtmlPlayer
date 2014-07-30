@@ -338,7 +338,7 @@
             function addSongSelectionToPlayList() {
                 var firstSelected = dom.songBox.find('.selected').eq(0);
                 var elemToAdd = firstSelected.find('[positionx="true"]');
-                if(elemToAdd.size() > 0){
+                if (elemToAdd.size() > 0) {
                     var dbQueryValue = elemToAdd.data('value');
                     var dbQueryKey = elemToAdd.attr('class');
                     var query = {};
@@ -353,7 +353,7 @@
             Mousetrap.bind(['enter'], addSongSelectionToPlayList);
 
             var element = document.getElementById('songBoxContainer');
-            new Hammer(element).on('doubletap',  addSongSelectionToPlayList);
+            new Hammer(element).on('doubletap', addSongSelectionToPlayList);
 
             function search() {
                 if (null !== filterBoxTimeout) {
