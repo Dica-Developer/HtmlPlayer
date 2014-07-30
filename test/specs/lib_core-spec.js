@@ -1,5 +1,5 @@
 /*global Audica, describe, it, expect, afterEach, beforeEach, sinon*/
-(function () {
+(function ($) {
     'use strict';
 
 
@@ -319,4 +319,4 @@
         });
 
     });
-}());
+}(jQuery));
