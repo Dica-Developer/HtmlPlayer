@@ -26,11 +26,20 @@ module.exports = function(grunt) {
       travis: {
         configFile: 'test/travis.karma.conf.js'
       }
+    },
+    coveralls: {
+      options: {
+          debug: false,
+          /*jshint camelcase:false*/
+          coverage_dir: 'test/coverage',
+          force: false
+      }
     }
   });
 
   grunt.registerTask('travis', [
     'jshint',
-    'karma:travis'
+    'karma:travis',
+    'coveralls'
   ]);
 };
