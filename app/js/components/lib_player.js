@@ -5,6 +5,7 @@
     function PluginPlayerError(message) {
         this.message = (message || '');
     }
+
     PluginPlayerError.prototype = new Error();
 
     function Player() {
@@ -29,20 +30,20 @@
         function onErrorCallbackAudioTag(event) {
             var errorMsg = 'The file "' + _player.src + '" cannot be played. The possible reasons is: ';
             switch (event.currentTarget.error.code) {
-                case 4:
-                    errorMsg += 'The current media type "' + _player.type + '" is not supported.';
-                    break;
-                case 1:
-                    errorMsg += 'The user agent stopped fetching the media data.';
-                    break;
-                case 2:
-                    errorMsg += 'A network error stopped the user agent fetching the media data.';
-                    break;
-                case 3:
-                    errorMsg += 'Error on decoding the media data.';
-                    break;
-                default:
-                    errorMsg += 'Unknown error with code "' + event.currentTarget.error.code + '" happened.';
+            case 4:
+                errorMsg += 'The current media type "' + _player.type + '" is not supported.';
+                break;
+            case 1:
+                errorMsg += 'The user agent stopped fetching the media data.';
+                break;
+            case 2:
+                errorMsg += 'A network error stopped the user agent fetching the media data.';
+                break;
+            case 3:
+                errorMsg += 'Error on decoding the media data.';
+                break;
+            default:
+                errorMsg += 'Unknown error with code "' + event.currentTarget.error.code + '" happened.';
             }
             Audica.trigger('player:error');
             Audica.trigger('ERROR', new PluginPlayerError(errorMsg));
