@@ -47,14 +47,15 @@
 
     Audica.prototype.nextSong = function () {
         var song = this.view.getFirstPlaylistElement();
-        if (null !== song) {
-            this.playSong(song);
-            this.view.removeFirstPlaylistElement();
-            this.historyAdd(song);
-            this.trigger('nextSong');
-        } else {
+        if (!song) {
             this.trigger('ERROR', new Error('No song found. Possible reason: Empty Playlist'));
+            return;
         }
+
+        this.playSong(song);
+        this.view.removeFirstPlaylistElement();
+        this.historyAdd(song);
+        this.trigger('nextSong');
     };
 
     Audica.prototype.previousSong = function () {
