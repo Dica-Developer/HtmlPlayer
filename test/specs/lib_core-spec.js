@@ -3,9 +3,9 @@
     'use strict';
 
 
-    afterEach(function(){
+    afterEach(function () {
         Audica.eventList = [];
-        Audica.songHistory =[];
+        Audica.songHistory = [];
     });
 
     describe('Core', function () {
@@ -91,7 +91,7 @@
                 });
 
                 it('Should trigger "playSong"', function (done) {
-                    Audica.on('playSong', function(eventData){
+                    Audica.on('playSong', function (eventData) {
                         expect(eventData).not.to.be.an('undefined');
                         expect(eventData.song).not.to.be.an('undefined');
                         done();
@@ -122,7 +122,7 @@
                 });
 
                 it('Should trigger "ERROR" if no song is given', function (done) {
-                    getFirstPlaylistElementSpy = sinon.stub(Audica.view, 'getFirstPlaylistElement', function(){
+                    getFirstPlaylistElementSpy = sinon.stub(Audica.view, 'getFirstPlaylistElement', function () {
                         return null;
                     });
                     Audica.on('ERROR', function testErrorCallback(error) {
@@ -153,7 +153,7 @@
                     playSpy = sinon.stub(Audica, 'playSong');
                     historyAddSpy = sinon.stub(Audica, 'historyAdd');
 
-                    getFirstPlaylistElementSpy = sinon.stub(Audica.view, 'getFirstPlaylistElement', function(){
+                    getFirstPlaylistElementSpy = sinon.stub(Audica.view, 'getFirstPlaylistElement', function () {
                         return {};
                     });
 
@@ -177,7 +177,7 @@
                 });
 
                 it('Should trigger "nextSong"', function (done) {
-                    Audica.on('nextSong', function(){
+                    Audica.on('nextSong', function () {
                         done();
                     });
 
@@ -203,9 +203,9 @@
 
                 it('Should trigger "ERROR" if database query returns empty Array', function (done) {
                     Audica.songHistory.push({});
-                    Audica.songDb.query = function(){
+                    Audica.songDb.query = function () {
                         return {
-                            get: function(){
+                            get: function () {
                                 return [];
                             }
                         };
@@ -229,10 +229,12 @@
                     playSpy = sinon.stub(Audica, 'playSong');
                     setSongAsFirstPlaylistElementSpy = sinon.stub(Audica.view, 'setSongAsFirstPlaylistElement');
                     Audica.songHistory.push({});
-                    Audica.songDb.query = function(){
+                    Audica.songDb.query = function () {
                         return {
-                            get: function(){
-                                return [{}];
+                            get: function () {
+                                return [
+                                    {}
+                                ];
                             }
                         };
                     };
@@ -252,7 +254,7 @@
                 });
 
                 it('Should trigger "previousSong"', function (done) {
-                    Audica.on('previousSong', function(){
+                    Audica.on('previousSong', function () {
                         done();
                     });
 
