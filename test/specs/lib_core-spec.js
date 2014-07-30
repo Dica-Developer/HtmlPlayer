@@ -2,7 +2,14 @@
 (function () {
     'use strict';
 
+
+    afterEach(function(){
+        Audica.eventList = [];
+        Audica.songHistory =[];
+    });
+
     describe('Core', function () {
+
 
         it('Should be defined', function () {
             expect(Audica).to.not.be.an('undefined');
@@ -111,7 +118,6 @@
 
                 afterEach(function () {
                     delete Audica.plugins.testBackend;
-                    Audica.eventList = [];
                     playSpy.restore();
                 });
 
@@ -156,7 +162,6 @@
 
                 afterEach(function () {
                     delete Audica.plugins.testBackend;
-                    Audica.eventList = [];
                     playSpy.restore();
                     getFirstPlaylistElementSpy.restore();
                     removeFirstPlaylistElementSpy.restore();
