@@ -1,7 +1,6 @@
 *~
 .DS_Store
 .idea/
-atlassian-ide-plugin.xml/test/tmp/libs.js
-/test/tmp
 style.css
 node_modules/
+test/coverage/
