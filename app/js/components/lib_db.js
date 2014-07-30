@@ -45,12 +45,12 @@
 
         root.Audica.plugins.fileSystem.readFile(_dbName, function (dbContent) {
             try {
-                _db.query = TAFFY(JSON.parse(dbContent));
+                _db.query = new TAFFY(JSON.parse(dbContent));
             } catch (error) {
                 root.Audica.trigger('ERROR', {
                     message: 'Cannot initialize db with old content. Set it to an empty db.' + error
                 });
-                _db.query = TAFFY();
+                _db.query = new TAFFY();
             }
             _db.query.settings({
                 cacheSize: 10000,
@@ -66,7 +66,7 @@
                 }
             });
         }, function () {
-            _db.query = TAFFY();
+            _db.query = new TAFFY();
             _db.query.settings({
                 cacheSize: 10000,
                 onDBChange: function () {
