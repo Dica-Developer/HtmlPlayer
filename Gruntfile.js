@@ -10,65 +10,36 @@ module.exports = function(grunt) {
       options: {
         jshintrc: '.jshintrc'
       },
-      all: ['Gruntfile.js', 'js/*.js', 'options/**/*.js']
-    },
-    concat: {
-      libs: {
-        src: ['js/lib_core.js'],
-        dest: 'test/tmp/libs.js'
-      },
-      specs: {
-        src: ['test/spec/Helper.js', 'test/spec/*Spec.js'],
-        dest: 'test/tmp/specs.js'
-      }
-    },
-    uglify: {
-      test_specs: {
-        src: 'test/tmp/specs.js',
-        dest: 'test/tmp/specs.min.js'
-      },
-      test_libs: {
-        src: 'test/tmp/libs.js',
-        dest: 'test/tmp/libs.min.js'
-      }
+      all: ['app/js/components/**/*.js']
     },
     less: {
       dev: {
-        options: {
-          paths: ["./"]
-        },
         files: {
-          "style.css": "style.less"
-        }
-      },
-      dist: {
-        options: {
-          paths: ["./"],
-          yuicompress: true
-        },
-        files: {
-          "style.css": "style.less"
+          "app/style/style.css": "app/style/style.less"
         }
       }
-    },
-    clean: {
-      tmp: 'test/tmp'
     },
     karma: {
       dev: {
         configFile: 'test/karma.conf.js'
       },
       travis: {
-        configFile: '<%= config.test %>/travis.karma.conf.js'
+        configFile: 'test/travis.karma.conf.js'
+      }
+    },
+    coveralls: {
+      options: {
+          debug: false,
+          /*jshint camelcase:false*/
+          coverage_dir: 'test/coverage',
+          force: false
       }
     }
   });
 
   grunt.registerTask('travis', [
     'jshint',
-    'concat:libs',
-    'concat:specs',
-    'uglify:test_specs',
-    'uglify:test_libs'
+    'karma:travis',
+    'coveralls'
   ]);
 };

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Audica HTML Player</title>
+    <link rel="stylesheet" href="style/style.css" type="text/css">
+    <script type="text/javascript" src="js/3rd/taffy-2.7.js"></script>
+    <script type="text/javascript" src="js/3rd/hammer-2.0.1.js"></script>
+    <script type="text/javascript" src="js/3rd/jquery.min.js"></script>
+    <script type="text/javascript" src="js/3rd/md5.js"></script>
+    <script type="text/javascript" src="js/3rd/ID3/stringutils.js"></script>
+    <script type="text/javascript" src="js/3rd/ID3/id3v1.js"></script>
+    <script type="text/javascript" src="js/3rd/ID3/id3v2.js"></script>
+    <script type="text/javascript" src="js/3rd/ID3/id3v2frames.js"></script>
+    <script type="text/javascript" src="js/3rd/ID3/id4.js"></script>
+    <script type="text/javascript" src="js/3rd/ID3/id3.js"></script>
+    <script type="text/javascript" src="js/3rd/mousetrap.min.js"></script>
+    <script type="text/javascript" src="js/3rd/oauth2/oauth2.js"></script>
+    <script type="text/javascript" src="js/components/lib_db.js"></script>
+    <script type="text/javascript" src="js/components/lib_core.js"></script>
+    <script type="text/javascript" src="js/components/lib_view.js"></script>
+    <script type="text/javascript" src="js/components/lib_player.js"></script>
+    <script type="text/javascript" src="js/components/lib_keys.js"></script>
+    <script type="text/javascript" src="js/plugins/lib_subsonic.js"></script>
+    <!-- script type="text/javascript" src="js/plugins/lib_google.js"></script>
+    <script type="text/javascript" src="js/plugins/lib_google_music.js"></script>
+    <!-- script type="text/javascript" src="js/plugins/lib_radioImporter.js"></script>
+    <script type="text/javascript" src="js/plugins/lib_fileImporter.js"></script -->
+    <script type="text/javascript" src="js/plugins/lib_fileSystem.js"></script>
+    <script type="text/javascript" src="js/plugins/lib_lastfm.js"></script>
+    <script type="text/javascript" src="js/plugins/lib_gracenote.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+
+    <!-- begin: options css and js -->
+    <link rel="stylesheet" href="options/css/browser.css" />
+    <link rel="stylesheet" href="options/css/checkbox.css" />
+    <link rel="stylesheet" href="options/css/button.css" />
+    <link rel="stylesheet" href="options/css/select.css" />
+    <script type="text/javascript" src="options/main.js"></script>
+    <!-- end: options css and js -->
+  </head>
+  <body>
+    <div id="fileImporter_dropZone">
+      <div id="searchViewPreview">
+      </div>
+      <div id="playerViewPreview">
+      </div>
+      <div id="searchView">
+        <div id="outerCircle" class="outerCircle">
+          <div id="pointerCircle" class="pointerCircle"></div>
+        </div>
+        <input id="filterBox" type="text"/>
+        <div id="songBoxContainer">
+          <ul id="songBox"></ul>
+        </div>
+        <div id="playlistBoxContainer">
+          <ul id="playlistBox"></ul>
+        </div>
+      </div>
+      <div id="playerView">
+        <div id="descriptionBox">
+          <label id="title">title</label>
+          <br />
+          by <label id="artist">artist</label>
+          <br />
+          from <label id="album">album</label>
+        </div>
+        <div id="coverArtBox" class="reflect" >
+          <img id="coverArt" src="images/wholeNote.svg"/>
+        </div>
+        <div id="playerControlView">
+          <progress id="progressBar" value="0" max="100"></progress>
+          <label id="timeField">0 / 0</label>
+          <div class="playerControlBar">
+            <span id="rewindButton" class="rewindButton"></span>
+            <span id="prevButton" class="prevButton"></span>
+            <span id="playPauseButton" class="playButton"></span>
+            <span id="nextButton" class="nextButton"></span>
+            <span id="forwardButton" class="forwardButton"></span>
+          </div>
+        </div>
+      </div>
+      <!-- options view -->
+      <div id="preferencesView">
+        <div id="navbar-container">
+          <div id="navbar-content-title">Options</div>
+          <ul id="navbar">
+            <li id="backend" class="navbar-item navbar-item-selected">Backend</li>
+            <li id="scrobble" class="navbar-item">Scrobble</li>
+            <li id="gracenote" class="navbar-item">Gracenote</li>
+            <li id="about" class="navbar-item">About</li>
+            <li id="test" class="navbar-item"><a href="../test/SpecRunner.html">Run test</a></li>
+          </ul>
+        </div>
+        <div id="mainview">
+          <div id="mainview-content">
+            <div id="page-container">
+              <div id="backendPage" class="page">
+                <h1>Backend</h1>
+                <div class="displaytable">
+                  <section>
+                    <div class="section-group">
+                      <select id="backendSelection">
+                        <option value="" disabled="disabled">Select a backend</option>
+                        <option value="subsonic">Subsonic</option>
+                      </select>
+                    </div>
+                    <div id="subsonicAuthParams">
+                      <div class="section-group">
+                        <h3>server url</h3>
+                        <input spellcheck="false" id="serverUrlBox" type="text" size="20" />
+                      </div>
+                      <div id="loginBoxDiv" class="section-group">
+                        <h3>login</h3>
+                        <input spellcheck="false" id="loginBox" type="text" size="20" />
+                      </div>
+                      <div id="passwordBoxDiv" class="section-group">
+                        <h3>password</h3>
+                        <input spellcheck="false" id="passwordBox" type="password" size="30" />
+                      </div>
+                      <div>
+                        <input type="button" id="retreiveSubsonicSongList" value="Retreive all songs metadata from server now"/>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+              <div id="gracenotePage" class="page">
+                <h1>Gracenote</h1>
+                <p><a href="http://en.wikipedia.org/wiki/Gracenote" target="_blank">What is Gracenote?</a></p>
+                <p>To use the Gracenote service you have to <a
+                    href="https://developer.gracenote.com/" target="_blank">register (Free)</a> and retrieve
+                  API
+                  ID.</p>
+                <div class="displaytable">
+                  <section>
+                    <div class="section-group" id="gracenoteFields">
+                      <h3>Client ID</h3>
+                      <input spellcheck="false" id="gracenoteClient_ID" type="text" size="30" />
+                      <h3>Web API ID</h3>
+                      <input spellcheck="false" id="gracenoteWepAPI_ID" type="text" size="30" />
+                    </div>
+                  </section>
+                </div>
+              </div>
+              <div id="scrobblePage" class="page">
+                <h1>Scrobble</h1>
+                <div class="displaytable">
+                  <section>
+                    <div class="section-group">
+                      <a href="http://www.last.fm/" target="_blank"><img src="http://cdn.last.fm/flatness/badges/lastfm_grey_small.gif" /></a>
+                      <a id="lastfmLoginLink" href="#">Login to last.fm</a>
+                      <a id="lastfmLogoutLink" href="#">Logout from last.fm</a>
+                      <label id="lastfmUserLabel">Logged in as</label>
+                      <a id="lastfmUserLink" target="_blank"></a>
+                    </div>
+                  </section>
+                </div>
+              </div>
+              <div id="aboutPage" class="page">
+                <h1>About</h1>
+                <div class="displaytable">
+                  <section>
+                    <h3>Homepage</h3>
+                    <div>
+                      <div class="section-group">
+                        <span><a href="https://github.com/Dica-Developer">http://dica-developer.github.com/HtmlPlayer</a></span>
+                        <span class="informational-text"> - Website</span>
+                      </div>
+                    </div>
+                  </section>
+                  <section>
+                    <h3>Bugreports</h3>
+                    <div class="section-group">
+                      <span>Please report bugs or suggestions under <a href="https://github.com/Dica-Developer/HtmlPlayer/issues">https://github.com/Dica-Developer/HtmlPlayer/issues</a>.</span>
+                      <span class="informational-text"> - Website</span>
+                    </div>
+                  </section>
+                  <section>
+                    <h3>Feedback</h3>
+                    <div class="section-group">
+                      <span>Please send feedback and question to <a href="mailto:dica-users@googlegroups.com?subject=[audica player]">dica-users@googlegroups.com</a>.</span>
+                      <span class="informational-text"> - public mailinglist</span>
+                    </div>
+                  </section>
+                  <section>
+                    <h3>Created by</h3>
+                    <div>
+                      <div class="section-group"><span>Dica Developers</span></div>
+                      <div class="section-group">
+                        <span><a href="https://github.com/Dica-Developer">https://github.com/Dica-Developer</a></span>
+                        <span class="informational-text"> - Website</span>
+                      </div>
+                    </div>
+                  </section>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
