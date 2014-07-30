@@ -1,6 +1,6 @@
-/*global $:true, Audica:true, Db:true, console:true, alert:true, localStorage:true */
-(function (window, Audica) {
-    "use strict";
+/*global Audica, window*/
+(function (window, Audica, $) {
+    'use strict';
 
     function prepareUI() {
         var gnPreview = $('<div id="gnPreview">Gracenote suggestion</div>');
@@ -54,18 +54,18 @@
 
 
     function Gracenote() {
-        this.db = new Db();
+        this.db = new window.Db();
         var self = this;
         var url = null;
-        var webAPI_ID = null;
-        var user_ID = null;
+        var webApiId = null;
+        var userId = null;
         //    var backendId = 'Gracenote';
 
-        var auth_query = '<QUERIES><QUERY CMD="REGISTER"><CLIENT>{{webAPI_ID}}</CLIENT></QUERY></QUERIES>';
-        var basic_query = '<QUERIES> <AUTH> <CLIENT>{{webAPI_ID}}</CLIENT> <USER>{{user_ID}}</USER> </AUTH> <LANG>eng</LANG>' +
+        var authQuery = '<QUERIES><QUERY CMD="REGISTER"><CLIENT>{{webAPI_ID}}</CLIENT></QUERY></QUERIES>';
+        var basicQuery = '<QUERIES> <AUTH> <CLIENT>{{webAPI_ID}}</CLIENT> <USER>{{user_ID}}</USER> </AUTH> <LANG>eng</LANG>' +
             '<COUNTRY>usa</COUNTRY> <QUERY CMD="ALBUM_SEARCH"><MODE>SINGLE_BEST</MODE><TEXT TYPE="ARTIST">{{artist}}</TEXT>' +
             '<TEXT TYPE="ALBUM_TITLE">{{album}}</TEXT> </QUERY></QUERIES>';
-        var mood_simple_query = '<QUERIES> <AUTH> <CLIENT>{{webAPI_ID}}</CLIENT> <USER>{{user_ID}}</USER> </AUTH> <LANG>eng</LANG>' +
+        var moodSimpleQuery = '<QUERIES> <AUTH> <CLIENT>{{webAPI_ID}}</CLIENT> <USER>{{user_ID}}</USER> </AUTH> <LANG>eng</LANG>' +
             '<COUNTRY>usa</COUNTRY> <QUERY CMD="ALBUM_FETCH"><GN_ID>{{GN_ID}}</GN_ID>' +
             '<OPTION> <PARAMETER>SELECT_EXTENDED</PARAMETER> <VALUE>MOOD,TEMPO</VALUE> </OPTION></QUERY></QUERIES>';
 
@@ -74,8 +74,8 @@
                 url: url,
                 type: 'POST',
                 data: data,
-                contentType: "text/xml",
-                dataType: "text"
+                contentType: 'text/xml',
+                dataType: 'text'
             });
         };
 
@@ -92,10 +92,10 @@
         };
 
         var getCredentials = function () {
-            var client_ID = JSON.parse(localStorage.gracenoteClient_ID) || null;
-            webAPI_ID = JSON.parse(localStorage.gracenoteWepAPI_ID) || null;
-            if (client_ID && webAPI_ID) {
-                url = 'https://c' + client_ID + '.web.cddbp.net/webapi/xml/1.0/';
+            var clientId = JSON.parse(localStorage.gracenoteClientId) || null;
+            webApiId = JSON.parse(localStorage.gracenoteWepApiId) || null;
+            if (clientId && webApiId) {
+                url = 'https://c' + clientId + '.web.cddbp.net/webapi/xml/1.0/';
                 return true;
             } else {
                 return false;
@@ -104,35 +104,36 @@
 
         var addMoodToSongDB = function (albumMood, tracksMood) {
             var albumFetch = self.db.query({
-                    'gn_id': albumMood.id
+                    'gnId': albumMood.id
                 }),
                 i = 0,
                 length = tracksMood.length;
+
             albumFetch.update({
                 genre: albumMood.genre
             });
             albumFetch.update({
-                genre_ID: albumMood.genre_ID
+                genreId: albumMood.genreId
             });
             albumFetch.update({
-                genre_NUM: albumMood.genre_NUM
+                genreNUM: albumMood.genreNUM
             });
             for (i; i < length; ++i) {
                 var track = tracksMood[i];
                 var trackFetch = self.db.query({
-                    'gn_id': track.id
+                    'gnId': track.id
                 });
                 trackFetch.update({
                     mood: track.mood
                 });
                 trackFetch.update({
-                    mood_ID: track.mood_ID
+                    moodId: track.moodId
                 });
                 trackFetch.update({
                     tempo: track.tempo
                 });
                 trackFetch.update({
-                    tempo_ID: track.tempo_ID
+                    tempoId: track.tempoId
                 });
             }
         };
@@ -140,8 +141,8 @@
         var extractAlbumGenre = function (xml) {
             return {
                 id: xml.find('GN_ID').eq(0).text(),
-                genre_NUM: xml.find('GENRE').attr('NUM'),
-                genre_ID: xml.find('GENRE').attr('ID'),
+                genreNUM: xml.find('GENRE').attr('NUM'),
+                genreId: xml.find('GENRE').attr('ID'),
                 genre: xml.find('GENRE').text()
             };
         };
@@ -156,9 +157,9 @@
                 ret[ret.length] = {
                     id: track.find('GN_ID').text(),
                     mood: track.find('MOOD').text(),
-                    mood_ID: track.find('MOOD').attr('ID'),
+                    moodId: track.find('MOOD').attr('ID'),
                     tempo: track.find('TEMPO').text(),
-                    tempo_ID: track.find('TEMPO').attr('ID')
+                    tempoId: track.find('TEMPO').attr('ID')
                 };
             }
             return ret;
@@ -174,22 +175,22 @@
         };
 
         var collectMoodInformations = function (id) {
-            var data = mood_simple_query.replace('{{webAPI_ID}}', webAPI_ID).replace('{{user_ID}}', user_ID)
+            var data = moodSimpleQuery.replace('{{webAPI_ID}}', webApiId).replace('{{user_ID}}', userId)
                 .replace('{{GN_ID}}', id);
             req(data).success(extractMoodInformations);
         };
 
-        var createDbEntry = function (isAlbum, gn_id, backendId, song_id) {
+        var createDbEntry = function (isAlbum, gnId, backendId, songId) {
             if (self.db.query({
-                'gn_id': gn_id
+                'gn_id': gnId
             }).count() === 0) {
                 self.db.query.insert({
-                    'gn_id': gn_id,
+                    'gnId': gnId,
                     'backendId': backendId,
-                    'song_id': song_id
+                    'songId': songId
                 });
                 if (isAlbum) {
-                    collectMoodInformations(gn_id);
+                    collectMoodInformations(gnId);
                 }
             }
         };
@@ -209,10 +210,10 @@
                 length = tracks.length;
             for (i; i < length; ++i) {
                 var track = tracks.eq(i),
-                    gn_id_track = track.find('GN_ID').text(),
+                    gnIdTrack = track.find('GN_ID').text(),
                     trackTitle = track.find('TITLE').text();
                 ret[ret.length] = {
-                    id: gn_id_track,
+                    id: gnIdTrack,
                     title: trackTitle
                 };
             }
@@ -272,7 +273,7 @@
                 length = unmatchedElems.length;
             for (i; i < length; i++) {
                 var arr = unmatchedElems[i];
-                var data = basic_query.replace('{{webAPI_ID}}', webAPI_ID).replace('{{user_ID}}', user_ID)
+                var data = basicQuery.replace('{{webAPI_ID}}', webApiId).replace('{{user_ID}}', userId)
                     .replace('{{artist}}', encodeURIComponent(arr[1])).replace('{{album}}', encodeURIComponent(arr[0]));
                 req(data).success(extractBasicInformations);
             }
@@ -298,7 +299,7 @@
                     };
                 }
             }
-            var tmpDB = new Db();
+            var tmpDB = new window.Db();
             tmpDB.init('tmp');
             tmpDB.query.insert(untrackedSongs);
             var ret = tmpDB.query().distinct('album', 'artist');
@@ -315,14 +316,14 @@
         this.init = function () {
             self.db.init('plugin_gracenote');
             if (getCredentials()) {
-                req(auth_query.replace('{{webAPI_ID}}', webAPI_ID)).success(function (resp) {
+                req(authQuery.replace('{{webAPI_ID}}', webApiId)).success(function (resp) {
                     var xml = parse(resp);
-                    user_ID = getSingleVal(xml, 'user');
+                    userId = getSingleVal(xml, 'user');
                     Audica.trigger('authReady');
                     Audica.trigger('initReady');
                 });
             } else {
-                console.log('Gracenote disabled!');
+                Audica.trigger('WARN', 'Gracenote disabled!');
                 Audica.trigger('initReady');
             }
         };
@@ -335,19 +336,18 @@
             var gnPreview = $('#gnPreview');
             gnPreview.hide();
             var song = args.song;
-            var gn_id = self.db.query({
+            var gnId = self.db.query({
                 'backendId': song.backendId
             }, {
-                'song_id': song.id
+                'songId': song.id
             }).select('gn_id');
-            if (gn_id.length !== 0) {
+            if (gnId.length !== 0) {
                 $('#gnSuggestions').empty();
                 gnPreview.show('slow');
                 var currentSongMetadata = self.db.query({
-                    'gn_id': gn_id[0]
+                    'gnId': gnId[0]
                 }).select('mood', 'tempo');
                 var mood = currentSongMetadata[0][0];
-                var tempo = currentSongMetadata[0][1];
                 var byMood = self.db.query({
                     'mood': mood
                 }).get();
@@ -356,7 +356,7 @@
                     var trackList = Audica.songDb.query({
                         'backendId': obj.backendId
                     }, {
-                        'id': obj.song_id
+                        'id': obj.songId
                     }).get();
                     for (var j = 0; j < trackList.length; j++) {
                         var track = trackList[j];
@@ -372,5 +372,5 @@
         _receiveList(args.timestamp);
     });
 
-    //Audica.extend('gracenote', new Gracenote());
-})(window, Audica);
+    Audica.extend('gracenote', new Gracenote());
+})(window, Audica, jQuery);
