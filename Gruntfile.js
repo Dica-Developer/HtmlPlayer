@@ -10,7 +10,7 @@ module.exports = function(grunt) {
       options: {
         jshintrc: '.jshintrc'
       },
-      all: ['Gruntfile.js', 'js/*.js', 'options/**/*.js']
+      all: ['app/js/components/**/*.js']
     },
     less: {
       dev: {
@@ -27,12 +27,13 @@ module.exports = function(grunt) {
         configFile: 'test/karma.conf.js'
       },
       travis: {
-        configFile: '<%= config.test %>/travis.karma.conf.js'
+        configFile: 'test/travis.karma.conf.js'
       }
     }
   });
 
   grunt.registerTask('travis', [
     'jshint',
+    'karma:travis'
   ]);
 };
