@@ -19,9 +19,6 @@ module.exports = function(grunt) {
         }
       }
     },
-    clean: {
-      tmp: 'test/tmp'
-    },
     karma: {
       dev: {
         configFile: 'test/karma.conf.js'
