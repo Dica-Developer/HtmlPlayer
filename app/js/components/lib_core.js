@@ -2,12 +2,8 @@
 (function (window, $) {
     'use strict';
 
-    function AudicaCoreError(message) {
-        this.message = (message || '');
+    function Audica() {
     }
-    AudicaCoreError.prototype = new Error();
-
-    function Audica() {}
 
     Audica.prototype.plugins = {};
 
@@ -22,27 +18,31 @@
     Audica.prototype.historyDb = new window.Db();
 
     Audica.prototype.playSong = function (song) {
-        this.song = song;
-        this.trigger('onStartPlayingSong', {
-            song: song
-        });
 
+        if (!song) {
+            this.trigger('ERROR', new Error('Song is ' + typeof song));
+            return;
+        }
+
+        this.song = song;
         this.plugins.player.type = song.contentType;
         var plugin = this.plugins[song.backendId];
 
-        if (plugin) {
-            // todo handle again asynchronous src retreive
-            var src = plugin.getPlaySrc(song.src, this.plugins.player);
-            plugin.setCoverArt(song.coverArt, this.view.Dom.coverArt);
-            // TODO move this to a plugin
-            this.plugins.player.play(src);
-        } else {
-            this.trigger('ERROR', new AudicaCoreError('Cannot handle songs from backend ' + song.backendId + '.'));
+        if (!plugin) {
+            this.trigger('ERROR', new Error('Cannot handle songs from backend ' + song.backendId + '.'));
+            return;
         }
 
-        this.trigger('playSong', {
-            song: song
-        });
+        this.trigger('onStartPlayingSong', { song: song });
+
+
+        // todo handle again asynchronous src retreive
+        var src = plugin.getPlaySrc(song.src, this.plugins.player);
+        plugin.setCoverArt(song.coverArt, this.view.Dom.coverArt);
+        // TODO move this to a plugin
+        this.plugins.player.play(src);
+
+        this.trigger('playSong', { song: song });
     };
 
     Audica.prototype.nextSong = function () {
@@ -53,7 +53,7 @@
             this.historyAdd(song);
             this.trigger('nextSong');
         } else {
-            this.trigger('ERROR', new AudicaCoreError('No song found. Possible reason: Empty Playlist'));
+            this.trigger('ERROR', new Error('No song found. Possible reason: Empty Playlist'));
         }
     };
 
@@ -70,10 +70,10 @@
                 this.view.setSongAsFirstPlaylistElement(song);
                 this.trigger('previousSong');
             } else {
-                this.trigger('ERROR', new AudicaCoreError('No song found. Possible reason: Empty Playlist'));
+                this.trigger('ERROR', new Error('No song found. Possible reason: Empty Playlist'));
             }
         } else {
-            this.trigger('ERROR', new AudicaCoreError('No song found. Possible reason: Empty History'));
+            this.trigger('ERROR', new Error('No song found. Possible reason: Empty History'));
         }
     };
 
@@ -180,7 +180,7 @@
             return false;
         }
 
-        events.forEach(function(subscription){
+        events.forEach(function (subscription) {
             subscription.callback.apply(subscription.context, args);
         });
         return this;
