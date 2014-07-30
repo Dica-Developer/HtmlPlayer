@@ -431,49 +431,42 @@
 
             new Hammer(document.getElementById('pointerCircle')).on('pan', function (event) {
                 window.requestAnimationFrame(function () {
-                    var outerCircle = $('#outerCircle');
-                    var outerCirclePos = outerCircle.position();
+                    var outerCircle = $('#outerCircle'),
+                        outerCirclePos = outerCircle.position(),
+                        eventX = event.center.x,
+                        eventY = event.center.y;
+
                     center.x = (outerCirclePos.left + 100);
                     center.y = (outerCirclePos.top + 100);
-                    var siteA = abs(event.center.x - center.x);
-                    var siteB = abs(event.center.y - center.y);
-                    var siteC = Math.sqrt(Math.pow(siteA, 2) + Math.pow(siteB, 2));
+
+                    var circleX = center.x,
+                        circleY = center.y,
+                        siteA = abs(eventX - circleX),
+                        siteB = abs(eventY - circleY),
+                        siteC = Math.sqrt(Math.pow(siteA, 2) + Math.pow(siteB, 2));
+
                     if (siteC > 80 && siteC < 120) {
-                        var pointer = document.getElementById('pointerCircle');
-                        pointer.style.webkitTransform = 'translate3d(' + round(event.center.x - outerCirclePos.left - 24) + 'px, ' + round(event.center.y - outerCirclePos.top - 24) + 'px, 0)';
-                        var deltaX = 0;
-                        var x = siteB / (siteC / Math.sin(90));
+                        var pointer = document.getElementById('pointerCircle'),
+                            x = siteB / (siteC / Math.sin(90)),
+                            deltaX = 0,
+                            direction = null;
+
                         if (null !== lastX) {
                             deltaX = abs(lastX - x);
                         }
-                        var direction = null;
-                        if ((event.center.x - center.x) > 0) {
-                            if ((event.center.y - center.y) > 0) {
-                                if ((lastX - x) < 0) {
-                                    direction = 'clock';
-                                } else {
-                                    direction = 'counterclock';
-                                }
+
+                        pointer.style.webkitTransform = 'translate3d(' + round(eventX - outerCirclePos.left - 24) + 'px, ' + round(eventY - outerCirclePos.top - 24) + 'px, 0)';
+                        if ((eventX - circleX) > 0) {
+                            if ((eventY - circleY) > 0) {
+                                direction = ((lastX - x) < 0) ? 'clock' : 'counterclock';
                             } else {
-                                if ((lastX - x) > 0) {
-                                    direction = 'clock';
-                                } else {
-                                    direction = 'counterclock';
-                                }
+                                direction = ((lastX - x) > 0) ? 'clock' : 'counterclock';
                             }
                         } else {
-                            if ((event.center.y - center.y) > 0) {
-                                if ((lastX - x) > 0) {
-                                    direction = 'clock';
-                                } else {
-                                    direction = 'counterclock';
-                                }
+                            if ((eventY - circleY) > 0) {
+                                direction = ((lastX - x) > 0) ? 'clock' : 'counterclock';
                             } else {
-                                if ((lastX - x) < 0) {
-                                    direction = 'clock';
-                                } else {
-                                    direction = 'counterclock';
-                                }
+                                direction = ((lastX - x) < 0) ? 'clock' : 'counterclock';
                             }
                         }
                         lastX = x;
