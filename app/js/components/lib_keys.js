@@ -1,6 +1,19 @@
 /*global $:true, Audica:true, document:true,  Mousetrap:true, Hammer */
 (function (window, Mousetrap) {
     'use strict';
+
+    function findNextByPositionX(dir) {
+        var view = Audica.view;
+        var currentXClass = view.positionXClassMap[view.getPlaylistBoxPositionX()];
+        var currentXValue = view.getPlaylistBoxPositionY().find(currentXClass).data('value');
+        var tmpNext = view.getPlaylistBoxPositionY();
+        //TODO maybe replace with for loop (secure)
+        while (tmpNext.find(currentXClass).data('value') === currentXValue) {
+            tmpNext = tmpNext[dir]();
+        }
+        return tmpNext;
+    }
+
     window.bindKeyEvents = function (Audica) {
         var bindKeysToView = {};
         var dom = Audica.view.Dom;
@@ -121,17 +134,6 @@
         };
 
         bindKeysToView.playList = function () {
-            function findNextByPositionX(dir) {
-                var view = Audica.view;
-                var currentXClass = view.positionXClassMap[view.getPlaylistBoxPositionX()];
-                var currentXValue = view.getPlaylistBoxPositionY().find(currentXClass).data('value');
-                var tmpNext = view.getPlaylistBoxPositionY();
-                //TODO maybe replace with for loop (secure)
-                while (tmpNext.find(currentXClass).data('value') === currentXValue) {
-                    tmpNext = tmpNext[dir]();
-                }
-                return tmpNext;
-            }
 
             var element = document.getElementById('playlistBoxContainer');
             new Hammer(element).on('doubletap', removePlaylistElements);
@@ -231,17 +233,6 @@
         };
 
         bindKeysToView.search = function () {
-            function findNextByPositionX(dir) {
-                var view = Audica.view;
-                var currentXClass = view.positionXClassMap[view.getSongBoxPositionX()];
-                var currentXValue = view.getSongBoxPositionY().find(currentXClass).data('value');
-                var tmpNext = view.getSongBoxPositionY();
-                //TODO maybe replace with for loop (secure)
-                while (tmpNext.find(currentXClass).data('value') === currentXValue) {
-                    tmpNext = tmpNext[dir]();
-                }
-                return tmpNext;
-            }
 
             Mousetrap.bind(['right'], function () {
                 var view = Audica.view;
