@@ -306,5 +306,17 @@
             });
         });
 
+        describe('Audica.initPlugins', function () {
+
+            it('Should call init method of a plugin', function (done) {
+                Audica.plugins.testPlugin = {
+                    init: function(){
+                        done();
+                    }
+                };
+                Audica.initPlugins();
+            });
+        });
+
     });
 }());
