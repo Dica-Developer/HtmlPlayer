@@ -59,23 +59,25 @@
     };
 
     Audica.prototype.previousSong = function () {
-        if (this.songHistory.length > 0) {
-            var history = this.songHistory.pop();
-            var song = this.songDb.query({
+        if (this.songHistory.length < 1) {
+            this.trigger('ERROR', new Error('No song found. Possible reason: Empty History'));
+            return;
+        }
+
+        var history = this.songHistory.pop(),
+            song = this.songDb.query({
                 id: history.songId,
                 backendId: history.backendId
             }).get()[0];
 
-            if (null !== song && undefined !== song) {
-                this.playSong(song);
-                this.view.setSongAsFirstPlaylistElement(song);
-                this.trigger('previousSong');
-            } else {
-                this.trigger('ERROR', new Error('No song found. Possible reason: Empty Playlist'));
-            }
-        } else {
-            this.trigger('ERROR', new Error('No song found. Possible reason: Empty History'));
+        if (!song) {
+            this.trigger('ERROR', new Error('No song found. Possible reason: Empty Playlist'));
+            return;
         }
+
+        this.playSong(song);
+        this.view.setSongAsFirstPlaylistElement(song);
+        this.trigger('previousSong');
     };
 
     Audica.prototype.getLastSong = function () {
