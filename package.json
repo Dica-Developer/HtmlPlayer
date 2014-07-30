@@ -10,6 +10,12 @@
             "path": "/"
         }
     ],
+    "engines": {
+        "node": ">=0.8.0"
+    },
+    "scripts": {
+        "test": "grunt travis"
+    },
     "devDependencies": {
         "grunt": "~0.4.5",
         "grunt-contrib-jshint": "~0.10.0",
