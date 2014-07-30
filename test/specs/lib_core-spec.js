@@ -95,5 +95,92 @@
 
         });
 
+        describe('Audica.nextSong', function () {
+
+            describe('error handling', function () {
+                var testBackEnd, playSpy, getFirstPlaylistElementSpy;
+                beforeEach(function () {
+                    testBackEnd = {
+                        getPlaySrc: sinon.spy(),
+                        setCoverArt: sinon.spy()
+                    };
+
+                    Audica.plugins.testBackend = testBackEnd;
+                    playSpy = sinon.stub(Audica.plugins.player, 'play');
+                });
+
+                afterEach(function () {
+                    delete Audica.plugins.testBackend;
+                    Audica.eventList = [];
+                    playSpy.restore();
+                });
+
+                it('Should trigger "ERROR" if no song is given', function (done) {
+                    getFirstPlaylistElementSpy = sinon.stub(Audica.view, 'getFirstPlaylistElement', function(){
+                        return null;
+                    });
+                    Audica.on('ERROR', function testErrorCallback(error) {
+                        expect(error).not.to.be.an('undefined');
+                        expect(error.message).to.equal('No song found. Possible reason: Empty Playlist');
+                        getFirstPlaylistElementSpy.restore();
+                        done();
+                    });
+
+                    Audica.nextSong();
+                });
+            });
+
+            describe('actual next song', function () {
+                var testBackEnd,
+                    playSpy,
+                    historyAddSpy,
+                    getFirstPlaylistElementSpy,
+                    removeFirstPlaylistElementSpy;
+
+                beforeEach(function () {
+                    testBackEnd = {
+                        getPlaySrc: sinon.spy(),
+                        setCoverArt: sinon.spy()
+                    };
+
+                    Audica.plugins.testBackend = testBackEnd;
+                    playSpy = sinon.stub(Audica, 'playSong');
+                    historyAddSpy = sinon.stub(Audica, 'historyAdd');
+
+                    getFirstPlaylistElementSpy = sinon.stub(Audica.view, 'getFirstPlaylistElement', function(){
+                        return {};
+                    });
+
+                    removeFirstPlaylistElementSpy = sinon.stub(Audica.view, 'removeFirstPlaylistElement');
+                });
+
+                afterEach(function () {
+                    delete Audica.plugins.testBackend;
+                    Audica.eventList = [];
+                    playSpy.restore();
+                    getFirstPlaylistElementSpy.restore();
+                    removeFirstPlaylistElementSpy.restore();
+                    historyAddSpy.restore();
+                });
+
+                it('Should call "playSong", "view.removeFirstPlaylistElement" and "historyAdd"', function () {
+                    Audica.nextSong();
+
+                    expect(playSpy.callCount).to.equal(1);
+                    expect(removeFirstPlaylistElementSpy.callCount).to.equal(1);
+                    expect(historyAddSpy.callCount).to.equal(1);
+                });
+
+                it('Should trigger "nextSong"', function (done) {
+                    Audica.on('nextSong', function(){
+                        done();
+                    });
+
+                    Audica.nextSong();
+                });
+            });
+
+        });
+
     });
 }());
