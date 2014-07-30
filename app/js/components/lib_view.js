@@ -138,11 +138,11 @@
 
     View.prototype.setSongAsFirstPlaylistElement = function (song) {
         var li = [
-            '<li data-song-id="' +song.___id + '">',
-            '<span>' + this.encodeHtml(song.artist) + '</span> / ',
-            '<span>' + this.encodeHtml(song.album) + '</span> / ',
-            '<span>' + this.encodeHtml(song.track) + '.</span> ',
-            '<span>' + this.encodeHtml(song.title) + '</span>',
+                '<li data-song-id="' + song.___id + '">',
+                '<span>' + this.encodeHtml(song.artist) + '</span> / ',
+                '<span>' + this.encodeHtml(song.album) + '</span> / ',
+                '<span>' + this.encodeHtml(song.track) + '.</span> ',
+                '<span>' + this.encodeHtml(song.title) + '</span>',
             '</li>'
         ];
 
@@ -220,7 +220,7 @@
 
     View.prototype.bindPlaylistBoxEvents = function () {
         this.Dom.playlistBox.on('click', 'span', function () {
-           Audica.trigger('view:selectInPlaylistBox', {element: this});
+            Audica.trigger('view:selectInPlaylistBox', {element: this});
         });
         Audica.trigger('tracklistChanged');
     };
@@ -228,7 +228,7 @@
     View.prototype.fillPlaylist = function (songs) {
         var _this = this,
             lis = [];
-        songs.forEach(function(song, index){
+        songs.forEach(function (song, index) {
             var li = [],
                 artist = _this.encodeHtml(song.artist),
                 album = _this.encodeHtml(song.album),
@@ -251,7 +251,7 @@
     View.prototype.fillSongBox = function (songs) {
         var _this = this,
             lis = [];
-        songs.forEach(function(song, index){
+        songs.forEach(function (song, index) {
             var li = [],
                 artist = _this.encodeHtml(song.artist),
                 album = _this.encodeHtml(song.album),
@@ -506,9 +506,9 @@
         });
     };
 
-    View.prototype.startBackgroundTask = function(){
+    View.prototype.startBackgroundTask = function () {
         var view = this;
-        this.backgroundInterval = window.setInterval(function(){
+        this.backgroundInterval = window.setInterval(function () {
             var player = Audica.plugins.player,
                 duration = player.getDuration(),
                 currentTime = player.getCurrentTime();
@@ -518,7 +518,7 @@
         }, 1000);
     };
 
-    View.prototype.stopBackgroundTask = function(){
+    View.prototype.stopBackgroundTask = function () {
         window.clearInterval(this.backgroundInterval);
     };
 
