@@ -426,48 +426,73 @@
         });
 
         var handleLeftZone = function (event) {
-            var searchView = _this.Dom.searchView;
-            var songBox = _this.Dom.songBox;
-            var playlistBox = _this.Dom.playlistBox;
-            var boxWidth = ($(document).width() / 2) - 22 - 2;
-            var boxHeight = $(document).height() - 22;
-            if ('player' === _this.getViewState()) {
-                if ('mouseenter' === event.type) {
-                    searchView.animate({
-                        left: -1 * Math.round($(document).width() * 0.95)
-                    });
-                } else if ('mouseleave' === event.type) {
-                    searchView.animate({
-                        left: -1 * $(document).width()
-                    });
-                } else if ('click' === event.type) {
-                    _this.Dom.searchViewPreview.hide();
-                    songBox.focus();
-                    songBox.width(boxWidth);
-                    songBox.height(boxHeight);
-                    playlistBox.width(boxWidth);
-                    playlistBox.height(boxHeight);
-                    searchView.height($(document).height());
-                    searchView.animate({
-                        left: 0
-                    });
-                    _this.setViewState('search');
-                }
-            } else if ('preferences' === _this.getViewState()) {
-                if ('mouseenter' === event.type) {
-                    _this.Dom.playerView.animate({
-                        left: -1 * Math.round($(document).width() * 0.95)
-                    });
-                } else if ('mouseleave' === event.type) {
-                    _this.Dom.playerView.animate({
-                        left: -1 * $(document).width()
-                    });
-                } else if ('click' === event.type) {
-                    _this.Dom.playerView.animate({
-                        left: 0
-                    });
-                    _this.setViewState('player');
-                }
+            var searchView = _this.Dom.searchView,
+                songBox = _this.Dom.songBox,
+                playlistBox = _this.Dom.playlistBox,
+                boxWidth = ($(document).width() / 2) - 22 - 2,
+                boxHeight = $(document).height() - 22,
+
+                viewStateIsPLayer = function(){
+                    switch(event.type){
+                    case 'mouseenter':
+                        searchView.animate({
+                            left: -1 * Math.round($(document).width() * 0.95)
+                        });
+                        break;
+                    case 'mouseleave':
+                        searchView.animate({
+                            left: -1 * $(document).width()
+                        });
+                        break;
+                    case 'click':
+                        _this.Dom.searchViewPreview.hide();
+                        songBox.focus();
+                        songBox.width(boxWidth);
+                        songBox.height(boxHeight);
+                        playlistBox.width(boxWidth);
+                        playlistBox.height(boxHeight);
+                        searchView.height($(document).height());
+                        searchView.animate({
+                            left: 0
+                        });
+                        _this.setViewState('search');
+                        break;
+                    default:
+                        break;
+                    }
+                },
+                viewStateIsPreferences = function(){
+                    switch(event.type){
+                    case 'mouseenter':
+                        _this.Dom.playerView.animate({
+                            left: -1 * Math.round($(document).width() * 0.95)
+                        });
+                        break;
+                    case 'mouseleave':
+                        _this.Dom.playerView.animate({
+                            left: -1 * $(document).width()
+                        });
+                        break;
+                    case 'click':
+                        _this.Dom.playerView.animate({
+                            left: 0
+                        });
+                        _this.setViewState('player');
+                        break;
+                    default:
+                        break;
+                    }
+                };
+
+            switch(_this.getViewState()){
+            case 'player':
+                viewStateIsPLayer();
+                break;
+            case 'preferences':
+                viewStateIsPreferences();
+                break;
+            default:
+                break;
             }
         };
 
