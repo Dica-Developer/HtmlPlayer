@@ -30,7 +30,7 @@
             new Blob([serializedDb], {
                 type: 'text/plain'
             }),
-            function(){
+            function () {
                 db.lock = false;
             }
         );
@@ -55,7 +55,7 @@
             _db.query.settings({
                 cacheSize: 10000,
                 onDBChange: function () {
-                    if(false === _db.lock){
+                    if (false === _db.lock) {
                         if (null !== _timeout) {
                             clearTimeout(_timeout);
                         }
@@ -70,7 +70,7 @@
             _db.query.settings({
                 cacheSize: 10000,
                 onDBChange: function () {
-                    if(false === _db.lock){
+                    if (false === _db.lock) {
                         if (null !== _timeout) {
                             clearTimeout(_timeout);
                         }
