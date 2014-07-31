@@ -192,29 +192,35 @@
         Audica.trigger('updateMainView');
     };
 
-    View.prototype.selectInPlaylistBox = function (eventData) {
-        var thisUL = $(eventData.element).closest('ul');
-        var value = $(eventData.element).data('value');
-        var clazz = $(eventData.element).attr('class');
-        var yIndex = $(eventData.element).closest('li');
-        var elems = thisUL.find('.' + clazz + '[data-value="' + value + '"]');
+    function setSelection(target){
+        var thisUL = target.closest('ul'),
+            value = target.data('value'),
+            clazz = target.attr('class'),
+            elems = thisUL.find('.' + clazz + '[data-value="' + value + '"]');
+
         thisUL.find('.selected').removeClass('selected');
         elems.parent().addClass('selected');
+    }
+
+    View.prototype.selectInPlaylistBox = function (eventData) {
+        var target = $(eventData.element),
+            yIndex = target.closest('li');
+
+        setSelection(target);
+
         this.setPlaylistBoxPositionY(yIndex);
-        this.setPlaylistBoxPositionX($(eventData.element).index());
+        this.setPlaylistBoxPositionX(target.index());
         this.indicatePlaylistBoxXPosition();
     };
 
     View.prototype.selectInSongBox = function (eventData) {
-        var value = $(eventData.element).data('value');
-        var clazz = $(eventData.element).attr('class');
-        var yIndex = $(eventData.element).closest('li');
-        var ul = $(eventData.element).closest('ul');
-        var elems = ul.find('.' + clazz + '[data-value="' + value + '"]');
-        ul.find('.selected').removeClass('selected');
-        elems.parent().addClass('selected');
+        var target = $(eventData.element),
+            yIndex = target.closest('li');
+
+        setSelection(target);
+        
         this.setSongBoxPositionY(yIndex);
-        this.setSongBoxPositionX($(eventData.element).index());
+        this.setSongBoxPositionX(target.index());
         this.indicateSongBoxXPosition();
     };
 
