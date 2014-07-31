@@ -192,7 +192,7 @@
         Audica.trigger('updateMainView');
     };
 
-    function setSelection(target){
+    function setSelection(target) {
         var thisUL = target.closest('ul'),
             value = target.data('value'),
             clazz = target.attr('class'),
@@ -438,8 +438,8 @@
                 boxWidth = ($(document).width() / 2) - 22 - 2,
                 boxHeight = $(document).height() - 22,
 
-                viewStateIsPLayer = function(){
-                    switch(event.type){
+                viewStateIsPLayer = function () {
+                    switch (event.type) {
                     case 'mouseenter':
                         searchView.animate({
                             left: -1 * Math.round($(document).width() * 0.95)
@@ -467,8 +467,8 @@
                         break;
                     }
                 },
-                viewStateIsPreferences = function(){
-                    switch(event.type){
+                viewStateIsPreferences = function () {
+                    switch (event.type) {
                     case 'mouseenter':
                         _this.Dom.playerView.animate({
                             left: -1 * Math.round($(document).width() * 0.95)
@@ -490,7 +490,7 @@
                     }
                 };
 
-            switch(_this.getViewState()){
+            switch (_this.getViewState()) {
             case 'player':
                 viewStateIsPLayer();
                 break;
