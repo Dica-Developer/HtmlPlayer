@@ -118,27 +118,25 @@
             Audica.trigger('player:seek:rewind');
         };
 
-        this.volumeUp = function (percentage) {
+        this.setVolume = function(){
             if (_useAudioTag) {
-                var currentVolume = _player.volume;
-                _volume = Math.min(currentVolume + percentage, 1.0);
                 _player.volume = _volume;
             } else {
-                _volume = Math.min(_volume + percentage, 1.0);
                 _player.setVolume(_volume);
             }
-            Audica.trigger('player:volume:rewind');
+        };
+
+        this.volumeUp = function (percentage) {
+            var currentVolume = _useAudioTag ? _player.volume : _volume;
+            _volume = Math.min(currentVolume + percentage, 1.0);
+            this.setVolume();
+            Audica.trigger('player:volume:up');
         };
 
         this.volumeDown = function (percentage) {
-            if (_useAudioTag) {
-                var currentVolume = _player.volume;
-                _volume = Math.max(currentVolume - percentage, 0);
-                _player.volume = _volume;
-            } else {
-                _volume = Math.max(_volume - percentage, 0);
-                _player.setVolume(_volume);
-            }
+            var currentVolume = _useAudioTag ? _player.volume : _volume;
+            _volume = Math.max(currentVolume - percentage, 0);
+            this.setVolume();
             Audica.trigger('player:volume:down');
         };
 
