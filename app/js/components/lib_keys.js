@@ -2,11 +2,23 @@
 (function (window, Mousetrap) {
     'use strict';
 
-    function findNextByPositionX(dir) {
+    function findNextPlaylistBoxByPositionX(dir) {
         var view = Audica.view;
         var currentXClass = view.positionXClassMap[view.getPlaylistBoxPositionX()];
         var currentXValue = view.getPlaylistBoxPositionY().find(currentXClass).data('value');
         var tmpNext = view.getPlaylistBoxPositionY();
+        //TODO maybe replace with for loop (secure)
+        while (tmpNext.find(currentXClass).data('value') === currentXValue) {
+            tmpNext = tmpNext[dir]();
+        }
+        return tmpNext;
+    }
+
+    function findNextSongBoxByPositionX(dir) {
+        var view = Audica.view;
+        var currentXClass = view.positionXClassMap[view.getSongBoxPositionX()];
+        var currentXValue = view.getSongBoxPositionY().find(currentXClass).data('value');
+        var tmpNext = view.getSongBoxPositionY();
         //TODO maybe replace with for loop (secure)
         while (tmpNext.find(currentXClass).data('value') === currentXValue) {
             tmpNext = tmpNext[dir]();
@@ -95,7 +107,6 @@
                 dom.searchViewPreview.hide();
             });
 
-
             function next() {
                 Audica.nextSong();
                 Audica.trigger('scrobble');
@@ -153,7 +164,9 @@
                 } else {
                     view.setPlaylistBoxPositionX(++x);
                 }
-                Audica.trigger('view:selectInPlaylistBox', {element: view.getPlaylistBoxPositionY().find('span').eq(x)[0]});
+                Audica.trigger('view:selectInPlaylistBox', {
+                    element: view.getPlaylistBoxPositionY().find('span').eq(x)[0]
+                });
                 view.indicatePlaylistBoxXPosition();
             });
 
@@ -165,7 +178,9 @@
                 } else {
                     view.setPlaylistBoxPositionX(--x);
                 }
-                Audica.trigger('view:selectInPlaylistBox', {element: view.getPlaylistBoxPositionY().find('span').eq(x)[0]});
+                Audica.trigger('view:selectInPlaylistBox', {
+                    element: view.getPlaylistBoxPositionY().find('span').eq(x)[0]
+                });
                 view.indicatePlaylistBoxXPosition();
             });
 
@@ -176,7 +191,7 @@
                     view.setPlaylistBoxPositionY(playlistBox.find('li').eq(0));
                     prev = view.getPlaylistBoxPositionY();
                 } else {
-                    prev = findNextByPositionX('prev');
+                    prev = findNextPlaylistBoxByPositionX('prev');
                     view.getPlaylistBoxPositionY().removeClass('active');
                     if (prev.length === 0) {
                         prev = dom.playlistBox.find('li').last();
@@ -187,7 +202,9 @@
                 playlistBox.parent().scrollTop(scrollPos);
                 prev.addClass('active');
                 view.setPlaylistBoxPositionY(prev);
-                Audica.trigger('view:selectInPlaylistBox', {element: prev.find('span').eq(view.getPlaylistBoxPositionX())[0]});
+                Audica.trigger('view:selectInPlaylistBox', {
+                    element: prev.find('span').eq(view.getPlaylistBoxPositionX())[0]
+                });
                 view.indicatePlaylistBoxXPosition();
             });
 
@@ -198,7 +215,7 @@
                     view.setPlaylistBoxPositionY(playlistBox.find('li').eq(0));
                     next = view.getPlaylistBoxPositionY();
                 } else {
-                    next = findNextByPositionX('next');
+                    next = findNextPlaylistBoxByPositionX('next');
                     view.getPlaylistBoxPositionY().removeClass('active');
                     if (next.length === 0) {
                         next = playlistBox.find('li').eq(0);
@@ -209,7 +226,9 @@
                 playlistBox.parent().scrollTop(scrollPos);
                 next.addClass('active');
                 view.setPlaylistBoxPositionY(next);
-                Audica.trigger('view:selectInPlaylistBox', {element: next.find('span').eq(view.getPlaylistBoxPositionX())[0]});
+                Audica.trigger('view:selectInPlaylistBox', {
+                    element: next.find('span').eq(view.getPlaylistBoxPositionX())[0]
+                });
                 view.indicatePlaylistBoxXPosition();
             });
 
@@ -242,7 +261,9 @@
                 } else {
                     view.setSongBoxPositionX(++x);
                 }
-                Audica.trigger('view:selectInSongBox', {element: view.getSongBoxPositionY().find('span').eq(x)[0]});
+                Audica.trigger('view:selectInSongBox', {
+                    element: view.getSongBoxPositionY().find('span').eq(x)[0]
+                });
                 view.indicateSongBoxXPosition();
             });
 
@@ -254,7 +275,9 @@
                 } else {
                     view.setSongBoxPositionX(--x);
                 }
-                Audica.trigger('view:selectInSongBox', {element: view.getSongBoxPositionY().find('span').eq(x)[0]});
+                Audica.trigger('view:selectInSongBox', {
+                    element: view.getSongBoxPositionY().find('span').eq(x)[0]
+                });
                 view.indicateSongBoxXPosition();
             });
 
@@ -265,7 +288,7 @@
                     view.setSongBoxPositionY(songBox.find('li').eq(0));
                     prev = view.getSongBoxPositionY();
                 } else {
-                    prev = findNextByPositionX('prev');
+                    prev = findNextSongBoxByPositionX('prev');
                     view.getSongBoxPositionY().removeClass('active');
                     if (prev.length === 0) {
                         prev = dom.songBox.find('li').last();
@@ -276,7 +299,9 @@
                 songBox.parent().scrollTop(scrollPos);
                 prev.addClass('active');
                 view.setSongBoxPositionY(prev);
-                Audica.trigger('view:selectInSongBox', {element: prev.find('span').eq(view.getSongBoxPositionX())[0]});
+                Audica.trigger('view:selectInSongBox', {
+                    element: prev.find('span').eq(view.getSongBoxPositionX())[0]
+                });
                 view.indicateSongBoxXPosition();
             });
 
@@ -294,7 +319,7 @@
                     view.setSongBoxPositionY(songBox.find('li').eq(0));
                     next = view.getSongBoxPositionY();
                 } else {
-                    next = findNextByPositionX('next');
+                    next = findNextSongBoxByPositionX('next');
                     view.getSongBoxPositionY().removeClass('active');
                     if (next.length === 0) {
                         next = songBox.find('li').eq(0);
@@ -305,7 +330,9 @@
                 songBox.parent().scrollTop(scrollPos);
                 next.addClass('active');
                 view.setSongBoxPositionY(next);
-                Audica.trigger('view:selectInSongBox', {element: next.find('span').eq(view.getSongBoxPositionX())[0]});
+                Audica.trigger('view:selectInSongBox', {
+                    element: next.find('span').eq(view.getSongBoxPositionX())[0]
+                });
                 view.indicateSongBoxXPosition();
             });
 
@@ -346,7 +373,9 @@
                     query[dbQueryKey] = {};
                     query[dbQueryKey][term] = dbQueryValue;
                     var result = Audica.songDb.query(query).get();
-                    Audica.trigger('fillPlaylist', {songs: result});
+                    Audica.trigger('fillPlaylist', {
+                        songs: result
+                    });
                 }
             }
 
@@ -364,28 +393,23 @@
                     var filterQuery = filterBox.val();
                     if (null !== filterQuery && undefined !== filterQuery) {
                         // TODO If album medium number is available sort by it first
-                        var dbQuery = [
-                            {
-                                artist: {
-                                    likenocase: filterQuery
-                                }
-                            },
-                            {
-                                album: {
-                                    likenocase: filterQuery
-                                }
-                            },
-                            {
-                                genre: {
-                                    likenocase: filterQuery
-                                }
-                            },
-                            {
-                                title: {
-                                    likenocase: filterQuery
-                                }
+                        var dbQuery = [{
+                            artist: {
+                                likenocase: filterQuery
                             }
-                        ];
+                        }, {
+                            album: {
+                                likenocase: filterQuery
+                            }
+                        }, {
+                            genre: {
+                                likenocase: filterQuery
+                            }
+                        }, {
+                            title: {
+                                likenocase: filterQuery
+                            }
+                        }];
                         currentSongList = Audica.songDb.query(dbQuery).order('artist asec, album asec, year asec, track asec, title asec').get();
                     } else {
                         currentSongList = Audica.songDb.query().order('artist asec, album asec, year asec, track asec, title asec').get();
@@ -413,12 +437,13 @@
                 openSearchBox();
             });
 
-
             //CIRCLE Navigation
             var center = {},
-                lastX = null,
+                lastAngle = null,
+                lastTime = 0,
                 abs = Math.abs,
-                round = Math.round;
+                round = Math.round,
+                direction = null;
 
             new Hammer(document.getElementById('pointerCircle')).on('pan', function (event) {
                 window.requestAnimationFrame(function () {
@@ -438,31 +463,59 @@
 
                     if (siteC > 80 && siteC < 120) {
                         var pointer = document.getElementById('pointerCircle'),
-                            x = siteB / (siteC / Math.sin(90)),
-                            deltaX = 0,
-                            direction = null;
+                            angle = siteB / siteC,
+                            deltaAngleAbs = 0,
+                            deltaAngle = 0;
 
-                        if (null !== lastX) {
-                            deltaX = abs(lastX - x);
+                        if (null !== lastAngle) {
+                            deltaAngle = lastAngle - angle;
                         }
 
                         pointer.style.webkitTransform = 'translate3d(' + round(eventX - outerCirclePos.left - 24) + 'px, ' + round(eventY - outerCirclePos.top - 24) + 'px, 0)';
                         if ((eventX - circleX) > 0) {
                             if ((eventY - circleY) > 0) {
-                                direction = ((lastX - x) < 0) ? 'clock' : 'counterclock';
-                            } else {
-                                direction = ((lastX - x) > 0) ? 'clock' : 'counterclock';
+                                // quadrant 2
+                                angle = 1 + angle;
+                                direction = (deltaAngle < 0) ? 'clockwise' : 'counterclockwise';
+                            } else if ((eventY - circleY) < 0) {
+                                // quadrant 1
+                                angle = (1 - angle);
+                                direction = (deltaAngle > 0) ? 'clockwise' : 'counterclockwise';
                             }
-                        } else {
+                        } else /*if ((eventX - circleX) < 0)*/ {
                             if ((eventY - circleY) > 0) {
-                                direction = ((lastX - x) > 0) ? 'clock' : 'counterclock';
-                            } else {
-                                direction = ((lastX - x) < 0) ? 'clock' : 'counterclock';
+                                angle = 2 + (1 - angle);
+                                direction = (deltaAngle > 0) ? 'clockwise' : 'counterclockwise';
+                            } else if ((eventY - circleY) < 0) {
+                                // quadrant 4
+                                angle = 3 + angle;
+                                direction = (deltaAngle < 0) ? 'clockwise' : 'counterclockwise';
                             }
                         }
-                        lastX = x;
+                        var speed = 0;
+                        if (lastTime > 0) {
+                            if (null !== lastAngle) {
+                                deltaAngle = lastAngle - angle;
+                                deltaAngleAbs = abs(deltaAngle);
+                            }
+                            console.log('here ' + (deltaAngleAbs / ((new Date()).getTime() - lastTime)) + ' - ' + angle);
+                            speed = (deltaAngleAbs / ((new Date()).getTime() - lastTime));
+                        }
+                        lastAngle = angle;
+                        lastTime = (new Date()).getTime();
+                        if (speed > 0.0002 && speed < 0.001) {
+                            Audica.trigger('circle.' + direction, {
+                                delta: deltaAngleAbs
+                            });
+                        }
                     }
                 });
+            });
+            Audica.on('circle.counterclockwise', function () {
+                Mousetrap.trigger('down');
+            });
+            Audica.on('circle.clockwise', function () {
+                Mousetrap.trigger('up');
             });
             Mousetrap.bind(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '/'], openSearchBox);
 

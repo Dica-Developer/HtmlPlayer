@@ -97,8 +97,7 @@
             return src;
         };
 
-        this.setCoverArt = function () {
-        };
+        this.setCoverArt = function () {};
 
         function readFileInDirectory(directory, filePath, fileContentCallback, errorCallback) {
             directory.getFile(filePath, {}, function (fileEntry) {
@@ -176,13 +175,13 @@
          */
         function onInitFs(fs) {
             fileSystem = fs;
-            Audica.on('updateSongList', function (args) {
+            /*Audica.on('updateSongList', function (args) {
                 _searchForSongs(args.timestamp);
             });
 
             Audica.on('filesImported', function () {
                 _searchForSongs($.now());
-            });
+            });*/
             Audica.trigger('initReady');
             Audica.trigger('fileSystemInitReady');
         }
@@ -190,18 +189,20 @@
         this.init = function () {
             if (typeof cordova !== 'undefined') {
                 _isCordova = true;
-            }
-            if (window.webkitStorageInfo) {
-                window.webkitStorageInfo.requestQuota(PERSISTENT, 1024 * 1024 * 1024, function (grantedBytes) {
-                    var requestFileSystem = window.webkitRequestFileSystem || window.requestFileSystem;
-                    requestFileSystem(PERSISTENT, grantedBytes, onInitFs, errorHandler);
-                }, function (e) {
-                    console.error('Error: ' + e);
-                    Audica.trigger('initReady');
-                });
-            } else {
-                console.error('No webkitStorage available');
                 Audica.trigger('initReady');
+            } else {
+                if (window.webkitStorageInfo) {
+                    window.webkitStorageInfo.requestQuota(PERSISTENT, 1024 * 1024 * 1024, function (grantedBytes) {
+                        var requestFileSystem = window.webkitRequestFileSystem || window.requestFileSystem;
+                        requestFileSystem(PERSISTENT, grantedBytes, onInitFs, errorHandler);
+                    }, function (e) {
+                        console.error('Error: ' + e);
+                        Audica.trigger('initReady');
+                    });
+                } else {
+                    console.error('No webkitStorage available');
+                    Audica.trigger('initReady');
+                }
             }
         };
     }
