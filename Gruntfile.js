@@ -1,5 +1,5 @@
 /*global module:true, require:true*/
-module.exports = function(grunt) {
+module.exports = function (grunt) {
   'use strict';
 
   require('time-grunt')(grunt);
@@ -15,7 +15,7 @@ module.exports = function(grunt) {
     less: {
       dev: {
         files: {
-          "app/style/style.css": "app/style/style.less"
+          'app/style/style.css': 'app/style/style.less'
         }
       }
     },
@@ -29,10 +29,10 @@ module.exports = function(grunt) {
     },
     coveralls: {
       options: {
-          debug: false,
-          /*jshint camelcase:false*/
-          coverage_dir: 'test/coverage',
-          force: false
+        debug: false,
+        /*jshint camelcase:false*/
+        coverage_dir: 'test/coverage',
+        force: false
       }
     }
   });
