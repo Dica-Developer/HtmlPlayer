@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>Audica HTML Player</title>
     <link rel="stylesheet" href="style/style.css" type="text/css">
+    <script type="text/javascript" src="cordova.js"></script>
     <script type="text/javascript" src="js/3rd/taffy-2.7.js"></script>
     <script type="text/javascript" src="js/3rd/hammer-2.0.1.js"></script>
     <script type="text/javascript" src="js/3rd/jquery.min.js"></script>
@@ -27,8 +28,8 @@
     <!-- script type="text/javascript" src="js/plugins/lib_radioImporter.js"></script>
     <script type="text/javascript" src="js/plugins/lib_fileImporter.js"></script -->
     <script type="text/javascript" src="js/plugins/lib_fileSystem.js"></script>
-    <script type="text/javascript" src="js/plugins/lib_lastfm.js"></script>
-    <!-- script type="text/javascript" src="js/plugins/lib_gracenote.js"></script -->
+    <!-- script type="text/javascript" src="js/plugins/lib_lastfm.js"></script -->
+    <script type="text/javascript" src="js/plugins/lib_gracenote.js"></script>
     <script type="text/javascript" src="js/main.js"></script>
 
     <!-- begin: options css and js -->
@@ -127,11 +128,12 @@
               </div>
               <div id="gracenotePage" class="page">
                 <h1>Gracenote</h1>
-                <p><a href="http://en.wikipedia.org/wiki/Gracenote" target="_blank">What is Gracenote?</a></p>
-                <p>To use the Gracenote service you have to <a
-                    href="https://developer.gracenote.com/" target="_blank">register (Free)</a> and retrieve
-                  API
-                  ID.</p>
+                <p>
+                  <a href="http://en.wikipedia.org/wiki/Gracenote" target="_blank">What is Gracenote?</a>
+                </p>
+                <p>
+                  To use the Gracenote service you have to <a href="https://developer.gracenote.com/" target="_blank">register (Free)</a> and retrieve API ID.
+                </p>
                 <div class="displaytable">
                   <section>
                     <div class="section-group" id="gracenoteFields">
@@ -139,6 +141,7 @@
                       <input spellcheck="false" id="gracenoteClientId" type="text" size="30" />
                       <h3>Web API ID</h3>
                       <input spellcheck="false" id="gracenoteWepApiId" type="text" size="30" />
+                      <input type="button" id="retreiveGracenoteMoodData" value="Update mood data from gracenote now"/>
                     </div>
                   </section>
                 </div>

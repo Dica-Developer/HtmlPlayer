@@ -36,7 +36,7 @@
     );
   };
 
-  Db.prototype.init = function(dbName) {
+  Db.prototype.init = function(dbName, initReadyCallback) {
     var _db = this,
       _timeout = null,
       _dbName = 'db.' + dbName;
@@ -65,6 +65,9 @@
           }
         }
       });
+      if (initReadyCallback) {
+        initReadyCallback();
+      }
     }, function() {
       _db.query = new TAFFY();
       _db.query.settings({
@@ -80,6 +83,9 @@
           }
         }
       });
+      if (initReadyCallback) {
+        initReadyCallback();
+      }
     });
   };
 

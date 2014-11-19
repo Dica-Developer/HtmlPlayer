@@ -138,21 +138,19 @@
     });
 
     this.init = function() {
-      chrome.storage.local.get(['authentication_login', 'authentication_password', 'serverUrl'], function(items) {
-        var password = items.authentication_password;
-        var serverUrl = items.serverUrl;
-        var login = items.authentication_login;
-        if (login) {
-          _login = JSON.parse(login);
-        }
-        if (password) {
-          _password = JSON.parse(password);
-        }
-        if (serverUrl) {
-          _serverUrl = JSON.parse(serverUrl);
-        }
-        Audica.trigger('initReady');
-      });
+      var password = localStorage.getItem('authentication_password');
+      var serverUrl = localStorage.getItem('serverUrl');
+      var login = localStorage.getItem('authentication_login');
+      if (login) {
+        _login = JSON.parse(login);
+      }
+      if (password) {
+        _password = JSON.parse(password);
+      }
+      if (serverUrl) {
+        _serverUrl = JSON.parse(serverUrl);
+      }
+      Audica.trigger('initReady');
     };
   }
 

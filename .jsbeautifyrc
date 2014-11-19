@@ -3,5 +3,6 @@
   "max_preserve_newlines": 2,
   "format_on_save": true,
   "indent_size": 2,
-  "indent_with_tabs": false
+  "indent_with_tabs": false,
+  space_after_anon_function
 }

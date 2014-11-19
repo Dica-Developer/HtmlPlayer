@@ -1,6 +1,6 @@
 /*
  * Copyright 2011 Google Inc. All Rights Reserved.
-
+ 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,12 +50,12 @@ OAuth2.FINISH = 'finish';
  * OAuth 2.0 endpoint adapters known to the library
  */
 OAuth2.adapters = {};
-OAuth2.adapterReverse = chrome.storage.local.oauth2_adapterReverse &&
-    JSON.parse(chrome.storage.local.oauth2_adapterReverse) || {};
+OAuth2.adapterReverse = localStorage.getItem('oauth2_adapterReverse') &&
+  JSON.parse(localStorage.getItem('oauth2_adapterReverse')) || {};
 // Update the persisted adapterReverse in localStorage.
-if (chrome.storage.local.adapterReverse) {
-  OAuth2.adapterReverse = JSON.parse(chrome.storage.local.adapterReverse);
-  delete chrome.storage.local.adapterReverse;
+if (localStorage.getItem('adapterReverse')) {
+  OAuth2.adapterReverse = JSON.parse(localStorage.getItem('adapterReverse'));
+  localStorage.removeItem('adapterReverse');
 }
 
 /**
@@ -78,9 +78,9 @@ OAuth2.prototype.updateLocalStorage = function() {
   var key;
   for (var i = 0; i < variables.length; i++) {
     key = this.adapterName + '_' + variables[i];
-    if (chrome.storage.local.hasOwnProperty(key)) {
-      data[variables[i]] = chrome.storage.local[key];
-      delete chrome.storage.local[key];
+    if (localStorage.getItem('key')) {
+      data[variables[i]] = localStorage.getItem('key');
+      localStorage.removeItem('key');
     }
   }
   // Persist the new JSON object in localStorage.
@@ -98,19 +98,21 @@ OAuth2.prototype.openAuthorizationCodePopup = function(callback) {
   window['oauth-callback'] = callback;
 
   // Create a new tab with the OAuth 2.0 prompt
-  chrome.tabs.create({url: this.adapter.authorizationCodeURL(this.getConfig())},
-  function(tab) {
-    // 1. user grants permission for the application to access the OAuth 2.0
-    // endpoint
-    // 2. the endpoint redirects to the redirect URL.
-    // 3. the extension injects a script into that redirect URL
-    // 4. the injected script redirects back to oauth2.html, also passing
-    // the redirect URL
-    // 5. oauth2.html uses redirect URL to know what OAuth 2.0 flow to finish
-    // (if there are multiple OAuth 2.0 adapters)
-    // 6. Finally, the flow is finished and client code can call
-    // myAuth.getAccessToken() to get a valid access token.
-  });
+  chrome.tabs.create({
+      url: this.adapter.authorizationCodeURL(this.getConfig())
+    },
+    function(tab) {
+      // 1. user grants permission for the application to access the OAuth 2.0
+      // endpoint
+      // 2. the endpoint redirects to the redirect URL.
+      // 3. the extension injects a script into that redirect URL
+      // 4. the injected script redirects back to oauth2.html, also passing
+      // the redirect URL
+      // 5. oauth2.html uses redirect URL to know what OAuth 2.0 flow to finish
+      // (if there are multiple OAuth 2.0 adapters)
+      // 6. Finally, the flow is finished and client code can call
+      // myAuth.getAccessToken() to get a valid access token.
+    });
 };
 
 /**
@@ -148,7 +150,7 @@ OAuth2.prototype.getAccessAndRefreshTokens = function(authorizationCode, callbac
     var params = '?';
     for (key in items) {
       params += encodeURIComponent(key) + '=' +
-                encodeURIComponent(items[key]) + '&';
+        encodeURIComponent(items[key]) + '&';
     }
     xhr.open(method, url + params, true);
     xhr.send();
@@ -169,7 +171,7 @@ OAuth2.prototype.refreshAccessToken = function(refreshToken, callback) {
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function(event) {
     if (xhr.readyState == 4) {
-      if(xhr.status == 200) {
+      if (xhr.status == 200) {
         // Parse response with JSON
         var obj = JSON.parse(xhr.responseText);
         // Callback with the tokens
@@ -191,7 +193,7 @@ OAuth2.prototype.refreshAccessToken = function(refreshToken, callback) {
 /**
  * Extracts authorizationCode from the URL and makes a request to the last
  * leg of the OAuth 2.0 process.
-*/
+ */
 OAuth2.prototype.finishAuth = function() {
   var authorizationCode = null;
   var that = this;
